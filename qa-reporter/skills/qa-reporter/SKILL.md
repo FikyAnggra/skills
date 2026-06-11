@@ -1,4 +1,4 @@
-﻿---
+---
 name: qa-reporter
 description: Portable QA reporting agent for converting qa-planner data, qa-executor results, manual execution results, or exploratory issue findings into governed report_state JSON, test reports, issue packages, bug reports, SIT/UAT documents, coverage-risk summaries, OK/NOK review updates, and Go/Conditional Go/No-Go/Not Assessed sign-off recommendations. Use when asked to create or revise QA reports, normalize failed/blocked issues for review, prepare issue submission packages, generate SIT or UAT evidence summaries, summarize coverage/risk, or process human report review feedback. Do not use for creating test cases, running tests, writing automation scripts, or submitting final issues without explicit user approval and approved package/config.
 ---
@@ -16,17 +16,20 @@ Do reporting work only. Do not create test cases, execute tests, write automatio
 Accept three input paths.
 
 Planner plus executor input:
+
 - `planning_state` or reporter handoff from `qa-planner`
 - `execution_result` or reporter handoff from `qa-executor`
 - issue candidates, coverage map, risks, evidence refs, approval metadata, and environment data
 
 Manual execution result input:
+
 - test case id or scenario
 - status: `Passed`, `Failed`, `Blocked`, `Untested`, or `Retest`
 - expected result, actual result, execution date, environment, evidence refs, and notes
 - failed or blocked items must include evidence or a visible `report_gap`
 
 Exploratory issue finding input:
+
 - title or summary, reproduction steps, expected result, actual result, environment, evidence or clear observation, and impact/severity hint
 - if minimum issue data is missing, ask one concise question or record `report_gap`
 
@@ -35,15 +38,18 @@ Exploratory issue finding input:
 Create or update `report_state.json` before rendering outputs. Use `schemas/report-state.schema.json` when validation tooling exists.
 
 Required source-of-truth sections:
+
 - metadata, source refs, summary, scope, coverage, risk, execution metrics, issue package, SIT document, UAT document, sign-off recommendation, review history, submission history, and changelog
 
 Allowed `report_status` values:
+
 - `draft`
 - `revision_required`
 - `approved`
 - `submitted`
 
 Evidence rules:
+
 - store evidence refs, paths, or links instead of duplicating large evidence
 - redact tokens, passwords, cookies, credentials, secrets, and PII
 - mark missing or weak evidence as `report_gap`
@@ -54,6 +60,7 @@ Evidence rules:
 Calculate metrics from normalized source data and preserve source refs when available.
 
 Core metrics:
+
 - total test cases
 - selected test cases
 - executed test cases
@@ -65,6 +72,7 @@ Core metrics:
 - open blocker count
 
 Rules:
+
 - `executed_test_cases = passed + failed + blocked + retest` unless the source defines another auditable execution rule
 - `pass_rate = passed / executed_test_cases * 100` when executed count is greater than zero
 - `execution_completion_rate = executed_test_cases / selected_test_cases * 100` when selected count is greater than zero
@@ -75,14 +83,17 @@ Rules:
 Create one issue submission package for each failed or blocked issue candidate when enough data exists. Use `schemas/issue-submission-package.schema.json` when validation tooling exists.
 
 Required issue fields:
+
 - title, severity, priority, status, affected test cases, expected result, actual result or blocker detail, reproduction steps or gap note, evidence refs or gap note, redaction status, submission status
 
 Default behavior:
+
 - create issue package
 - request human review
 - do not submit automatically
 
 Issue submission is allowed only when all conditions are true:
+
 - user explicitly requests submission
 - package status is approved
 - dev tool/config exists
@@ -96,6 +107,7 @@ After submission, record tool, external issue id, timestamp, submitter, and resu
 Use source severity when defensible, then normalize with impact and evidence.
 
 Inputs:
+
 - executor severity suggestion
 - test case priority
 - business impact
@@ -106,6 +118,7 @@ Inputs:
 - workaround availability
 
 Severity values:
+
 - `Critical`: P0 affected, critical business flow broken, no workaround, release blocker
 - `High`: P1 affected, major flow broken, workaround limited
 - `Medium`: P2 affected, partial functionality issue or workaround exists
@@ -118,12 +131,14 @@ Record normalization reason and allow human override with reviewer, reason, time
 Generate SIT/UAT documents when requested or useful for release review. Include objective, scope, environment, execution summary, coverage summary, defect summary, known limitations, open risks, evidence refs, conclusion, and sign-off recommendation.
 
 Sign-off values:
+
 - `Go`
 - `Conditional Go`
 - `No-Go`
 - `Not Assessed`
 
 Default recommendation rules:
+
 - `Go`: no open Critical/High failed/blocker, exit criteria met, critical coverage complete
 - `Conditional Go`: Medium/Low issues remain but workaround or approval exists
 - `No-Go`: Critical/High failed/blocker exists, exit criteria not met, or critical coverage gap exists
@@ -136,9 +151,11 @@ Human override must record reviewer, reason, timestamp, previous recommendation,
 Human review status is either `OK` or `NOK`. Use `schemas/reporter-review.schema.json` when validation tooling exists.
 
 Review targets:
+
 - `package`, `artifact`, `section`, `issue_item`, `metric`, `recommendation`, `submission_package`
 
 For `NOK`:
+
 - record feedback in `review_history`
 - set `report_status = revision_required`
 - revise impacted `report_state` section
@@ -147,6 +164,7 @@ For `NOK`:
 - mark `report_gap` or ask human if data is missing
 
 For `OK`:
+
 - set `report_status = approved`
 - lock artifacts as approved version
 - allow issue submission only if the user explicitly requests it and config/tool exists
@@ -154,6 +172,7 @@ For `OK`:
 ## Outputs
 
 Produce these artifacts when requested or useful:
+
 - `report_state.json`: canonical source of truth using `templates/report-state.json`
 - Markdown test report using `templates/test-report.md`
 - Markdown issue package using `templates/issue-package.md`
@@ -168,6 +187,7 @@ Supported human formats include Markdown, Excel/Google Sheets, Word, PDF, Notion
 ## Quality Gates
 
 Before presenting review-ready output, verify:
+
 - report metrics match source execution/manual input or conflicts are explicit gaps
 - failed and blocked issues include expected vs actual or blocker detail
 - issue packages include severity, priority, reproduction steps or gap note, and evidence refs or gap note
@@ -178,6 +198,7 @@ Before presenting review-ready output, verify:
 - rendered artifacts match `report_state.json`
 
 Before issue submission, verify:
+
 - package is approved
 - user explicitly requested submission
 - tool/config is available
@@ -188,6 +209,7 @@ Before issue submission, verify:
 ## Resources
 
 Read only when needed:
+
 - `schemas/report-state.schema.json`: canonical report state schema
 - `schemas/issue-submission-package.schema.json`: governed issue package schema
 - `schemas/reporter-review.schema.json`: OK/NOK review feedback schema
