@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.qa/qa-automation/automation-review.schema.json",
+  "title": "QA Automation Review",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["review_id", "change_set_id", "review_type", "status", "reviewed_at", "reviewer"],
+  "properties": {
+    "review_id": { "type": "string", "minLength": 1 },
+    "change_set_id": { "type": "string", "minLength": 1 },
+    "review_type": { "type": "string", "enum": ["script_review", "promotion_review"] },
+    "status": { "type": "string", "enum": ["OK", "NOK"] },
+    "reviewed_at": { "type": "string" },
+    "reviewer": { "type": "string" },
+    "summary": { "type": "string" },
+    "feedback": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["category", "comment"],
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": ["tc_mapping", "assertion", "locator", "fixture", "data", "validation", "branch_policy", "promotion", "other"]
+          },
+          "severity": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+          "file_path": { "type": "string" },
+          "tc_id": { "type": "string" },
+          "comment": { "type": "string" },
+          "required_action": { "type": "string" }
+        }
+      }
+    },
+    "approval_for_remote_action": { "type": "boolean" },
+    "custom_fields": { "type": "object" }
+  }
+}

@@ -1,0 +1,349 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.qa/qa-executor/execution-result.schema.json",
+  "title": "QA Executor Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "execution_id",
+    "source_agent",
+    "package_id",
+    "run_policy",
+    "environment",
+    "started_at",
+    "finished_at",
+    "summary",
+    "results"
+  ],
+  "properties": {
+    "execution_id": { "type": "string", "minLength": 1 },
+    "source_agent": { "const": "qa-executor" },
+    "package_id": { "type": "string", "minLength": 1 },
+    "planning_state_ref": { "type": ["string", "null"] },
+    "run_policy": { "$ref": "#/$defs/run_policy" },
+    "environment": { "$ref": "#/$defs/environment" },
+    "started_at": { "type": "string", "format": "date-time" },
+    "finished_at": { "type": "string", "format": "date-time" },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total", "selected", "passed", "failed", "blocked", "untested", "retest"],
+      "properties": {
+        "total": { "type": "integer", "minimum": 0 },
+        "selected": { "type": "integer", "minimum": 0 },
+        "passed": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "integer", "minimum": 0 },
+        "blocked": { "type": "integer", "minimum": 0 },
+        "untested": { "type": "integer", "minimum": 0 },
+        "retest": { "type": "integer", "minimum": 0 },
+        "pass_rate": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+        "completion_rate": { "type": ["number", "null"], "minimum": 0, "maximum": 100 }
+      }
+    },
+    "results": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/test_result" }
+    },
+    "issue_candidates": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/issue_candidate" }
+    },
+    "execution_review_history": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/review_record" }
+    },
+    "qa_reporter_handoff": { "$ref": "#/$defs/reporter_handoff" },
+    "qa_automation_signal": { "$ref": "#/$defs/automation_signal" },
+    "custom_fields": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "status": {
+      "type": "string",
+      "enum": ["Untested", "On Progress", "Passed", "Failed", "Blocked", "Retest"]
+    },
+    "execution_mode": {
+      "type": "string",
+      "enum": ["api", "ui", "db", "hybrid", "manual_instruction"]
+    },
+    "run_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "selected_tc_ids", "parallel_allowed"],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["initial_run", "full_regression", "failed_retest", "smoke", "targeted", "automation_validation"]
+        },
+        "selected_tc_ids": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "parallel_allowed": { "type": "boolean" },
+        "notes": { "type": "string" }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "base_url": { "type": "string" },
+        "build": { "type": "string" },
+        "data_refs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "constraints": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "step_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["step_number", "instruction", "expected_result", "actual_result", "status"],
+      "properties": {
+        "step_number": { "type": "integer", "minimum": 1 },
+        "instruction": { "type": "string", "minLength": 1 },
+        "expected_result": { "type": "string", "minLength": 1 },
+        "actual_result": { "type": "string" },
+        "status": { "$ref": "#/$defs/status" },
+        "evidence_refs": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "assertion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["assertion", "expected", "actual", "status"],
+      "properties": {
+        "assertion": { "type": "string", "minLength": 1 },
+        "expected": { "type": "string" },
+        "actual": { "type": "string" },
+        "status": { "$ref": "#/$defs/status" }
+      }
+    },
+    "blocker": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["blocker_type", "blocker_reason"],
+      "properties": {
+        "blocker_type": {
+          "type": "string",
+          "enum": ["test_dependency", "environment", "data", "access", "credential", "endpoint", "db", "fixture", "setup"]
+        },
+        "blocker_reason": { "type": "string", "minLength": 1 },
+        "blocked_by": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "retry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["attempt", "timestamp", "reason", "outcome"],
+      "properties": {
+        "attempt": { "type": "integer", "minimum": 1 },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "reason": { "type": "string", "minLength": 1 },
+        "outcome": { "type": "string", "minLength": 1 },
+        "evidence_refs": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "api_evidence": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "method": { "type": "string" },
+        "url": { "type": "string" },
+        "request_headers": { "type": "object", "additionalProperties": true },
+        "request_body_summary": { "type": "object", "additionalProperties": true },
+        "response_status": { "type": "integer" },
+        "response_body_summary": { "type": "object", "additionalProperties": true }
+      }
+    },
+    "ui_evidence": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "screenshot_refs": { "type": "array", "items": { "type": "string" } },
+        "video_refs": { "type": "array", "items": { "type": "string" } },
+        "trace_refs": { "type": "array", "items": { "type": "string" } },
+        "observation": { "type": "string" }
+      }
+    },
+    "db_evidence": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "query_name": { "type": "string" },
+        "query_summary": { "type": "string" },
+        "expected": { "type": "string" },
+        "actual": { "type": "string" },
+        "status": { "$ref": "#/$defs/status" }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "executor": { "type": "string" },
+        "redaction_status": { "type": "string", "enum": ["passed", "gap", "not_applicable"] },
+        "api": { "type": "array", "items": { "$ref": "#/$defs/api_evidence" } },
+        "ui": { "$ref": "#/$defs/ui_evidence" },
+        "db": { "type": "array", "items": { "$ref": "#/$defs/db_evidence" } },
+        "logs": { "type": "array", "items": { "type": "string" } },
+        "evidence_gaps": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "issue_candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "issue_candidate_id",
+        "tc_id",
+        "severity_suggestion",
+        "title",
+        "summary",
+        "reproduction_steps",
+        "expected_result",
+        "actual_result",
+        "evidence_refs",
+        "suggested_owner",
+        "requires_human_review"
+      ],
+      "properties": {
+        "issue_candidate_id": { "type": "string", "minLength": 1 },
+        "tc_id": { "type": "string", "minLength": 1 },
+        "severity_suggestion": { "type": "string", "enum": ["Critical", "High", "Medium", "Low"] },
+        "title": { "type": "string", "minLength": 1 },
+        "summary": { "type": "string", "minLength": 1 },
+        "reproduction_steps": { "type": "array", "items": { "type": "string" } },
+        "expected_result": { "type": "string", "minLength": 1 },
+        "actual_result": { "type": "string", "minLength": 1 },
+        "evidence_refs": { "type": "array", "items": { "type": "string" } },
+        "suggested_owner": { "type": "string", "minLength": 1 },
+        "requires_human_review": { "const": true },
+        "custom_fields": { "type": "object", "additionalProperties": true }
+      }
+    },
+    "automation_update_signal": {
+      "type": ["object", "null"],
+      "additionalProperties": true,
+      "properties": {
+        "signal_type": {
+          "type": "string",
+          "enum": ["flaky_technical_failure", "selector_gap", "api_gap", "data_gap", "script_update_candidate"]
+        },
+        "reason": { "type": "string" }
+      }
+    },
+    "test_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tc_id",
+        "scenario",
+        "selected",
+        "execution_mode",
+        "test_case_status",
+        "actual_result",
+        "started_at",
+        "finished_at",
+        "duration_ms",
+        "steps",
+        "assertions",
+        "retries",
+        "evidence"
+      ],
+      "properties": {
+        "tc_id": { "type": "string", "minLength": 1 },
+        "scenario": { "type": "string", "minLength": 1 },
+        "selected": { "type": "boolean" },
+        "execution_mode": { "$ref": "#/$defs/execution_mode" },
+        "test_case_status": { "$ref": "#/$defs/status" },
+        "expected_result": { "type": "string" },
+        "actual_result": { "type": "string" },
+        "started_at": { "type": ["string", "null"], "format": "date-time" },
+        "finished_at": { "type": ["string", "null"], "format": "date-time" },
+        "duration_ms": { "type": ["integer", "null"], "minimum": 0 },
+        "steps": { "type": "array", "items": { "$ref": "#/$defs/step_result" } },
+        "assertions": { "type": "array", "items": { "$ref": "#/$defs/assertion" } },
+        "blocker": { "anyOf": [{ "$ref": "#/$defs/blocker" }, { "type": "null" }] },
+        "retries": { "type": "array", "items": { "$ref": "#/$defs/retry" } },
+        "evidence": { "$ref": "#/$defs/evidence" },
+        "issue_candidate": { "anyOf": [{ "$ref": "#/$defs/issue_candidate" }, { "type": "null" }] },
+        "automation_update_signal": { "$ref": "#/$defs/automation_update_signal" },
+        "notes": { "type": "string" },
+        "custom_fields": { "type": "object", "additionalProperties": true }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "test_case_status": { "const": "Failed" } }, "required": ["test_case_status"] },
+          "then": {
+            "required": ["expected_result", "issue_candidate"],
+            "properties": {
+              "expected_result": { "type": "string", "minLength": 1 },
+              "actual_result": { "type": "string", "minLength": 1 },
+              "issue_candidate": { "$ref": "#/$defs/issue_candidate" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "test_case_status": { "const": "Blocked" } }, "required": ["test_case_status"] },
+          "then": {
+            "required": ["blocker", "issue_candidate"],
+            "properties": {
+              "blocker": { "$ref": "#/$defs/blocker" },
+              "issue_candidate": { "$ref": "#/$defs/issue_candidate" }
+            }
+          }
+        }
+      ]
+    },
+    "review_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["review_status", "reviewer", "reviewed_at"],
+      "properties": {
+        "review_status": { "type": "string", "enum": ["OK", "NOK"] },
+        "reviewer": { "type": "string", "minLength": 1 },
+        "reviewed_at": { "type": "string", "format": "date-time" },
+        "note": { "type": "string" }
+      }
+    },
+    "reporter_handoff": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "source_agent": { "const": "qa-executor" },
+        "execution_result_ref": { "type": "string" },
+        "approval_status": { "type": "string", "enum": ["OK", "NOK", "pending"] }
+      }
+    },
+    "automation_signal": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "source_agent": { "const": "qa-executor" },
+        "execution_result_ref": { "type": "string" },
+        "selector_gaps": { "type": "array" },
+        "api_gaps": { "type": "array" },
+        "data_gaps": { "type": "array" },
+        "flaky_technical_failures": { "type": "array" },
+        "update_candidates": { "type": "array" }
+      }
+    }
+  }
+}

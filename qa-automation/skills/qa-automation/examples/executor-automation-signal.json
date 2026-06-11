@@ -1,0 +1,28 @@
+{
+  "source_agent": "qa-executor",
+  "package_id": "EXEC-AUTH-LOGIN-20260611",
+  "qa_automation_signal": {
+    "selector_gaps": [
+      {
+        "tc_id": "TC-AUTH-001",
+        "element": "Submit login button",
+        "description": "Button has no stable role name or test id."
+      }
+    ],
+    "flaky_technical_failures": [
+      {
+        "tc_id": "TC-AUTH-002",
+        "script_path": "tests/e2e/login.spec.ts",
+        "failure": "Timeout waiting for dashboard route after submit.",
+        "suspected_cause": "Navigation wait races with form submit."
+      }
+    ],
+    "update_candidates": [
+      {
+        "tc_id": "TC-AUTH-005",
+        "script_path": "tests/e2e/password-reset.spec.ts",
+        "reason": "API now returns 202 for accepted reset request."
+      }
+    ]
+  }
+}

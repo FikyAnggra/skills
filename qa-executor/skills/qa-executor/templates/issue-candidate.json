@@ -1,0 +1,19 @@
+{
+  "issue_candidate_id": "ISSUE-CAND-TC0002",
+  "tc_id": "TC0002",
+  "severity_suggestion": "High",
+  "title": "Invalid password allows dashboard access",
+  "summary": "Invalid password returned dashboard access instead of the expected generic credential error.",
+  "reproduction_steps": [
+    "Open the staging login page.",
+    "Enter a valid user email and an invalid password.",
+    "Submit the login form."
+  ],
+  "expected_result": "Generic invalid credential message is shown.",
+  "actual_result": "User landed on dashboard.",
+  "blocker_detail": null,
+  "evidence_refs": ["evidence/TC0002-invalid-password-dashboard.png"],
+  "suggested_owner": "dev",
+  "requires_human_review": true,
+  "custom_fields": {}
+}

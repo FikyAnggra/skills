@@ -1,0 +1,18 @@
+﻿{
+  "name": "qa-reporter",
+  "version": "0.1.0",
+  "description": "Portable QA reporting plugin with a qa-reporter skill for producing report_state JSON, test reports, issue packages, SIT/UAT documents, coverage-risk summaries, and sign-off recommendations.",
+  "author": {
+    "name": "Local developer"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "QA Reporter",
+    "shortDescription": "Build QA reports and sign-off packages.",
+    "longDescription": "QA Reporter provides a portable skill for converting planner, executor, manual execution, or exploratory issue input into governed report_state JSON, review-ready reports, issue submission packages, SIT/UAT documents, coverage-risk summaries, and Go/Conditional Go/No-Go/Not Assessed recommendations.",
+    "developerName": "Local developer",
+    "category": "Productivity",
+    "capabilities": [],
+    "defaultPrompt": "Use qa-reporter to generate a QA report package from execution results or issue findings."
+  }
+}

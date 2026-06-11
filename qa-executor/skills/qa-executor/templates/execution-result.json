@@ -1,0 +1,67 @@
+{
+  "execution_id": "EXEC-20260611-001",
+  "source_agent": "qa-executor",
+  "package_id": "QA-PLAN-AUTH-LOGIN-v0.2",
+  "planning_state_ref": "planning_state.json",
+  "run_policy": {
+    "mode": "targeted",
+    "selected_tc_ids": ["TC0001"],
+    "parallel_allowed": false,
+    "notes": "Targeted execution from approved package."
+  },
+  "environment": {
+    "name": "Staging",
+    "base_url": "https://staging.example.com",
+    "build": "2026.06.11.1",
+    "data_refs": ["test-data/auth-users.md"],
+    "constraints": ["Use redacted credentials from approved secret source."]
+  },
+  "started_at": "2026-06-11T10:00:00+07:00",
+  "finished_at": "2026-06-11T10:02:00+07:00",
+  "summary": {
+    "total": 1,
+    "selected": 1,
+    "passed": 1,
+    "failed": 0,
+    "blocked": 0,
+    "untested": 0,
+    "retest": 0,
+    "pass_rate": 100,
+    "completion_rate": 100
+  },
+  "results": [
+    {
+      "tc_id": "TC0001",
+      "scenario": "Login with valid active user",
+      "selected": true,
+      "execution_mode": "ui",
+      "test_case_status": "Passed",
+      "expected_result": "User lands on dashboard.",
+      "actual_result": "User landed on dashboard.",
+      "started_at": "2026-06-11T10:00:00+07:00",
+      "finished_at": "2026-06-11T10:02:00+07:00",
+      "duration_ms": 120000,
+      "steps": [],
+      "assertions": [],
+      "blocker": null,
+      "retries": [],
+      "evidence": {
+        "executor": "qa-executor",
+        "redaction_status": "passed",
+        "ui": {
+          "screenshot_refs": ["evidence/TC0001-dashboard.png"],
+          "video_refs": [],
+          "trace_refs": [],
+          "observation": "Dashboard heading visible after login."
+        },
+        "evidence_gaps": []
+      },
+      "issue_candidate": null,
+      "automation_update_signal": null,
+      "notes": "No issue observed."
+    }
+  ],
+  "issue_candidates": [],
+  "execution_review_history": [],
+  "custom_fields": {}
+}

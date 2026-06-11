@@ -1,0 +1,56 @@
+{
+  "contract_version": "1.0",
+  "source_agent": "qa-planner",
+  "package_id": "",
+  "approval_status": "draft",
+  "source_refs": {
+    "planning_state": "planning_state.json",
+    "test_cases": "planning_state.test_cases",
+    "coverage_map": "planning_state.coverage_map",
+    "test_plan": "planning_state.test_plan",
+    "review_history": "planning_state.review_history"
+  },
+  "qa_executor": {
+    "target_agent": "qa-executor",
+    "run_policy": {
+      "run_mode": "initial_run",
+      "status_filter": ["Untested"],
+      "priority_filter": ["P0 - Critical", "P1 - High", "P2 - Medium", "P3 - Low"],
+      "include_tags": [],
+      "exclude_tags": []
+    },
+    "scope": {
+      "candidate_test_cases": [],
+      "selected_test_cases": []
+    },
+    "environment": "",
+    "constraints": [],
+    "gaps": []
+  },
+  "qa_automation": {
+    "target_agent": "qa-automation",
+    "automation_policy": {
+      "include_status": ["To Be Automate", "Already Automate"],
+      "exclude_status": ["Manual Only"],
+      "priority_filter": ["P0 - Critical", "P1 - High"]
+    },
+    "scope": {
+      "create_scripts": [],
+      "update_scripts": [],
+      "manual_only": []
+    },
+    "constraints": [],
+    "gaps": []
+  },
+  "qa_reporter": {
+    "target_agent": "qa-reporter",
+    "scope": {
+      "coverage_refs": [],
+      "risk_refs": [],
+      "candidate_test_cases": []
+    },
+    "summary": "",
+    "constraints": [],
+    "gaps": []
+  }
+}

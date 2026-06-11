@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/qa-planner/handoff-contract.schema.json",
+  "title": "QA Planner Handoff Contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "source_agent",
+    "target_agent",
+    "package_id",
+    "approval_status",
+    "source_refs",
+    "scope"
+  ],
+  "properties": {
+    "contract_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+$" },
+    "source_agent": { "type": "string", "const": "qa-planner" },
+    "target_agent": {
+      "type": "string",
+      "enum": ["qa-executor", "qa-automation", "qa-reporter"]
+    },
+    "package_id": { "type": "string", "minLength": 1 },
+    "approval_status": { "type": "string", "enum": ["draft", "revision_required", "approved"] },
+    "source_refs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["planning_state", "test_cases", "coverage_map"],
+      "properties": {
+        "planning_state": { "type": "string", "minLength": 1 },
+        "test_cases": { "type": "string", "minLength": 1 },
+        "coverage_map": { "type": "string", "minLength": 1 },
+        "test_plan": { "type": "string" },
+        "review_history": { "type": "string" }
+      }
+    },
+    "run_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "run_mode": {
+          "type": "string",
+          "enum": [
+            "initial_run",
+            "full_regression",
+            "failed_retest",
+            "smoke",
+            "targeted",
+            "automation_validation"
+          ]
+        },
+        "status_filter": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/test_case_status" }
+        },
+        "priority_filter": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/priority" }
+        },
+        "include_tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        },
+        "exclude_tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "candidate_test_cases": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        },
+        "selected_test_cases": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        },
+        "create_scripts": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        },
+        "update_scripts": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        },
+        "manual_only": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        },
+        "coverage_refs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        },
+        "risk_refs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        }
+      }
+    },
+    "automation_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "include_status": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/automation_status" }
+        },
+        "exclude_status": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/automation_status" }
+        },
+        "priority_filter": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/priority" }
+        }
+      }
+    },
+    "environment": { "type": "string" },
+    "constraints": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": []
+    },
+    "gaps": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": []
+    },
+    "summary": { "type": "string" },
+    "custom_fields": {
+      "type": "object",
+      "additionalProperties": true,
+      "default": {}
+    }
+  },
+  "$defs": {
+    "priority": {
+      "type": "string",
+      "enum": ["P0 - Critical", "P1 - High", "P2 - Medium", "P3 - Low"]
+    },
+    "test_case_status": {
+      "type": "string",
+      "enum": ["Untested", "On Progress", "Passed", "Failed", "Blocked", "Retest"]
+    },
+    "automation_status": {
+      "type": "string",
+      "enum": ["Manual Only", "To Be Automate", "Already Automate"]
+    }
+  }
+}

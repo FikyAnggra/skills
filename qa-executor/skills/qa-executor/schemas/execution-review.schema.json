@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.qa/qa-executor/execution-review.schema.json",
+  "title": "QA Executor Review Feedback",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["review_id", "package_id", "review_status", "reviewer", "reviewed_at", "feedback_items"],
+  "properties": {
+    "review_id": { "type": "string", "minLength": 1 },
+    "package_id": { "type": "string", "minLength": 1 },
+    "execution_id": { "type": "string" },
+    "review_status": { "type": "string", "enum": ["OK", "NOK"] },
+    "reviewer": { "type": "string", "minLength": 1 },
+    "reviewed_at": { "type": "string", "format": "date-time" },
+    "feedback_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["target_type", "target_ref", "finding", "requested_action"],
+        "properties": {
+          "target_type": {
+            "type": "string",
+            "enum": ["package", "test_case", "step", "assertion", "evidence", "blocker", "retry", "issue_candidate", "handoff"]
+          },
+          "target_ref": { "type": "string", "minLength": 1 },
+          "finding": { "type": "string", "minLength": 1 },
+          "requested_action": {
+            "type": "string",
+            "enum": ["add", "remove", "update", "rerun", "redact", "clarify", "accept_override"]
+          },
+          "resolution": { "type": "string" }
+        }
+      }
+    },
+    "decision_note": { "type": "string" },
+    "custom_fields": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  }
+}

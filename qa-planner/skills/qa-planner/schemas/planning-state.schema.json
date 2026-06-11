@@ -1,0 +1,217 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/qa-planner/planning-state.schema.json",
+  "title": "QA Planner Planning State",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "metadata",
+    "source_inputs",
+    "assumptions",
+    "open_questions",
+    "scope",
+    "risk_analysis",
+    "test_strategy",
+    "test_plan",
+    "test_cases",
+    "coverage_map",
+    "handoff_contracts",
+    "review_history",
+    "changelog"
+  ],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["package_id", "project", "feature", "version", "planning_status", "created_at", "updated_at"],
+      "properties": {
+        "package_id": { "type": "string", "minLength": 1 },
+        "project": { "type": "string", "minLength": 1 },
+        "feature": { "type": "string", "minLength": 1 },
+        "owner": { "type": "string" },
+        "version": { "type": "string", "minLength": 1 },
+        "planning_status": { "type": "string", "enum": ["draft", "revision_required", "approved"] },
+        "created_at": { "type": "string", "format": "date-time" },
+        "updated_at": { "type": "string", "format": "date-time" },
+        "tags": { "type": "array", "items": { "type": "string" }, "default": [] }
+      }
+    },
+    "source_inputs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["source_id", "source_type", "summary"],
+        "properties": {
+          "source_id": { "type": "string", "minLength": 1 },
+          "source_type": { "type": "string" },
+          "path_or_ref": { "type": "string" },
+          "summary": { "type": "string", "minLength": 1 },
+          "requirements": { "type": "array", "items": { "$ref": "#/$defs/requirement" }, "default": [] }
+        }
+      }
+    },
+    "assumptions": { "type": "array", "items": { "$ref": "#/$defs/note" }, "default": [] },
+    "open_questions": { "type": "array", "items": { "$ref": "#/$defs/note" }, "default": [] },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["in_scope", "out_of_scope"],
+      "properties": {
+        "in_scope": { "type": "array", "items": { "type": "string" }, "default": [] },
+        "out_of_scope": { "type": "array", "items": { "type": "string" }, "default": [] }
+      }
+    },
+    "risk_analysis": { "type": "array", "items": { "$ref": "#/$defs/risk" }, "default": [] },
+    "test_strategy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["test_levels", "test_types", "priority_model", "coverage_target", "execution_approach"],
+      "properties": {
+        "test_levels": { "type": "array", "items": { "type": "string" }, "default": [] },
+        "test_types": { "type": "array", "items": { "type": "string" }, "default": [] },
+        "priority_model": { "type": "string" },
+        "coverage_target": { "type": "string" },
+        "execution_approach": { "type": "string" }
+      }
+    },
+    "test_plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["objective", "environment", "entry_criteria", "exit_criteria", "dependencies"],
+      "properties": {
+        "objective": { "type": "string" },
+        "environment": { "type": "string" },
+        "entry_criteria": { "type": "array", "items": { "type": "string" }, "default": [] },
+        "exit_criteria": { "type": "array", "items": { "type": "string" }, "default": [] },
+        "schedule_notes": { "type": "string" },
+        "dependencies": { "type": "array", "items": { "type": "string" }, "default": [] }
+      }
+    },
+    "test_cases": { "type": "array", "items": { "$ref": "#/$defs/test_case" }, "default": [] },
+    "coverage_map": { "type": "array", "items": { "$ref": "#/$defs/coverage_item" }, "default": [] },
+    "handoff_contracts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["qa_executor", "qa_automation", "qa_reporter"],
+      "properties": {
+        "qa_executor": { "$ref": "handoff-contract.schema.json" },
+        "qa_automation": { "$ref": "handoff-contract.schema.json" },
+        "qa_reporter": { "$ref": "handoff-contract.schema.json" }
+      }
+    },
+    "review_history": { "type": "array", "items": { "$ref": "review-feedback.schema.json" }, "default": [] },
+    "changelog": { "type": "array", "items": { "$ref": "#/$defs/change" }, "default": [] },
+    "custom_fields": { "type": "object", "additionalProperties": true, "default": {} }
+  },
+  "$defs": {
+    "priority": {
+      "type": "string",
+      "enum": ["P0 - Critical", "P1 - High", "P2 - Medium", "P3 - Low"]
+    },
+    "test_case_status": {
+      "type": "string",
+      "enum": ["Untested", "On Progress", "Passed", "Failed", "Blocked", "Retest"]
+    },
+    "automation_status": {
+      "type": "string",
+      "enum": ["Manual Only", "To Be Automate", "Already Automate"]
+    },
+    "note": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "text", "status"],
+      "properties": {
+        "id": { "type": "string" },
+        "text": { "type": "string" },
+        "status": { "type": "string", "enum": ["open", "resolved", "accepted"] },
+        "references": { "type": "array", "items": { "type": "string" }, "default": [] }
+      }
+    },
+    "requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requirement_id", "summary", "priority"],
+      "properties": {
+        "requirement_id": { "type": "string" },
+        "summary": { "type": "string" },
+        "priority": { "$ref": "#/$defs/priority" },
+        "acceptance_criteria": { "type": "array", "items": { "type": "string" }, "default": [] }
+      }
+    },
+    "risk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["risk_id", "category", "description", "impact", "mitigation"],
+      "properties": {
+        "risk_id": { "type": "string" },
+        "category": { "type": "string", "enum": ["product", "technical", "data", "integration", "operational", "business"] },
+        "description": { "type": "string" },
+        "impact": { "$ref": "#/$defs/priority" },
+        "mitigation": { "type": "string" },
+        "related_requirements": { "type": "array", "items": { "type": "string" }, "default": [] }
+      }
+    },
+    "test_case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tc_id",
+        "scenario",
+        "summary",
+        "test_type",
+        "priority",
+        "pre_conditions",
+        "test_steps",
+        "test_data",
+        "expected_result",
+        "actual_result",
+        "test_case_status",
+        "automation_status",
+        "notes"
+      ],
+      "properties": {
+        "tc_id": { "type": "string", "pattern": "^TC[0-9]{4,}$" },
+        "scenario": { "type": "string", "minLength": 1 },
+        "summary": { "type": "string", "minLength": 1 },
+        "test_type": { "type": "string", "minLength": 1 },
+        "priority": { "$ref": "#/$defs/priority" },
+        "pre_conditions": { "type": "string" },
+        "test_steps": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "test_data": { "type": "string" },
+        "expected_result": { "type": "string", "minLength": 1 },
+        "actual_result": { "type": "string", "default": "" },
+        "test_case_status": { "$ref": "#/$defs/test_case_status" },
+        "automation_status": { "$ref": "#/$defs/automation_status" },
+        "notes": { "type": "string" },
+        "requirement_refs": { "type": "array", "items": { "type": "string" }, "default": [] },
+        "tags": { "type": "array", "items": { "type": "string" }, "default": [] },
+        "custom_fields": { "type": "object", "additionalProperties": true, "default": {} }
+      }
+    },
+    "coverage_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requirement_id", "test_case_ids", "coverage_status"],
+      "properties": {
+        "requirement_id": { "type": "string" },
+        "test_case_ids": { "type": "array", "items": { "type": "string" }, "default": [] },
+        "coverage_status": { "type": "string", "enum": ["covered", "partial", "excluded", "gap"] },
+        "exclusion_reason": { "type": "string" },
+        "notes": { "type": "string" }
+      }
+    },
+    "change": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "changed_at", "summary"],
+      "properties": {
+        "version": { "type": "string" },
+        "changed_at": { "type": "string", "format": "date-time" },
+        "summary": { "type": "string" },
+        "changed_by": { "type": "string" }
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "qa-executor",
+  "version": "0.1.0",
+  "description": "Portable QA execution plugin with a qa-executor skill for running or guiding approved QA test cases, capturing evidence, producing execution_result JSON, and handing structured results to QA reporter and automation agents.",
+  "author": {
+    "name": "Local developer"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "QA Executor",
+    "shortDescription": "Execute QA cases and capture evidence.",
+    "longDescription": "QA Executor provides a portable skill for normalizing planner-driven or manual test cases, resolving run policy scope, executing API, UI, DB, hybrid, or manual-instruction checks, capturing redacted evidence, producing execution_result JSON, managing OK/NOK execution review, and generating handoffs for qa-reporter and qa-automation.",
+    "developerName": "Local developer",
+    "category": "Productivity",
+    "capabilities": [],
+    "defaultPrompt": "Use qa-executor to run or guide approved QA test cases and produce an execution result package."
+  }
+}

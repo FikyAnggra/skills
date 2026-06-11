@@ -1,0 +1,72 @@
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.qa/qa-reporter/issue-submission-package.schema.json",
+  "title": "QA Reporter Issue Submission Package",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "issue_id",
+    "title",
+    "severity",
+    "priority",
+    "status",
+    "expected_result",
+    "redaction_status",
+    "submission_status"
+  ],
+  "properties": {
+    "issue_id": { "type": "string", "minLength": 1 },
+    "source_issue_candidate_id": { "type": "string" },
+    "title": { "type": "string", "minLength": 1 },
+    "summary": { "type": "string" },
+    "severity": { "type": "string", "enum": ["Critical", "High", "Medium", "Low"] },
+    "priority": { "type": "string", "enum": ["P0", "P1", "P2", "P3", "P0 - Critical", "P1 - High", "P2 - Medium", "P3 - Low"] },
+    "status": { "type": "string", "enum": ["draft", "ready_for_review", "revision_required", "approved", "rejected"] },
+    "affected_test_cases": { "type": "array", "items": { "type": "string" } },
+    "environment": { "type": "string" },
+    "expected_result": { "type": "string", "minLength": 1 },
+    "actual_result": { "type": "string" },
+    "blocker_detail": { "type": "string" },
+    "reproduction_steps": { "type": "array", "items": { "type": "string" } },
+    "evidence_refs": { "type": "array", "items": { "type": "string" } },
+    "report_gaps": { "type": "array", "items": { "type": "string" } },
+    "suggested_owner": { "type": "string" },
+    "severity_normalization": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source_severity": { "type": "string" },
+        "normalization_inputs": { "type": "array", "items": { "type": "string" } },
+        "reason": { "type": "string" },
+        "override": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["reviewer", "reason", "timestamp", "previous_severity", "final_severity"],
+          "properties": {
+            "reviewer": { "type": "string" },
+            "reason": { "type": "string" },
+            "timestamp": { "type": "string" },
+            "previous_severity": { "type": "string", "enum": ["Critical", "High", "Medium", "Low"] },
+            "final_severity": { "type": "string", "enum": ["Critical", "High", "Medium", "Low"] }
+          }
+        }
+      }
+    },
+    "redaction_status": { "type": "string", "enum": ["not_checked", "pending", "passed", "failed"] },
+    "submission_status": { "type": "string", "enum": ["not_submitted", "submission_requested", "submitted", "submission_failed"] },
+    "submission_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "submitted": { "type": "boolean" },
+        "tool": { "type": "string", "enum": ["jira", "linear", "github", "other"] },
+        "external_issue_id": { "type": "string" },
+        "external_issue_url": { "type": "string" },
+        "submitted_at": { "type": "string" },
+        "submitted_by": { "type": "string" },
+        "error": { "type": "string" }
+      }
+    },
+    "custom_fields": { "type": "object", "additionalProperties": true }
+  }
+}

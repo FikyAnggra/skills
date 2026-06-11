@@ -1,0 +1,32 @@
+{
+  "source_agent": "qa-executor",
+  "package_id": "QA-PLAN-AUTH-LOGIN-v0.2",
+  "execution_result_ref": "execution_result.json",
+  "qa_automation_signal": {
+    "selector_gaps": [
+      {
+        "tc_id": "TC0002",
+        "element": "Login error message",
+        "description": "No stable accessible name or test id was available for assertion."
+      }
+    ],
+    "api_gaps": [],
+    "data_gaps": [],
+    "flaky_technical_failures": [
+      {
+        "tc_id": "TC0003",
+        "failure": "Temporary timeout waiting for dashboard route on first attempt.",
+        "suspected_cause": "UI navigation wait raced with submit response.",
+        "evidence_refs": ["evidence/TC0003-retry-1-timeout.log"]
+      }
+    ],
+    "update_candidates": [
+      {
+        "tc_id": "TC0002",
+        "script_path": "tests/e2e/login.spec.ts",
+        "reason": "Business failure should remain failing; automation may need stronger invalid credential assertion."
+      }
+    ],
+    "note": "Signal is not a script generation request by itself."
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "package_id": "QA-PLAN-AUTH-LOGIN-v0.2",
+  "source_agent": "qa-planner",
+  "automation_contract": {
+    "create_scripts": [
+      {
+        "tc_id": "TC-AUTH-001",
+        "automation_status": "To Be Automate",
+        "priority": "P1 - High",
+        "scenario": "Valid user can log in",
+        "test_steps": ["Open login page", "Enter valid credentials", "Submit login form"],
+        "expected_result": "Dashboard is shown for the authenticated user."
+      }
+    ],
+    "update_scripts": [
+      {
+        "tc_id": "TC-AUTH-002",
+        "automation_status": "Already Automate",
+        "script_path": "tests/e2e/login.spec.ts",
+        "reason": "Expected error copy changed."
+      }
+    ],
+    "manual_only": [
+      {
+        "tc_id": "TC-AUTH-003",
+        "automation_status": "Manual Only",
+        "reason": "Requires visual judgment and external OTP device."
+      }
+    ],
+    "automation_gaps": [
+      {
+        "tc_id": "TC-AUTH-004",
+        "gap_type": "data_gap",
+        "description": "Locked user fixture is unavailable."
+      }
+    ]
+  }
+}

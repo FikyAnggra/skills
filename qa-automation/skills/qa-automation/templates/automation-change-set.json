@@ -1,0 +1,68 @@
+{
+  "change_set_id": "AUTO-CS-YYYYMMDD-001",
+  "source_agent": "qa-automation",
+  "package_id": "PACKAGE-ID",
+  "input_refs": {
+    "planner_contract": "path-or-id",
+    "executor_signal": "path-or-id",
+    "manual_request": "request-summary",
+    "test_case_source": "path-or-id",
+    "custom_fields": {}
+  },
+  "repo_context": {
+    "repo_path": "path-to-repo",
+    "repo_available": true,
+    "package_manager": "unknown",
+    "test_commands": [],
+    "current_branch": "",
+    "base_branch": "develop",
+    "target_branch": "master",
+    "detected_conventions": [],
+    "custom_fields": {}
+  },
+  "framework": {
+    "name": "Playwright",
+    "language": "TypeScript",
+    "source": "fallback",
+    "test_id_attribute": "data-testid",
+    "config_files": [],
+    "custom_fields": {}
+  },
+  "branch_policy": {
+    "policy_source": "fallback",
+    "flow": "develop -> master",
+    "feature_branch": "",
+    "base_branch": "develop",
+    "target_branch": "master",
+    "remote_action_requires_approval": true,
+    "remote_action_approved": false,
+    "custom_fields": {}
+  },
+  "automation_scope": {
+    "scope_type": "mixed",
+    "actions": ["create_script"],
+    "priority_filter": "",
+    "selected_tc_ids": [],
+    "custom_fields": {}
+  },
+  "test_case_mappings": [],
+  "planned_changes": [],
+  "applied_changes": [],
+  "validation_results": [],
+  "review_gates": {
+    "script_review": { "required": true, "status": "pending" },
+    "promotion_review": { "required": true, "status": "pending" },
+    "custom_fields": {}
+  },
+  "promotion_status": {
+    "state": "draft",
+    "ready_for_remote_action": false,
+    "remote_action_type": "none",
+    "remote_action_approved": false,
+    "reason": "Change set initialized.",
+    "custom_fields": {}
+  },
+  "gaps": [],
+  "changelog": [],
+  "custom_fields": {}
+}

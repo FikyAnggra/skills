@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.qa/qa-automation/validation-result.schema.json",
+  "title": "QA Automation Validation Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["validation_type", "command", "status", "summary"],
+  "properties": {
+    "validation_type": {
+      "type": "string",
+      "enum": ["lint", "typecheck", "format_check", "config_validation", "targeted_run", "full_run"]
+    },
+    "command": { "type": "string", "minLength": 1 },
+    "status": { "type": "string", "enum": ["passed", "failed", "skipped", "blocked"] },
+    "started_at": { "type": "string" },
+    "finished_at": { "type": "string" },
+    "duration_ms": { "type": "integer", "minimum": 0 },
+    "summary": { "type": "string" },
+    "evidence_refs": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "failure_reason": { "type": "string" },
+    "blocked_reason": { "type": "string" },
+    "custom_fields": { "type": "object" }
+  }
+}

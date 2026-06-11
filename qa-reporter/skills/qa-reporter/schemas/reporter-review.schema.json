@@ -1,0 +1,36 @@
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.qa/qa-reporter/reporter-review.schema.json",
+  "title": "QA Reporter Review Feedback",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["review_id", "review_status", "target_level", "target_ref", "reviewer", "reviewed_at"],
+  "properties": {
+    "review_id": { "type": "string", "minLength": 1 },
+    "review_status": { "type": "string", "enum": ["OK", "NOK"] },
+    "target_level": {
+      "type": "string",
+      "enum": ["package", "artifact", "section", "issue_item", "metric", "recommendation", "submission_package"]
+    },
+    "target_ref": { "type": "string", "minLength": 1 },
+    "issue": { "type": "string" },
+    "action": {
+      "type": "string",
+      "enum": ["approve", "update", "add", "remove", "recalculate", "rerender", "request_info", "override"]
+    },
+    "expected_change": { "type": "string" },
+    "reviewer": { "type": "string", "minLength": 1 },
+    "reviewed_at": { "type": "string" },
+    "resolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "status": { "type": "string", "enum": ["open", "resolved", "deferred", "rejected"] },
+        "resolved_at": { "type": "string" },
+        "resolution_note": { "type": "string" },
+        "changed_refs": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "custom_fields": { "type": "object", "additionalProperties": true }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.qa/qa-executor/issue-candidate.schema.json",
+  "title": "QA Executor Issue Candidate",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "issue_candidate_id",
+    "tc_id",
+    "severity_suggestion",
+    "title",
+    "summary",
+    "reproduction_steps",
+    "expected_result",
+    "actual_result",
+    "evidence_refs",
+    "suggested_owner",
+    "requires_human_review"
+  ],
+  "properties": {
+    "issue_candidate_id": { "type": "string", "minLength": 1 },
+    "tc_id": { "type": "string", "minLength": 1 },
+    "severity_suggestion": {
+      "type": "string",
+      "enum": ["Critical", "High", "Medium", "Low"]
+    },
+    "title": { "type": "string", "minLength": 1 },
+    "summary": { "type": "string", "minLength": 1 },
+    "reproduction_steps": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "expected_result": { "type": "string", "minLength": 1 },
+    "actual_result": { "type": "string", "minLength": 1 },
+    "blocker_detail": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "blocker_type": {
+          "type": "string",
+          "enum": ["test_dependency", "environment", "data", "access", "credential", "endpoint", "db", "fixture", "setup"]
+        },
+        "blocker_reason": { "type": "string", "minLength": 1 },
+        "blocked_by": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      },
+      "required": ["blocker_type", "blocker_reason"]
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "suggested_owner": { "type": "string", "minLength": 1 },
+    "requires_human_review": { "const": true },
+    "custom_fields": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  }
+}

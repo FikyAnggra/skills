@@ -1,0 +1,231 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.qa/qa-automation/automation-change-set.schema.json",
+  "title": "QA Automation Change Set",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "change_set_id",
+    "source_agent",
+    "repo_context",
+    "framework",
+    "branch_policy",
+    "automation_scope",
+    "test_case_mappings",
+    "planned_changes",
+    "applied_changes",
+    "validation_results",
+    "review_gates",
+    "promotion_status",
+    "gaps",
+    "changelog"
+  ],
+  "properties": {
+    "change_set_id": { "type": "string", "minLength": 1 },
+    "source_agent": { "type": "string", "const": "qa-automation" },
+    "package_id": { "type": "string" },
+    "input_refs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "planner_contract": { "type": "string" },
+        "executor_signal": { "type": "string" },
+        "manual_request": { "type": "string" },
+        "test_case_source": { "type": "string" },
+        "custom_fields": { "type": "object" }
+      }
+    },
+    "repo_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repo_path", "repo_available"],
+      "properties": {
+        "repo_path": { "type": "string" },
+        "repo_available": { "type": "boolean" },
+        "package_manager": { "type": "string", "enum": ["npm", "pnpm", "yarn", "bun", "maven", "gradle", "pip", "poetry", "unknown", "none"] },
+        "test_commands": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "current_branch": { "type": "string" },
+        "base_branch": { "type": "string" },
+        "target_branch": { "type": "string" },
+        "detected_conventions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "custom_fields": { "type": "object" }
+      }
+    },
+    "framework": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "source"],
+      "properties": {
+        "name": { "type": "string" },
+        "language": { "type": "string" },
+        "source": { "type": "string", "enum": ["detected", "provided", "fallback"] },
+        "test_id_attribute": { "type": "string" },
+        "config_files": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "custom_fields": { "type": "object" }
+      }
+    },
+    "branch_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy_source", "remote_action_requires_approval"],
+      "properties": {
+        "policy_source": { "type": "string", "enum": ["repo", "provided", "fallback"] },
+        "flow": { "type": "string" },
+        "feature_branch": { "type": "string" },
+        "base_branch": { "type": "string" },
+        "target_branch": { "type": "string" },
+        "remote_action_requires_approval": { "type": "boolean", "const": true },
+        "remote_action_approved": { "type": "boolean" },
+        "custom_fields": { "type": "object" }
+      }
+    },
+    "automation_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scope_type", "actions"],
+      "properties": {
+        "scope_type": { "type": "string", "enum": ["create", "update", "manual_only", "skipped", "validation_only", "mixed"] },
+        "actions": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["create_script", "update_script", "skip_manual_only", "mark_gap", "refactor_approved", "validation_only"] }
+        },
+        "priority_filter": { "type": "string" },
+        "selected_tc_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "custom_fields": { "type": "object" }
+      }
+    },
+    "test_case_mappings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["tc_id", "automation_status", "mapping_status"],
+        "properties": {
+          "tc_id": { "type": "string", "minLength": 1 },
+          "scenario": { "type": "string" },
+          "expected_result": { "type": "string" },
+          "automation_status": { "type": "string", "enum": ["To Be Automate", "Already Automate", "Manual Only"] },
+          "mapping_status": { "type": "string", "enum": ["planned", "created", "updated", "validated", "skipped", "blocked"] },
+          "script_path": { "type": "string" },
+          "spec_title": { "type": "string" },
+          "assertions": { "type": "array", "items": { "type": "string" } },
+          "locators": { "type": "array", "items": { "type": "string" } },
+          "gaps": { "type": "array", "items": { "type": "string" } },
+          "custom_fields": { "type": "object" }
+        }
+      }
+    },
+    "planned_changes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/file_change" }
+    },
+    "applied_changes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/file_change" }
+    },
+    "validation_results": {
+      "type": "array",
+      "items": { "$ref": "validation-result.schema.json" }
+    },
+    "review_gates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["script_review", "promotion_review"],
+      "properties": {
+        "script_review": { "$ref": "#/$defs/review_gate" },
+        "promotion_review": { "$ref": "#/$defs/review_gate" },
+        "custom_fields": { "type": "object" }
+      }
+    },
+    "promotion_status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state"],
+      "properties": {
+        "state": {
+          "type": "string",
+          "enum": ["draft", "script_review_required", "revision_required", "validation_required", "promotion_review_required", "ready_to_push", "ready_to_deploy", "ready_to_merge", "promoted", "blocked"]
+        },
+        "ready_for_remote_action": { "type": "boolean" },
+        "remote_action_type": { "type": "string", "enum": ["push", "deploy", "merge", "none"] },
+        "remote_action_approved": { "type": "boolean" },
+        "reason": { "type": "string" },
+        "custom_fields": { "type": "object" }
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/gap" }
+    },
+    "changelog": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["timestamp", "summary"],
+        "properties": {
+          "timestamp": { "type": "string" },
+          "author": { "type": "string" },
+          "summary": { "type": "string" },
+          "custom_fields": { "type": "object" }
+        }
+      }
+    },
+    "custom_fields": { "type": "object" }
+  },
+  "$defs": {
+    "file_change": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["action", "file_path", "rationale"],
+      "properties": {
+        "action": { "type": "string", "enum": ["create", "update", "delete", "skip", "validate"] },
+        "file_path": { "type": "string" },
+        "tc_ids": { "type": "array", "items": { "type": "string" } },
+        "rationale": { "type": "string" },
+        "summary": { "type": "string" },
+        "custom_fields": { "type": "object" }
+      }
+    },
+    "review_gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "status"],
+      "properties": {
+        "required": { "type": "boolean" },
+        "status": { "type": "string", "enum": ["pending", "OK", "NOK", "skipped"] },
+        "review_id": { "type": "string" },
+        "reviewed_at": { "type": "string" },
+        "reviewer": { "type": "string" },
+        "summary": { "type": "string" },
+        "custom_fields": { "type": "object" }
+      }
+    },
+    "gap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gap_type", "description", "impact"],
+      "properties": {
+        "gap_type": { "type": "string", "enum": ["selector_gap", "data_gap", "env_gap", "fixture_gap", "api_gap", "repo_gap", "framework_gap"] },
+        "tc_id": { "type": "string" },
+        "file_path": { "type": "string" },
+        "description": { "type": "string" },
+        "impact": { "type": "string" },
+        "recommended_action": { "type": "string" },
+        "custom_fields": { "type": "object" }
+      }
+    }
+  }
+}

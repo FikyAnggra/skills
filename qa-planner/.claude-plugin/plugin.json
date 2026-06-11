@@ -1,0 +1,34 @@
+{
+  "name": "qa-planner",
+  "version": "0.1.0",
+  "description": "Portable QA planning plugin for Claude-compatible agents. It uses skills/qa-planner/SKILL.md as the canonical instruction source and preserves the Codex plugin wrapper.",
+  "author": {
+    "name": "Local developer"
+  },
+  "entrypoints": {
+    "primary_skill": "../skills/qa-planner/SKILL.md"
+  },
+  "resources": {
+    "schemas": "../skills/qa-planner/schemas/",
+    "templates": "../skills/qa-planner/templates/",
+    "examples": "../skills/qa-planner/examples/"
+  },
+  "capabilities": [
+    "qa_planning",
+    "planning_state_json",
+    "test_plan",
+    "test_case_design",
+    "coverage_mapping",
+    "review_loop",
+    "handoff_contracts"
+  ],
+  "compatibility": {
+    "codex": {
+      "manifest": "../.codex-plugin/plugin.json",
+      "skill": "../skills/qa-planner/SKILL.md"
+    },
+    "claude": {
+      "canonical_skill": "../skills/qa-planner/SKILL.md"
+    }
+  }
+}

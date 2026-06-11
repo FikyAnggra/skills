@@ -1,0 +1,36 @@
+{
+  "source_agent": "qa-executor",
+  "package_id": "QA-PLAN-AUTH-LOGIN-v0.2",
+  "execution_result_ref": "execution_result.json",
+  "approval_status": "OK",
+  "approval_metadata": {
+    "reviewer": "QA Lead",
+    "reviewed_at": "2026-06-11T10:30:00+07:00",
+    "decision_note": "Execution package accepted for reporting."
+  },
+  "summary": {
+    "total": 3,
+    "selected": 3,
+    "passed": 1,
+    "failed": 1,
+    "blocked": 1,
+    "untested": 0,
+    "retest": 0
+  },
+  "issue_candidates": [
+    {
+      "issue_candidate_id": "ISSUE-CAND-TC0002",
+      "tc_id": "TC0002",
+      "severity_suggestion": "High",
+      "title": "Invalid password allows dashboard access",
+      "evidence_refs": ["evidence/TC0002-invalid-password-dashboard.png"]
+    }
+  ],
+  "evidence_refs": [
+    "evidence/TC0001-dashboard.png",
+    "evidence/TC0002-invalid-password-dashboard.png"
+  ],
+  "coverage_refs": ["planning_state.coverage_map"],
+  "risk_refs": ["planning_state.risk_analysis"],
+  "custom_fields": {}
+}

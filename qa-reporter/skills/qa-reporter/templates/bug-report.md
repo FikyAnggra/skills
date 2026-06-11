@@ -1,0 +1,45 @@
+﻿# Bug Report
+
+Issue ID: `{{issue_id}}`
+Title: {{title}}
+Severity: `{{severity}}`
+Priority: `{{priority}}`
+Environment: `{{environment}}`
+
+## Summary
+
+{{summary}}
+
+## Reproduction Steps
+
+{{#reproduction_steps}}
+1. {{.}}
+{{/reproduction_steps}}
+
+## Expected Result
+
+{{expected_result}}
+
+## Actual Result
+
+{{actual_result}}
+
+## Evidence References
+
+{{#evidence_refs}}
+- {{.}}
+{{/evidence_refs}}
+
+## Impact and Severity Reason
+
+{{severity_normalization.reason}}
+
+## Report Gaps
+
+{{#report_gaps}}
+- {{.}}
+{{/report_gaps}}
+
+## Submission Gate
+
+Do not submit this issue until the issue package is approved, redaction status is `passed`, required fields are complete, tool/config exists, and the user explicitly asks to submit.

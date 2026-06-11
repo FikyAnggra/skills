@@ -1,0 +1,105 @@
+{
+  "package_id": "EXEC-PKG-AUTH-LOGIN-20260611",
+  "source_agent": "human",
+  "source_refs": [
+    {
+      "ref_type": "manual_test_cases",
+      "ref": "examples/manual-test-cases.md",
+      "summary": "Three manually authored auth and product persistence test cases."
+    }
+  ],
+  "approval_state": {
+    "status": "approved_by_user",
+    "approved_by": "User request",
+    "approved_at": "2026-06-11T09:55:00+07:00",
+    "notes": "User asked to run the provided manual test cases."
+  },
+  "run_policy": {
+    "mode": "targeted",
+    "selected_tc_ids": ["TC0001", "TC0002", "TC0003"],
+    "priority_filter": [],
+    "tag_filter": [],
+    "parallel_allowed": false,
+    "notes": "Sequential run because cases share account and environment state."
+  },
+  "environment": {
+    "name": "Staging",
+    "base_url": "https://staging.example.com",
+    "build": "2026.06.11.1",
+    "data_refs": ["approved-secret-source/auth-users", "fixture/product-sku-SKU-EXEC-001"],
+    "constraints": ["Use read-only DB verification only.", "Redact credentials in evidence."]
+  },
+  "execution_scope": {
+    "selected_count": 3,
+    "excluded_tc_ids": [],
+    "selection_reason": "All provided manual cases selected by user request."
+  },
+  "test_cases": [
+    {
+      "tc_id": "TC0001",
+      "scenario": "Valid active user logs in",
+      "summary": "Verify active user can log in through the UI.",
+      "priority": "P0 - Critical",
+      "pre_conditions": ["Staging web is reachable.", "Active user exists."],
+      "steps": [
+        {
+          "step_number": 1,
+          "instruction": "Open login page, enter active user email and password, submit.",
+          "expected_result": "User lands on dashboard."
+        }
+      ],
+      "test_data": ["active_user@example.com", "password from approved secret source"],
+      "expected_result": "User lands on dashboard.",
+      "test_case_status": "Untested",
+      "execution_mode": "ui",
+      "dependencies": [],
+      "tags": ["smoke", "auth"],
+      "custom_fields": {}
+    },
+    {
+      "tc_id": "TC0002",
+      "scenario": "Invalid password is rejected",
+      "summary": "Verify invalid credentials do not create an authenticated session.",
+      "priority": "P1 - High",
+      "pre_conditions": ["Staging web is reachable.", "Active user exists."],
+      "steps": [
+        {
+          "step_number": 1,
+          "instruction": "Open login page, enter active user email and invalid password, submit.",
+          "expected_result": "Generic invalid credential message is shown."
+        }
+      ],
+      "test_data": ["active_user@example.com", "invalid password"],
+      "expected_result": "Generic invalid credential message is shown.",
+      "test_case_status": "Untested",
+      "execution_mode": "hybrid",
+      "dependencies": [],
+      "tags": ["auth", "negative"],
+      "custom_fields": {}
+    },
+    {
+      "tc_id": "TC0003",
+      "scenario": "Product creation persists to DB",
+      "summary": "Create product through API and verify DB/UI persistence.",
+      "priority": "P2 - Medium",
+      "pre_conditions": ["User can log in.", "Product API is reachable.", "Read-only DB access is available."],
+      "steps": [
+        {
+          "step_number": 1,
+          "instruction": "Create product by API, verify product row exists in DB, view product in UI.",
+          "expected_result": "Product exists in DB and appears in product list."
+        }
+      ],
+      "test_data": ["SKU-EXEC-001"],
+      "expected_result": "Product exists in DB and appears in product list.",
+      "test_case_status": "Untested",
+      "execution_mode": "hybrid",
+      "dependencies": ["TC0001"],
+      "tags": ["product", "db"],
+      "custom_fields": {}
+    }
+  ],
+  "custom_fields": {
+    "manual_normalization_source": "Markdown table"
+  }
+}

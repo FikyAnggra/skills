@@ -1,0 +1,157 @@
+﻿{
+  "report_id": "RPT-20260611-001",
+  "source_agent": "qa-reporter",
+  "package_id": "QA-PLAN-AUTH-LOGIN-v0.2",
+  "planning_state_ref": "planning_state.json",
+  "execution_result_ref": "execution_result.json",
+  "report_status": "draft",
+  "metadata": {
+    "project": "Customer Portal",
+    "feature": "Login",
+    "report_version": "0.1.0",
+    "created_at": "2026-06-11T15:00:00+07:00",
+    "updated_at": "2026-06-11T15:00:00+07:00",
+    "environment": "Staging web, build 2026.06.11.1",
+    "reporter": "qa-reporter",
+    "custom_fields": {}
+  },
+  "summary": {
+    "objective": "Summarize login feature test execution and release readiness.",
+    "overall_status": "Execution found one High severity authentication failure and one blocked email scenario.",
+    "key_findings": [
+      "Invalid password was accepted after prior successful session.",
+      "Forgot password scenario was blocked by staging SMTP outage."
+    ],
+    "report_gaps": [
+      "TC0003 has no screenshot evidence because the mail service was unavailable."
+    ],
+    "evidence_refs": [
+      "evidence/login-success.png",
+      "evidence/invalid-password-dashboard.png"
+    ]
+  },
+  "scope": {
+    "in_scope": ["Login", "Invalid credential handling", "Forgot password", "Logout"],
+    "out_of_scope": ["Production monitoring"],
+    "source_refs": ["planning_state.scope"]
+  },
+  "coverage": {
+    "coverage_status": "partial",
+    "covered_requirements": 3,
+    "total_requirements": 4,
+    "critical_coverage_status": "gap",
+    "coverage_gaps": ["Logout session clearing remains untested."],
+    "source_refs": ["planning_state.coverage_map"]
+  },
+  "risk": {
+    "risk_level": "High",
+    "open_risks": ["Authentication bypass risk remains open until TC0002 is fixed and retested."],
+    "mitigations": ["Block release until invalid-password defect is fixed and retested."],
+    "source_refs": ["planning_state.risk_analysis", "execution_result.issue_candidates"]
+  },
+  "execution_metrics": {
+    "total_test_cases": 4,
+    "selected_test_cases": 4,
+    "executed_test_cases": 3,
+    "passed": 1,
+    "failed": 1,
+    "blocked": 1,
+    "untested": 1,
+    "retest": 0,
+    "pass_rate": 33.33,
+    "execution_completion_rate": 75,
+    "critical_high_issue_count": 1,
+    "open_blocker_count": 1,
+    "source_refs": ["manual-execution-result.md"],
+    "metric_gaps": []
+  },
+  "issue_package": {
+    "status": "ready_for_review",
+    "issues": [
+      {
+        "issue_id": "ISSUE-PKG-TC0002",
+        "source_issue_candidate_id": "ISSUE-CAND-TC0002",
+        "title": "Login accepts invalid password after prior session",
+        "summary": "Invalid password login resulted in dashboard access after a prior successful session.",
+        "severity": "High",
+        "priority": "P1",
+        "status": "ready_for_review",
+        "affected_test_cases": ["TC0002"],
+        "environment": "Staging web, build 2026.06.11.1",
+        "expected_result": "Generic invalid credential message is shown and user remains on login page.",
+        "actual_result": "User landed on dashboard.",
+        "reproduction_steps": [
+          "Log in with a valid user.",
+          "Log out from the dashboard.",
+          "Enter the same username with an invalid password.",
+          "Submit the login form."
+        ],
+        "evidence_refs": ["evidence/invalid-password-dashboard.png"],
+        "report_gaps": [],
+        "suggested_owner": "dev",
+        "severity_normalization": {
+          "source_severity": "High",
+          "normalization_inputs": ["P1 affected", "major auth flow broken", "workaround limited", "evidence present"],
+          "reason": "High severity because a major authentication flow accepts invalid credentials with limited workaround."
+        },
+        "redaction_status": "passed",
+        "submission_status": "not_submitted",
+        "custom_fields": {}
+      }
+    ],
+    "report_gaps": ["TC0003 blocker issue lacks screenshot evidence."]
+  },
+  "sit_document": {
+    "status": "draft",
+    "objective": "Assess SIT readiness for login release.",
+    "scope": ["Login", "Invalid credential handling", "Forgot password", "Logout"],
+    "environment": "Staging web, build 2026.06.11.1",
+    "execution_summary": "Three of four selected cases were executed. One passed, one failed, one was blocked, and one remained untested.",
+    "coverage_summary": "Coverage is partial with a critical coverage gap for logout session clearing.",
+    "defect_summary": "One High authentication defect and one blocked SMTP-dependent scenario remain open.",
+    "known_limitations": ["SMTP outage blocked forgot password validation."],
+    "open_risks": ["Authentication bypass risk remains open."],
+    "evidence_refs": ["evidence/login-success.png", "evidence/invalid-password-dashboard.png"],
+    "conclusion": "SIT should not sign off until the High defect is fixed and critical gap is retested.",
+    "signoff_recommendation_ref": "signoff_recommendation",
+    "custom_fields": {}
+  },
+  "uat_document": {
+    "status": "draft",
+    "objective": "Summarize UAT readiness for login release.",
+    "scope": ["Login user journeys"],
+    "environment": "Staging web, build 2026.06.11.1",
+    "execution_summary": "UAT readiness is blocked by a High authentication defect.",
+    "coverage_summary": "Critical coverage remains incomplete.",
+    "defect_summary": "One High defect requires fix before UAT sign-off.",
+    "known_limitations": ["Forgot password could not be validated due to environment outage."],
+    "open_risks": ["Invalid credential handling may allow unauthorized access."],
+    "evidence_refs": ["evidence/invalid-password-dashboard.png"],
+    "conclusion": "UAT should wait for fix and retest.",
+    "signoff_recommendation_ref": "signoff_recommendation",
+    "custom_fields": {}
+  },
+  "signoff_recommendation": {
+    "recommendation": "No-Go",
+    "rule": "critical_high_or_exit_gap",
+    "reason": "A High authentication defect and critical coverage gap remain open.",
+    "exit_criteria_status": "not_met",
+    "critical_coverage_status": "gap",
+    "open_critical_high_issue_count": 1,
+    "open_blocker_count": 1,
+    "source_refs": ["execution_metrics", "issue_package", "coverage"],
+    "generated_at": "2026-06-11T15:00:00+07:00",
+    "custom_fields": {}
+  },
+  "review_history": [],
+  "submission_history": [],
+  "changelog": [
+    {
+      "timestamp": "2026-06-11T15:00:00+07:00",
+      "change": "Initial report state generated from manual execution result.",
+      "changed_by": "qa-reporter",
+      "refs": ["manual-execution-result.md"]
+    }
+  ],
+  "custom_fields": {}
+}

@@ -1,0 +1,62 @@
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.qa/qa-reporter/signoff-recommendation.schema.json",
+  "title": "QA Reporter Sign-Off Recommendation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["recommendation", "rule", "reason", "generated_at"],
+  "properties": {
+    "recommendation": {
+      "type": "string",
+      "enum": ["Go", "Conditional Go", "No-Go", "Not Assessed"]
+    },
+    "rule": {
+      "type": "string",
+      "enum": ["no_open_critical_high", "medium_low_with_workaround", "critical_high_or_exit_gap", "insufficient_data", "human_override"]
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "exit_criteria_status": {
+      "type": "string",
+      "enum": ["met", "not_met", "partially_met", "not_assessed"]
+    },
+    "critical_coverage_status": {
+      "type": "string",
+      "enum": ["complete", "gap", "not_assessed"]
+    },
+    "open_critical_high_issue_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "open_blocker_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "source_refs": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "override": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reviewer", "reason", "timestamp", "previous_recommendation", "final_recommendation"],
+      "properties": {
+        "reviewer": { "type": "string", "minLength": 1 },
+        "reason": { "type": "string", "minLength": 1 },
+        "timestamp": { "type": "string" },
+        "previous_recommendation": {
+          "type": "string",
+          "enum": ["Go", "Conditional Go", "No-Go", "Not Assessed"]
+        },
+        "final_recommendation": {
+          "type": "string",
+          "enum": ["Go", "Conditional Go", "No-Go", "Not Assessed"]
+        }
+      }
+    },
+    "generated_at": { "type": "string" },
+    "custom_fields": { "type": "object", "additionalProperties": true }
+  }
+}

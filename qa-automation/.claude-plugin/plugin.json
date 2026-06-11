@@ -1,0 +1,36 @@
+{
+  "name": "qa-automation",
+  "version": "0.1.0",
+  "description": "Portable QA automation plugin for Claude-compatible agents. It uses skills/qa-automation/SKILL.md as the canonical instruction source and preserves the Codex plugin wrapper.",
+  "author": {
+    "name": "Local developer"
+  },
+  "entrypoints": {
+    "primary_skill": "../skills/qa-automation/SKILL.md"
+  },
+  "resources": {
+    "schemas": "../skills/qa-automation/schemas/",
+    "templates": "../skills/qa-automation/templates/",
+    "references": "../skills/qa-automation/references/",
+    "examples": "../skills/qa-automation/examples/"
+  },
+  "capabilities": [
+    "qa_automation",
+    "automation_change_set_json",
+    "script_generation",
+    "script_update",
+    "playwright_typescript_fallback",
+    "locator_policy",
+    "validation_gates",
+    "promotion_review"
+  ],
+  "compatibility": {
+    "codex": {
+      "manifest": "../.codex-plugin/plugin.json",
+      "skill": "../skills/qa-automation/SKILL.md"
+    },
+    "claude": {
+      "canonical_skill": "../skills/qa-automation/SKILL.md"
+    }
+  }
+}

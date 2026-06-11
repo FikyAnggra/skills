@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/qa-planner/review-feedback.schema.json",
+  "title": "QA Planner Review Feedback",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "review_id",
+    "review_status",
+    "target_level",
+    "target_ref",
+    "issue",
+    "action",
+    "expected_change",
+    "resolution"
+  ],
+  "properties": {
+    "review_id": { "type": "string", "minLength": 1 },
+    "review_status": { "type": "string", "enum": ["OK", "NOK"] },
+    "reviewer": { "type": "string" },
+    "reviewed_at": { "type": "string", "format": "date-time" },
+    "target_level": {
+      "type": "string",
+      "enum": [
+        "package",
+        "test_plan",
+        "scope",
+        "risk",
+        "strategy",
+        "test_case_group",
+        "test_case",
+        "handoff_contract"
+      ]
+    },
+    "target_ref": { "type": "string", "minLength": 1 },
+    "issue": { "type": "string" },
+    "action": {
+      "type": "string",
+      "enum": ["add", "remove", "update", "split", "merge", "regenerate"]
+    },
+    "expected_change": { "type": "string" },
+    "resolution": { "type": "string" },
+    "status_after_resolution": {
+      "type": "string",
+      "enum": ["draft", "revision_required", "approved"]
+    },
+    "references": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": []
+    },
+    "custom_fields": {
+      "type": "object",
+      "additionalProperties": true,
+      "default": {}
+    }
+  }
+}

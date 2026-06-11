@@ -1,0 +1,308 @@
+{
+  "metadata": {
+    "package_id": "QA-PLAN-RETAIL-PROMO-v0.1",
+    "project": "Retail Web",
+    "feature": "Checkout promo code",
+    "owner": "QA Team",
+    "version": "0.1",
+    "planning_status": "draft",
+    "created_at": "2026-06-11T04:30:00Z",
+    "updated_at": "2026-06-11T04:30:00Z",
+    "tags": ["checkout", "promo"]
+  },
+  "source_inputs": [
+    {
+      "source_id": "SRC-001",
+      "source_type": "requirement",
+      "path_or_ref": "examples/input-requirement.md",
+      "summary": "Customers can apply one promo code during checkout and receive clear validation messages for invalid states.",
+      "requirements": [
+        {
+          "requirement_id": "REQ-001",
+          "summary": "Valid promo code SAVE10 applies 10 percent discount before payment.",
+          "priority": "P1 - High",
+          "acceptance_criteria": ["Payable total reflects discount before payment."]
+        },
+        {
+          "requirement_id": "REQ-002",
+          "summary": "Invalid promo states show clear errors and do not alter payable total.",
+          "priority": "P1 - High",
+          "acceptance_criteria": ["Expired, used, and empty promo submissions show specific messages."]
+        },
+        {
+          "requirement_id": "REQ-003",
+          "summary": "Removing an applied promo code restores original total.",
+          "priority": "P2 - Medium",
+          "acceptance_criteria": ["Discount row is removed and payable total returns to original amount."]
+        }
+      ]
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "ASM-001",
+      "text": "Cart total 100.00 is valid test data for deterministic discount assertions.",
+      "status": "accepted",
+      "references": ["SRC-001"]
+    }
+  ],
+  "open_questions": [
+    {
+      "id": "OQ-001",
+      "text": "Promo configuration API endpoint is not documented.",
+      "status": "open",
+      "references": ["SRC-001"]
+    }
+  ],
+  "scope": {
+    "in_scope": [
+      "Checkout promo apply, reject, empty input, and removal behavior"
+    ],
+    "out_of_scope": [
+      "Final payment capture and promotion administration UI"
+    ]
+  },
+  "risk_analysis": [
+    {
+      "risk_id": "RISK-001",
+      "category": "integration",
+      "description": "Promo configuration API is not documented, which may block automation fixture setup.",
+      "impact": "P2 - Medium",
+      "mitigation": "Use preconfigured promo codes and record API gap for automation handoff.",
+      "related_requirements": ["REQ-001", "REQ-002"]
+    }
+  ],
+  "test_strategy": {
+    "test_levels": ["System", "Regression"],
+    "test_types": ["Functional", "Negative", "Boundary", "UI"],
+    "priority_model": "Prioritize checkout money-impacting flows as P1 and UI restoration as P2.",
+    "coverage_target": "Each requirement maps to at least one test case or explicit exclusion.",
+    "execution_approach": "Run initial Untested cases in payment sandbox with deterministic cart data."
+  },
+  "test_plan": {
+    "objective": "Validate promo code application and rejection behavior before checkout payment.",
+    "environment": "Retail Web staging with payment provider sandbox.",
+    "entry_criteria": [
+      "Checkout page is deployed to staging.",
+      "Promo test codes SAVE10, SPRINGOLD, and ONCEONLY are configured."
+    ],
+    "exit_criteria": [
+      "All P1 planned cases are reviewed and ready for qa-executor.",
+      "Open questions are accepted or resolved."
+    ],
+    "schedule_notes": "Execute in the next checkout regression cycle.",
+    "dependencies": ["Staging account", "Configured promo codes", "Payment sandbox"]
+  },
+  "test_cases": [
+    {
+      "tc_id": "TC0001",
+      "scenario": "Apply valid promo code",
+      "summary": "Verify discount is applied before payment.",
+      "test_type": "Functional",
+      "priority": "P1 - High",
+      "pre_conditions": "Cart has eligible item and user is on checkout page.",
+      "test_steps": [
+        "Enter promo code SAVE10.",
+        "Select apply.",
+        "Review order summary."
+      ],
+      "test_data": "Promo code SAVE10; cart total 100.00",
+      "expected_result": "Order summary shows 10 percent discount and payable total 90.00.",
+      "actual_result": "",
+      "test_case_status": "Untested",
+      "automation_status": "To Be Automate",
+      "notes": "Primary positive case.",
+      "requirement_refs": ["REQ-001"],
+      "tags": ["checkout", "smoke"]
+    },
+    {
+      "tc_id": "TC0002",
+      "scenario": "Reject expired promo code",
+      "summary": "Verify expired code does not alter total.",
+      "test_type": "Negative",
+      "priority": "P1 - High",
+      "pre_conditions": "Cart has eligible item and user is on checkout page.",
+      "test_steps": [
+        "Enter promo code SPRINGOLD.",
+        "Select apply.",
+        "Review message and total."
+      ],
+      "test_data": "Promo code SPRINGOLD; cart total 100.00",
+      "expected_result": "Error Promo code has expired appears and payable total remains 100.00.",
+      "actual_result": "",
+      "test_case_status": "Untested",
+      "automation_status": "To Be Automate",
+      "notes": "Negative case.",
+      "requirement_refs": ["REQ-002"],
+      "tags": ["checkout", "negative"]
+    },
+    {
+      "tc_id": "TC0003",
+      "scenario": "Empty promo submission",
+      "summary": "Verify empty submit shows validation and keeps total unchanged.",
+      "test_type": "Boundary",
+      "priority": "P2 - Medium",
+      "pre_conditions": "Cart has eligible item and promo input is visible.",
+      "test_steps": [
+        "Leave promo field empty.",
+        "Select apply."
+      ],
+      "test_data": "Blank promo code; cart total 100.00",
+      "expected_result": "Error Enter a promo code appears and payable total remains 100.00.",
+      "actual_result": "",
+      "test_case_status": "Untested",
+      "automation_status": "Already Automate",
+      "notes": "Edge case likely covered by existing form validation suite.",
+      "requirement_refs": ["REQ-002"],
+      "tags": ["checkout", "boundary"]
+    },
+    {
+      "tc_id": "TC0004",
+      "scenario": "Visual total restoration after removal",
+      "summary": "Verify removing promo restores original total and UI state.",
+      "test_type": "UI",
+      "priority": "P2 - Medium",
+      "pre_conditions": "Promo SAVE10 is already applied.",
+      "test_steps": [
+        "Select remove promo.",
+        "Review discount row and payable total."
+      ],
+      "test_data": "Applied promo SAVE10; original total 100.00",
+      "expected_result": "Discount row disappears and payable total returns to 100.00.",
+      "actual_result": "",
+      "test_case_status": "Untested",
+      "automation_status": "Manual Only",
+      "notes": "Manual-only until UI selector names are confirmed.",
+      "requirement_refs": ["REQ-003"],
+      "tags": ["checkout", "ui"]
+    }
+  ],
+  "coverage_map": [
+    {
+      "requirement_id": "REQ-001",
+      "test_case_ids": ["TC0001"],
+      "coverage_status": "covered",
+      "exclusion_reason": "",
+      "notes": "Positive discount coverage."
+    },
+    {
+      "requirement_id": "REQ-002",
+      "test_case_ids": ["TC0002", "TC0003"],
+      "coverage_status": "partial",
+      "exclusion_reason": "",
+      "notes": "Already used promo case should be added when account fixture is confirmed."
+    },
+    {
+      "requirement_id": "REQ-003",
+      "test_case_ids": ["TC0004"],
+      "coverage_status": "covered",
+      "exclusion_reason": "",
+      "notes": "Manual UI validation planned."
+    }
+  ],
+  "handoff_contracts": {
+    "qa_executor": {
+      "contract_version": "1.0",
+      "source_agent": "qa-planner",
+      "target_agent": "qa-executor",
+      "package_id": "QA-PLAN-RETAIL-PROMO-v0.1",
+      "approval_status": "draft",
+      "source_refs": {
+        "planning_state": "examples/planning-state.example.json",
+        "test_cases": "planning_state.test_cases",
+        "coverage_map": "planning_state.coverage_map",
+        "test_plan": "planning_state.test_plan",
+        "review_history": "planning_state.review_history"
+      },
+      "run_policy": {
+        "run_mode": "initial_run",
+        "status_filter": ["Untested"],
+        "priority_filter": ["P0 - Critical", "P1 - High", "P2 - Medium", "P3 - Low"],
+        "include_tags": [],
+        "exclude_tags": []
+      },
+      "scope": {
+        "candidate_test_cases": ["TC0001", "TC0002", "TC0003", "TC0004"],
+        "selected_test_cases": ["TC0001", "TC0002", "TC0003", "TC0004"]
+      },
+      "environment": "Retail Web staging with payment provider sandbox.",
+      "constraints": ["Use deterministic cart data."],
+      "gaps": ["Already used promo account fixture is not confirmed."],
+      "summary": "Initial run contract for checkout promo planned cases."
+    },
+    "qa_automation": {
+      "contract_version": "1.0",
+      "source_agent": "qa-planner",
+      "target_agent": "qa-automation",
+      "package_id": "QA-PLAN-RETAIL-PROMO-v0.1",
+      "approval_status": "draft",
+      "source_refs": {
+        "planning_state": "examples/planning-state.example.json",
+        "test_cases": "planning_state.test_cases",
+        "coverage_map": "planning_state.coverage_map",
+        "test_plan": "planning_state.test_plan",
+        "review_history": "planning_state.review_history"
+      },
+      "scope": {
+        "create_scripts": ["TC0001", "TC0002"],
+        "update_scripts": ["TC0003"],
+        "manual_only": ["TC0004"]
+      },
+      "automation_policy": {
+        "include_status": ["To Be Automate", "Already Automate"],
+        "exclude_status": ["Manual Only"],
+        "priority_filter": ["P0 - Critical", "P1 - High"]
+      },
+      "constraints": ["Selector names are not confirmed."],
+      "gaps": ["Promo configuration API endpoint is not documented."],
+      "summary": "Automation candidates for valid and expired promo flows."
+    },
+    "qa_reporter": {
+      "contract_version": "1.0",
+      "source_agent": "qa-planner",
+      "target_agent": "qa-reporter",
+      "package_id": "QA-PLAN-RETAIL-PROMO-v0.1",
+      "approval_status": "draft",
+      "source_refs": {
+        "planning_state": "examples/planning-state.example.json",
+        "test_cases": "planning_state.test_cases",
+        "coverage_map": "planning_state.coverage_map",
+        "test_plan": "planning_state.test_plan",
+        "review_history": "planning_state.review_history"
+      },
+      "scope": {
+        "candidate_test_cases": ["TC0001", "TC0002", "TC0003", "TC0004"],
+        "coverage_refs": ["REQ-001", "REQ-002", "REQ-003"],
+        "risk_refs": ["RISK-001"]
+      },
+      "constraints": ["Report should reference planning sections instead of duplicating full case text."],
+      "gaps": ["REQ-002 is partial until already used promo case is added or excluded."],
+      "summary": "Reporter context for planned checkout promo coverage and risks."
+    }
+  },
+  "review_history": [
+    {
+      "review_id": "REV-001",
+      "review_status": "NOK",
+      "reviewer": "Product Owner",
+      "reviewed_at": "2026-06-11T04:45:00Z",
+      "target_level": "test_case_group",
+      "target_ref": "REQ-002",
+      "issue": "Add already used promo case when account fixture is available.",
+      "action": "add",
+      "expected_change": "Add coverage for promo code ONCEONLY or record fixture gap.",
+      "resolution": "Recorded partial coverage and fixture gap; test case to be added after fixture confirmation.",
+      "status_after_resolution": "revision_required",
+      "references": ["REQ-002"]
+    }
+  ],
+  "changelog": [
+    {
+      "version": "0.1",
+      "changed_at": "2026-06-11T04:30:00Z",
+      "summary": "Created initial planning state with test plan, test cases, coverage map, and downstream contracts.",
+      "changed_by": "qa-planner"
+    }
+  ],
+  "custom_fields": {}
+}

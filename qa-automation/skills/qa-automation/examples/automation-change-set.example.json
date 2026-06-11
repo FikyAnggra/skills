@@ -1,0 +1,119 @@
+{
+  "change_set_id": "AUTO-CS-20260611-001",
+  "source_agent": "qa-automation",
+  "package_id": "QA-PLAN-AUTH-LOGIN-v0.2",
+  "input_refs": {
+    "planner_contract": "examples/planner-automation-contract.json",
+    "executor_signal": "examples/executor-automation-signal.json",
+    "manual_request": "",
+    "test_case_source": "QA-PLAN-AUTH-LOGIN-v0.2",
+    "custom_fields": {}
+  },
+  "repo_context": {
+    "repo_path": "C:/work/app",
+    "repo_available": true,
+    "package_manager": "npm",
+    "test_commands": ["npm run lint", "npm run typecheck", "npx playwright test tests/e2e/login.spec.ts"],
+    "current_branch": "feature/auth-automation",
+    "base_branch": "develop",
+    "target_branch": "master",
+    "detected_conventions": ["Playwright TypeScript", "data-testid"],
+    "custom_fields": {}
+  },
+  "framework": {
+    "name": "Playwright",
+    "language": "TypeScript",
+    "source": "detected",
+    "test_id_attribute": "data-testid",
+    "config_files": ["playwright.config.ts"],
+    "custom_fields": {}
+  },
+  "branch_policy": {
+    "policy_source": "fallback",
+    "flow": "develop -> master",
+    "feature_branch": "feature/auth-automation",
+    "base_branch": "develop",
+    "target_branch": "master",
+    "remote_action_requires_approval": true,
+    "remote_action_approved": false,
+    "custom_fields": {}
+  },
+  "automation_scope": {
+    "scope_type": "mixed",
+    "actions": ["create_script", "update_script", "mark_gap"],
+    "priority_filter": "P1 - High",
+    "selected_tc_ids": ["TC-AUTH-001", "TC-AUTH-002"],
+    "custom_fields": {}
+  },
+  "test_case_mappings": [
+    {
+      "tc_id": "TC-AUTH-001",
+      "scenario": "Valid user can log in",
+      "expected_result": "Dashboard is shown for the authenticated user.",
+      "automation_status": "To Be Automate",
+      "mapping_status": "created",
+      "script_path": "tests/e2e/login.spec.ts",
+      "spec_title": "TC-AUTH-001 valid user can log in",
+      "assertions": ["dashboard heading is visible"],
+      "locators": ["getByRole('button', { name: 'Sign in' })"],
+      "gaps": [],
+      "custom_fields": {}
+    }
+  ],
+  "planned_changes": [
+    {
+      "action": "create",
+      "file_path": "tests/e2e/login.spec.ts",
+      "tc_ids": ["TC-AUTH-001"],
+      "rationale": "Create automation for approved high-priority login case.",
+      "summary": "Add login happy path spec.",
+      "custom_fields": {}
+    }
+  ],
+  "applied_changes": [
+    {
+      "action": "create",
+      "file_path": "tests/e2e/login.spec.ts",
+      "tc_ids": ["TC-AUTH-001"],
+      "rationale": "Create automation for approved high-priority login case.",
+      "summary": "Added Playwright login happy path spec.",
+      "custom_fields": {}
+    }
+  ],
+  "validation_results": [
+    {
+      "validation_type": "targeted_run",
+      "command": "npx playwright test tests/e2e/login.spec.ts",
+      "status": "passed",
+      "started_at": "2026-06-11T03:00:00Z",
+      "finished_at": "2026-06-11T03:01:10Z",
+      "duration_ms": 70000,
+      "summary": "Targeted login spec passed.",
+      "evidence_refs": ["playwright-report/index.html"],
+      "custom_fields": {}
+    }
+  ],
+  "review_gates": {
+    "script_review": { "required": true, "status": "pending" },
+    "promotion_review": { "required": true, "status": "pending" },
+    "custom_fields": {}
+  },
+  "promotion_status": {
+    "state": "script_review_required",
+    "ready_for_remote_action": false,
+    "remote_action_type": "none",
+    "remote_action_approved": false,
+    "reason": "Awaiting script review.",
+    "custom_fields": {}
+  },
+  "gaps": [],
+  "changelog": [
+    {
+      "timestamp": "2026-06-11T03:02:00Z",
+      "author": "qa-automation",
+      "summary": "Created initial login automation change set.",
+      "custom_fields": {}
+    }
+  ],
+  "custom_fields": {}
+}
