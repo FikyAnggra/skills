@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/qa-planner/plane-sync-record.schema.json",
+  "title": "QA Planner Plane Sync Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["sync_id", "package_id", "source_agent", "external_id", "source_ref", "sync_status", "transition_status"],
+  "properties": {
+    "sync_id": { "type": "string", "minLength": 1 },
+    "package_id": { "type": "string", "minLength": 1 },
+    "source_agent": { "type": "string", "const": "qa-planner" },
+    "external_id": { "type": "string", "minLength": 1 },
+    "source_ref": { "$ref": "plane-source.schema.json" },
+    "managed_comment_refs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/plane_ref" },
+      "default": []
+    },
+    "attachment_refs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/artifact_ref" },
+      "default": []
+    },
+    "wiki_page_refs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/plane_ref" },
+      "default": []
+    },
+    "page_link_refs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/plane_ref" },
+      "default": []
+    },
+    "artifact_versions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/artifact_ref" },
+      "default": []
+    },
+    "sync_status": {
+      "type": "string",
+      "enum": [
+        "not_started",
+        "comment_synced",
+        "attachments_synced",
+        "wiki_synced",
+        "full_sync_succeeded",
+        "full_sync_failed"
+      ]
+    },
+    "transition_status": {
+      "type": "string",
+      "enum": ["not_requested", "pending", "status_transition_succeeded", "status_transition_skipped", "status_transition_failed"]
+    },
+    "status_transition": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target_status": { "type": "string" },
+        "target_status_id": { "type": "string" },
+        "status_before": { "type": "string" },
+        "status_after": { "type": "string" },
+        "skip_reason": { "type": "string" },
+        "attempted_at": { "type": "string" }
+      }
+    },
+    "gap_notes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": []
+    },
+    "error_notes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": []
+    },
+    "synced_at": { "type": "string" },
+    "custom_fields": {
+      "type": "object",
+      "additionalProperties": true,
+      "default": {}
+    }
+  },
+  "$defs": {
+    "plane_ref": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["id"],
+      "properties": {
+        "id": { "type": "string" },
+        "source_url": { "type": "string" },
+        "title": { "type": "string" },
+        "type": { "type": "string" }
+      }
+    },
+    "artifact_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "artifact_type", "format", "version"],
+      "properties": {
+        "artifact_id": { "type": "string" },
+        "artifact_type": { "type": "string" },
+        "format": { "type": "string", "enum": ["json", "markdown", "excel", "pdf", "word"] },
+        "version": { "type": "string" },
+        "checksum": { "type": "string" },
+        "path_or_ref": { "type": "string" },
+        "plane_attachment_id": { "type": "string" },
+        "source_url": { "type": "string" }
+      }
+    }
+  }
+}

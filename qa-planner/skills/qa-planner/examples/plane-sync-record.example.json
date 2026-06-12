@@ -1,0 +1,107 @@
+{
+  "sync_id": "SYNC-QA-PLAN-ENG-42-v0.2",
+  "package_id": "QA-PLAN-ENG-42-v0.2",
+  "source_agent": "qa-planner",
+  "external_id": "qa-planner:ENG-42:QA-PLAN-ENG-42-v0.2",
+  "source_ref": {
+    "workspace": {
+      "workspace_id": "workspace-uuid-001",
+      "workspace_slug": "acme",
+      "workspace_name": "Acme"
+    },
+    "project": {
+      "project_id": "project-uuid-001",
+      "project_identifier": "ENG",
+      "project_name": "Engineering"
+    },
+    "work_item": {
+      "work_item_id": "work-item-uuid-042",
+      "readable_identifier": "ENG-42",
+      "sequence_id": 42,
+      "title": "Checkout promo code validation",
+      "description": "Customers can apply one promo code during checkout.",
+      "source_url": "https://app.plane.so/acme/projects/ENG/issues/42",
+      "status_id": "state-uuid-in-progress",
+      "status_name": "In Progress",
+      "state_group": "started",
+      "priority": "high",
+      "labels": ["checkout", "promo"],
+      "assignees": ["qa-owner"],
+      "module_ids": ["module-checkout"],
+      "cycle_ids": ["cycle-regression-18"]
+    },
+    "source_type": "work_item",
+    "custom_fields": {}
+  },
+  "managed_comment_refs": [
+    {
+      "id": "comment-uuid-qa-planner",
+      "source_url": "https://app.plane.so/acme/projects/ENG/issues/42#comment-uuid-qa-planner",
+      "title": "QA Planning Update",
+      "type": "comment"
+    }
+  ],
+  "attachment_refs": [
+    {
+      "artifact_id": "planning-state-json",
+      "artifact_type": "planning_state",
+      "format": "json",
+      "version": "0.2",
+      "checksum": "sha256-example-planning-state",
+      "path_or_ref": "planning_state.json",
+      "plane_attachment_id": "attachment-uuid-planning-state",
+      "source_url": "https://app.plane.so/acme/attachments/attachment-uuid-planning-state"
+    },
+    {
+      "artifact_id": "test-cases-xlsx",
+      "artifact_type": "test_cases",
+      "format": "excel",
+      "version": "0.2",
+      "checksum": "sha256-example-test-cases",
+      "path_or_ref": "test-cases.xlsx",
+      "plane_attachment_id": "attachment-uuid-test-cases",
+      "source_url": "https://app.plane.so/acme/attachments/attachment-uuid-test-cases"
+    }
+  ],
+  "wiki_page_refs": [
+    {
+      "id": "page-uuid-qa-plan-eng-42",
+      "source_url": "https://app.plane.so/acme/projects/ENG/pages/page-uuid-qa-plan-eng-42",
+      "title": "QA Plan - ENG-42 - Checkout promo code validation",
+      "type": "page"
+    }
+  ],
+  "page_link_refs": [
+    {
+      "id": "page-link-uuid-001",
+      "source_url": "https://app.plane.so/acme/projects/ENG/issues/42/pages/page-uuid-qa-plan-eng-42",
+      "title": "Linked QA plan page",
+      "type": "work_item_page_link"
+    }
+  ],
+  "artifact_versions": [
+    {
+      "artifact_id": "handoff-contracts-json",
+      "artifact_type": "handoff_contracts",
+      "format": "json",
+      "version": "0.2",
+      "checksum": "sha256-example-handoff",
+      "path_or_ref": "handoff-contracts.json"
+    }
+  ],
+  "sync_status": "full_sync_succeeded",
+  "transition_status": "status_transition_succeeded",
+  "status_transition": {
+    "target_status": "QA Ready",
+    "target_status_id": "state-uuid-qa-ready",
+    "status_before": "In Progress",
+    "status_after": "QA Ready",
+    "attempted_at": "2026-06-12T04:30:00Z"
+  },
+  "gap_notes": [
+    "If target status is not found, keep sync_status and set transition_status to status_transition_skipped with skip_reason."
+  ],
+  "error_notes": [],
+  "synced_at": "2026-06-12T04:30:00Z",
+  "custom_fields": {}
+}

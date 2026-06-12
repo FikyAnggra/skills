@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/qa-planner/plane-output-policy.schema.json",
+  "title": "QA Planner Plane Output Policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["write_mode", "artifact_formats", "fallback_behavior", "transition_policy"],
+  "properties": {
+    "write_mode": {
+      "type": "string",
+      "enum": ["read_only", "comment_only", "attach_artifacts", "wiki_update", "full_sync"],
+      "default": "full_sync"
+    },
+    "artifact_formats": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["json", "markdown", "excel", "pdf", "word"] },
+      "default": ["json", "markdown", "excel", "pdf", "word"]
+    },
+    "comment_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean", "default": true },
+        "update_existing_managed_comment": { "type": "boolean", "default": true },
+        "include_status_transition_result": { "type": "boolean", "default": true }
+      }
+    },
+    "attachment_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean", "default": true },
+        "upload_only_when_changed": { "type": "boolean", "default": true },
+        "required_minimum_formats": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["json", "markdown"] },
+          "default": ["json", "markdown"]
+        }
+      }
+    },
+    "wiki_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean", "default": true },
+        "create_or_update_when_useful": { "type": "boolean", "default": true },
+        "page_title_template": { "type": "string", "default": "QA Plan - <PROJECT>-<SEQ> - <feature title>" },
+        "preserve_manual_sections": { "type": "boolean", "default": true },
+        "managed_section_marker": { "type": "string", "default": "qa-planner-managed" }
+      }
+    },
+    "transition_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled", "move_timing", "requires_user_confirmation", "on_target_status_not_found"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "target_status": { "type": "string" },
+        "target_status_id": { "type": "string" },
+        "move_timing": { "type": "string", "enum": ["after_successful_plane_sync"] },
+        "requires_user_confirmation": { "type": "boolean", "default": true },
+        "status_before": { "type": "string" },
+        "status_after": { "type": "string" },
+        "on_target_status_not_found": { "type": "string", "enum": ["skip_status_move"], "default": "skip_status_move" }
+      }
+    },
+    "fallback_behavior": {
+      "type": "string",
+      "enum": ["render_local_json_markdown", "return_chat_artifacts"],
+      "default": "render_local_json_markdown"
+    },
+    "custom_fields": {
+      "type": "object",
+      "additionalProperties": true,
+      "default": {}
+    }
+  }
+}

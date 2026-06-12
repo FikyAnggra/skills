@@ -31,7 +31,13 @@
         "test_cases": { "type": "string", "minLength": 1 },
         "coverage_map": { "type": "string", "minLength": 1 },
         "test_plan": { "type": "string" },
-        "review_history": { "type": "string" }
+        "review_history": { "type": "string" },
+        "plane_source": { "$ref": "plane-source.schema.json" },
+        "plane_artifacts": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/plane_artifact_ref" },
+          "default": []
+        }
       }
     },
     "run_policy": {
@@ -140,6 +146,22 @@
       "default": []
     },
     "summary": { "type": "string" },
+    "plane_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "workspace_slug": { "type": "string" },
+        "project_id": { "type": "string" },
+        "project_identifier": { "type": "string" },
+        "work_item_id": { "type": "string" },
+        "readable_identifier": { "type": "string" },
+        "source_status": { "type": "string" },
+        "source_url": { "type": "string" },
+        "comment_ids": { "type": "array", "items": { "type": "string" }, "default": [] },
+        "attachment_ids": { "type": "array", "items": { "type": "string" }, "default": [] },
+        "page_ids": { "type": "array", "items": { "type": "string" }, "default": [] }
+      }
+    },
     "custom_fields": {
       "type": "object",
       "additionalProperties": true,
@@ -158,6 +180,21 @@
     "automation_status": {
       "type": "string",
       "enum": ["Manual Only", "To Be Automate", "Already Automate"]
+    },
+    "plane_artifact_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "format"],
+      "properties": {
+        "artifact_id": { "type": "string" },
+        "artifact_type": { "type": "string" },
+        "format": { "type": "string", "enum": ["json", "markdown", "excel", "pdf", "word"] },
+        "version": { "type": "string" },
+        "plane_attachment_id": { "type": "string" },
+        "plane_page_id": { "type": "string" },
+        "plane_comment_id": { "type": "string" },
+        "source_url": { "type": "string" }
+      }
     }
   }
 }

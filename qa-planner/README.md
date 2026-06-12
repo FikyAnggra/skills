@@ -1,15 +1,15 @@
 # QA Planner
 
-`qa-planner` is a portable QA planning package for agent platforms. It converts requirements, PRDs, user stories, API specs, UI flows, screenshots, database notes, and constraints into governed planning artifacts.
+`qa-planner` is a portable QA planning package for agent platforms. It converts requirements, Plane.so work items/cards, PRDs, user stories, API specs, UI flows, screenshots, database notes, and constraints into governed planning artifacts.
 
 ## Contents
 
 - `.codex-plugin/plugin.json`: Codex plugin wrapper.
 - `.claude-plugin/plugin.json`: Claude-compatible metadata wrapper.
 - `skills/qa-planner/SKILL.md`: canonical portable planner instructions.
-- `skills/qa-planner/schemas/`: JSON Schemas for planning state, handoff contracts, and review feedback.
-- `skills/qa-planner/templates/`: Markdown, JSON, and Excel templates for QA planning outputs.
-- `skills/qa-planner/examples/`: sample requirement, planning state, and rendered test cases.
+- `skills/qa-planner/schemas/`: JSON Schemas for planning state, handoff contracts, review feedback, Plane sources, Plane output policy, and Plane sync records.
+- `skills/qa-planner/templates/`: Markdown, JSON, Excel, Plane comment, and Plane page templates for QA planning outputs.
+- `skills/qa-planner/examples/`: sample requirement, planning state, Plane work item input, Plane sync record, Plane comment, and rendered test cases.
 - `skills/qa-planner/agents/openai.yaml`: Codex UI metadata.
 
 ## Use With Agent Platforms
@@ -20,7 +20,9 @@ For platforms without plugin support, copy `skills/qa-planner/` as a skill folde
 
 ## Inputs
 
-Provide requirements, PRDs, acceptance criteria, UI or API notes, screenshots, technical constraints, or existing QA artifacts. For revision, provide human review feedback with `OK` or `NOK` and the target area.
+Provide requirements, Plane work item/card ids or payloads, PRDs, acceptance criteria, UI or API notes, screenshots, technical constraints, or existing QA artifacts. For revision, provide human review feedback with `OK` or `NOK` and the target area.
+
+Plane inputs can come from work item/card title and description, comments, attachments, wiki/pages, parent or child work items, linked work items, modules, cycles, or direct MCP/API payloads. Plane source status is metadata only; `qa-planner` may plan from any source status when the user provides the requirement input.
 
 ## Outputs
 
@@ -31,7 +33,20 @@ Expected outputs include:
 - test cases using the `Template Test Case.xlsx` field model
 - requirement coverage map
 - `qa-executor`, `qa-automation`, and `qa-reporter` handoff contracts
+- Plane comment, attachment, wiki/page, page link, sync record, and optional status transition output when Plane tools are available
 - review history and changelog entries
+
+## Plane Hybrid Sync
+
+Default Plane write mode is `full_sync`: add or update a concise work item/card comment, attach generated artifacts, create or update a wiki/page when useful, link the page to the work item/card, and move status only after sync succeeds when a target status was configured.
+
+When Plane input is used and the user did not provide a status move instruction, the planner must ask before running:
+
+```text
+Setelah QA planning selesai dan output berhasil diattach/update ke Plane, apakah work item perlu dipindahkan status? Jika ya, ke status apa?
+```
+
+If the target status is not found, planning and Plane output still complete, status movement is skipped, and the sync record notes `status_transition_skipped`. If Plane tools are unavailable, the planner falls back to JSON and Markdown outputs and records the sync gap.
 
 ## Review Loop
 

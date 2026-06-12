@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.2.0 - 2026-06-12
+
+- Added Plane hybrid integration guidance for MCP assistant and Plane native agent workflows.
+- Added Plane source, output policy, and sync record schemas.
+- Added Plane comment and wiki/page templates.
+- Added Plane work item input, sync record, and output comment examples.
+- Updated planning state schema with optional Plane refs, artifact outputs, output policy, transition policy, and sync records.
+- Updated handoff contract schema with optional Plane context and artifact refs.
+- Added full sync behavior: comment, attachments, wiki/page update, page link, and optional status movement after successful sync.
+- Added status transition rules: all source statuses are allowed, ask before running when target status is missing, and skip status movement when target status is not found.
+- Added Plane safety and idempotency rules for redaction, managed sections, checksums, and duplicate prevention.
+
 ## 0.1.0 - 2026-06-11
 
 - Added portable `qa-planner` skill package.

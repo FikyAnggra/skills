@@ -1,18 +1,18 @@
 {
   "name": "qa-planner",
-  "version": "0.1.0",
-  "description": "Portable QA planning plugin with a qa-planner skill for converting requirements into planning_state JSON, test plans, test cases, coverage maps, review feedback, and downstream handoff contracts.",
+  "version": "0.2.0",
+  "description": "Portable QA planning plugin with Plane hybrid support for converting requirements and Plane work items/cards into planning_state JSON, test plans, test cases, coverage maps, Plane sync outputs, review feedback, and downstream handoff contracts.",
   "author": {
     "name": "Local developer"
   },
   "skills": "./skills/",
   "interface": {
     "displayName": "QA Planner",
-    "shortDescription": "Create QA plans and test cases.",
-    "longDescription": "QA Planner provides a portable skill for normalizing requirements, analyzing risk and ambiguity, creating planning_state JSON, rendering test plans and test cases from the Template Test Case field model, managing OK/NOK review loops, and producing handoff contracts for qa-executor, qa-automation, and qa-reporter.",
+    "shortDescription": "Create QA plans from requirements or Plane cards.",
+    "longDescription": "QA Planner provides a portable skill for normalizing requirements and Plane.so work items/cards, analyzing risk and ambiguity, creating planning_state JSON, rendering test plans and test cases from the Template Test Case field model, managing OK/NOK review loops, syncing Plane comments/attachments/wiki pages, optionally moving Plane status after successful sync, and producing handoff contracts for qa-executor, qa-automation, and qa-reporter.",
     "developerName": "Local developer",
     "category": "Productivity",
     "capabilities": [],
-    "defaultPrompt": "Use qa-planner to create a QA planning package from requirements."
+    "defaultPrompt": "Use qa-planner to create a QA planning package from requirements or a Plane work item."
   }
 }

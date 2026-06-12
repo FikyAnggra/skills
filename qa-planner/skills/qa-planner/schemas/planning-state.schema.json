@@ -48,7 +48,8 @@
           "source_type": { "type": "string" },
           "path_or_ref": { "type": "string" },
           "summary": { "type": "string", "minLength": 1 },
-          "requirements": { "type": "array", "items": { "$ref": "#/$defs/requirement" }, "default": [] }
+          "requirements": { "type": "array", "items": { "$ref": "#/$defs/requirement" }, "default": [] },
+          "plane_refs": { "$ref": "plane-source.schema.json" }
         }
       }
     },
@@ -103,6 +104,37 @@
     },
     "review_history": { "type": "array", "items": { "$ref": "review-feedback.schema.json" }, "default": [] },
     "changelog": { "type": "array", "items": { "$ref": "#/$defs/change" }, "default": [] },
+    "plane_refs": {
+      "type": "array",
+      "items": { "$ref": "plane-source.schema.json" },
+      "default": []
+    },
+    "artifact_outputs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/artifact_output" },
+      "default": []
+    },
+    "plane_output_policy": { "$ref": "plane-output-policy.schema.json" },
+    "plane_transition_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "target_status": { "type": "string" },
+        "target_status_id": { "type": "string" },
+        "move_timing": { "type": "string", "enum": ["after_successful_plane_sync"] },
+        "requires_user_confirmation": { "type": "boolean" },
+        "requested_by": { "type": "string" },
+        "status_before": { "type": "string" },
+        "status_after": { "type": "string" },
+        "on_target_status_not_found": { "type": "string", "enum": ["skip_status_move"] }
+      }
+    },
+    "plane_sync_records": {
+      "type": "array",
+      "items": { "$ref": "plane-sync-record.schema.json" },
+      "default": []
+    },
     "custom_fields": { "type": "object", "additionalProperties": true, "default": {} }
   },
   "$defs": {
@@ -186,6 +218,7 @@
         "automation_status": { "$ref": "#/$defs/automation_status" },
         "notes": { "type": "string" },
         "requirement_refs": { "type": "array", "items": { "type": "string" }, "default": [] },
+        "plane_refs": { "type": "array", "items": { "$ref": "plane-source.schema.json" }, "default": [] },
         "tags": { "type": "array", "items": { "type": "string" }, "default": [] },
         "custom_fields": { "type": "object", "additionalProperties": true, "default": {} }
       }
@@ -211,6 +244,24 @@
         "changed_at": { "type": "string", "format": "date-time" },
         "summary": { "type": "string" },
         "changed_by": { "type": "string" }
+      }
+    },
+    "artifact_output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "artifact_type", "format", "version"],
+      "properties": {
+        "artifact_id": { "type": "string" },
+        "artifact_type": { "type": "string" },
+        "format": { "type": "string", "enum": ["json", "markdown", "excel", "pdf", "word"] },
+        "version": { "type": "string" },
+        "path_or_ref": { "type": "string" },
+        "checksum": { "type": "string" },
+        "plane_comment_id": { "type": "string" },
+        "plane_attachment_id": { "type": "string" },
+        "plane_page_id": { "type": "string" },
+        "source_url": { "type": "string" },
+        "custom_fields": { "type": "object", "additionalProperties": true, "default": {} }
       }
     }
   }

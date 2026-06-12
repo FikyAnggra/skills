@@ -1,7 +1,7 @@
 {
   "name": "qa-planner",
-  "version": "0.1.0",
-  "description": "Portable QA planning plugin for Claude-compatible agents. It uses skills/qa-planner/SKILL.md as the canonical instruction source and preserves the Codex plugin wrapper.",
+  "version": "0.2.0",
+  "description": "Portable QA planning plugin for Claude-compatible agents with Plane hybrid work item/card intake, artifact sync guidance, wiki/page updates, and status transition policy. It uses skills/qa-planner/SKILL.md as the canonical instruction source and preserves the Codex plugin wrapper.",
   "author": {
     "name": "Local developer"
   },
@@ -15,6 +15,11 @@
   },
   "capabilities": [
     "qa_planning",
+    "plane_hybrid_planning",
+    "plane_work_item_intake",
+    "plane_artifact_sync",
+    "plane_wiki_update",
+    "plane_status_transition",
     "planning_state_json",
     "test_plan",
     "test_case_design",

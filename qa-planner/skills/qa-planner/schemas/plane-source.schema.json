@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/qa-planner/plane-source.schema.json",
+  "title": "QA Planner Plane Source",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["source_type", "project", "work_item"],
+  "properties": {
+    "workspace": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "workspace_id": { "type": "string" },
+        "workspace_slug": { "type": "string" },
+        "workspace_name": { "type": "string" }
+      }
+    },
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["project_id"],
+      "properties": {
+        "project_id": { "type": "string", "minLength": 1 },
+        "project_identifier": { "type": "string" },
+        "project_name": { "type": "string" }
+      }
+    },
+    "work_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["work_item_id"],
+      "properties": {
+        "work_item_id": { "type": "string", "minLength": 1 },
+        "readable_identifier": { "type": "string" },
+        "sequence_id": { "type": ["integer", "string"] },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "source_url": { "type": "string" },
+        "status_id": { "type": "string" },
+        "status_name": { "type": "string", "description": "Metadata only. qa-planner does not block intake by status." },
+        "state_group": { "type": "string" },
+        "priority": { "type": "string" },
+        "labels": { "type": "array", "items": { "type": "string" }, "default": [] },
+        "assignees": { "type": "array", "items": { "type": "string" }, "default": [] },
+        "module_ids": { "type": "array", "items": { "type": "string" }, "default": [] },
+        "cycle_ids": { "type": "array", "items": { "type": "string" }, "default": [] }
+      }
+    },
+    "source_type": {
+      "type": "string",
+      "enum": ["work_item", "comment", "attachment", "page", "module", "cycle", "payload"]
+    },
+    "comments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["comment_id"],
+        "properties": {
+          "comment_id": { "type": "string" },
+          "author": { "type": "string" },
+          "body": { "type": "string" },
+          "created_at": { "type": "string" },
+          "source_url": { "type": "string" }
+        }
+      },
+      "default": []
+    },
+    "attachments": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/ref" },
+      "default": []
+    },
+    "pages": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/ref" },
+      "default": []
+    },
+    "parent_work_items": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/ref" },
+      "default": []
+    },
+    "child_work_items": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/ref" },
+      "default": []
+    },
+    "linked_work_items": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/ref" },
+      "default": []
+    },
+    "module_refs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/ref" },
+      "default": []
+    },
+    "cycle_refs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/ref" },
+      "default": []
+    },
+    "custom_fields": {
+      "type": "object",
+      "additionalProperties": true,
+      "default": {}
+    }
+  },
+  "$defs": {
+    "ref": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["id"],
+      "properties": {
+        "id": { "type": "string" },
+        "readable_identifier": { "type": "string" },
+        "title": { "type": "string" },
+        "source_url": { "type": "string" },
+        "type": { "type": "string" }
+      }
+    }
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "workspace": {
+    "workspace_id": "workspace-uuid-001",
+    "workspace_slug": "acme",
+    "workspace_name": "Acme"
+  },
+  "project": {
+    "project_id": "project-uuid-001",
+    "project_identifier": "ENG",
+    "project_name": "Engineering"
+  },
+  "work_item": {
+    "work_item_id": "work-item-uuid-042",
+    "readable_identifier": "ENG-42",
+    "sequence_id": 42,
+    "title": "Checkout promo code validation",
+    "description": "Customers can apply one promo code during checkout. Valid codes apply discounts. Invalid, expired, already used, or empty codes show clear validation and do not change the payable total.",
+    "source_url": "https://app.plane.so/acme/projects/ENG/issues/42",
+    "status_id": "state-uuid-in-progress",
+    "status_name": "In Progress",
+    "state_group": "started",
+    "priority": "high",
+    "labels": ["checkout", "promo"],
+    "assignees": ["qa-owner"],
+    "module_ids": ["module-checkout"],
+    "cycle_ids": ["cycle-regression-18"]
+  },
+  "source_type": "work_item",
+  "comments": [
+    {
+      "comment_id": "comment-uuid-001",
+      "author": "product-owner",
+      "body": "Please generate QA plan and move this to QA Ready after output is attached.",
+      "created_at": "2026-06-12T03:00:00Z",
+      "source_url": "https://app.plane.so/acme/projects/ENG/issues/42#comment-uuid-001"
+    }
+  ],
+  "attachments": [
+    {
+      "id": "attachment-uuid-req",
+      "title": "promo-rules.md",
+      "source_url": "https://app.plane.so/acme/attachments/attachment-uuid-req",
+      "type": "requirement"
+    }
+  ],
+  "pages": [],
+  "parent_work_items": [],
+  "child_work_items": [
+    {
+      "id": "work-item-uuid-043",
+      "readable_identifier": "ENG-43",
+      "title": "Promo usage limit edge cases",
+      "source_url": "https://app.plane.so/acme/projects/ENG/issues/43",
+      "type": "work_item"
+    }
+  ],
+  "linked_work_items": [],
+  "module_refs": [
+    {
+      "id": "module-checkout",
+      "title": "Checkout",
+      "type": "module"
+    }
+  ],
+  "cycle_refs": [
+    {
+      "id": "cycle-regression-18",
+      "title": "Regression 18",
+      "type": "cycle"
+    }
+  ],
+  "custom_fields": {
+    "requested_status_after_sync": "QA Ready"
+  }
+}
