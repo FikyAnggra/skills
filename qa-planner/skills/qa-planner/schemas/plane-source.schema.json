@@ -117,7 +117,13 @@
         "readable_identifier": { "type": "string" },
         "title": { "type": "string" },
         "source_url": { "type": "string" },
-        "type": { "type": "string" }
+        "type": { "type": "string" },
+        "file_name": { "type": "string" },
+        "mime_type": { "type": "string" },
+        "content_text": { "type": "string" },
+        "extracted_text": { "type": "string" },
+        "extraction_status": { "type": "string", "enum": ["not_attempted", "readable", "unreadable", "failed"] },
+        "read_gap": { "type": "string" }
       }
     }
   }

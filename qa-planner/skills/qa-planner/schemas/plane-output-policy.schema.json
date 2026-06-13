@@ -52,13 +52,14 @@
     "transition_policy": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["enabled", "move_timing", "requires_user_confirmation", "on_target_status_not_found"],
+      "required": ["enabled", "move_timing", "on_missing_status_instruction", "on_target_status_not_found"],
       "properties": {
-        "enabled": { "type": "boolean" },
+        "enabled": { "type": "boolean", "default": false },
         "target_status": { "type": "string" },
         "target_status_id": { "type": "string" },
         "move_timing": { "type": "string", "enum": ["after_successful_plane_sync"] },
         "requires_user_confirmation": { "type": "boolean", "default": true },
+        "on_missing_status_instruction": { "type": "string", "enum": ["ask_user_before_running"], "default": "ask_user_before_running" },
         "status_before": { "type": "string" },
         "status_after": { "type": "string" },
         "on_target_status_not_found": { "type": "string", "enum": ["skip_status_move"], "default": "skip_status_move" }

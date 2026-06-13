@@ -99,6 +99,7 @@
     "attempted_at": "2026-06-12T04:30:00Z"
   },
   "gap_notes": [
+    "If no status movement is requested, keep sync_status and set transition_status to not_requested.",
     "If target status is not found, keep sync_status and set transition_status to status_transition_skipped with skip_reason."
   ],
   "error_notes": [],

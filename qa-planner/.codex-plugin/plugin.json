@@ -1,7 +1,7 @@
 {
   "name": "qa-planner",
-  "version": "0.2.0",
-  "description": "Portable QA planning plugin with Plane hybrid support for converting requirements and Plane work items/cards into planning_state JSON, test plans, test cases, coverage maps, Plane sync outputs, review feedback, and downstream handoff contracts.",
+  "version": "0.2.2",
+  "description": "Portable QA planning plugin with Plane hybrid support for converting requirements and Plane work items/cards, comments, and readable attachments into planning_state JSON, test plans, test cases, coverage maps, Plane card/work-item sync outputs, review feedback, and downstream handoff contracts.",
   "author": {
     "name": "Local developer"
   },
@@ -9,7 +9,7 @@
   "interface": {
     "displayName": "QA Planner",
     "shortDescription": "Create QA plans from requirements or Plane cards.",
-    "longDescription": "QA Planner provides a portable skill for normalizing requirements and Plane.so work items/cards, analyzing risk and ambiguity, creating planning_state JSON, rendering test plans and test cases from the Template Test Case field model, managing OK/NOK review loops, syncing Plane comments/attachments/wiki pages, optionally moving Plane status after successful sync, and producing handoff contracts for qa-executor, qa-automation, and qa-reporter.",
+    "longDescription": "QA Planner provides a portable skill for normalizing requirements, Plane.so work items/cards, comments, and readable attachments, analyzing risk and ambiguity without unsupported assumptions, creating planning_state JSON, rendering test plans and test cases from the Template Test Case field model, managing OK/NOK review loops, syncing Plane comments/attachments/wiki pages back to the source card/work item, asking required status-move clarification when Plane input omits status movement, optionally moving Plane status after successful sync, and producing handoff contracts for qa-executor, qa-automation, and qa-reporter.",
     "developerName": "Local developer",
     "category": "Productivity",
     "capabilities": [],

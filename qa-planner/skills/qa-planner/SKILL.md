@@ -1,6 +1,6 @@
 ---
 name: qa-planner
-description: Portable QA planning agent for converting requirements, PRDs, Plane.so work items/cards, Plane comments, attachments, pages/wiki, user stories, API specs, UI flows, screenshots, database notes, and technical constraints into governed planning_state JSON, test plans, test cases using the Template Test Case field model, coverage maps, OK/NOK review updates, Plane full-sync outputs, Plane wiki/page updates, optional Plane status movement after successful sync, and handoff contracts for qa-executor, qa-automation, and qa-reporter. Use when asked to create or revise QA plans, QA scenarios, test cases, requirement coverage, downstream QA handoffs, Plane-attached planning artifacts, or planning review packages. Do not use for running tests, creating defect tickets, writing final automation scripts, or producing final execution reports.
+description: Portable QA planning agent for converting requirements, PRDs, Plane.so work items/cards, Plane comments, readable attachments, pages/wiki, user stories, API specs, UI flows, screenshots, database notes, and technical constraints into governed planning_state JSON, test plans, test cases using the Template Test Case field model, coverage maps, OK/NOK review updates, Plane full-sync outputs written back to the source work item/card, Plane wiki/page updates, required Plane status-move clarification when status movement is not specified, optional Plane status movement after successful sync, and handoff contracts for qa-executor, qa-automation, and qa-reporter. Use when asked to create or revise QA plans, QA scenarios, test cases, requirement coverage, downstream QA handoffs, Plane-attached planning artifacts, or planning review packages. Do not use for running tests, creating defect tickets, writing final automation scripts, or producing final execution reports.
 ---
 
 # QA Planner
@@ -9,7 +9,7 @@ Use this skill to create and revise QA planning artifacts. Treat `planning_state
 
 ## Core Rule
 
-Do planning work only. Do not execute tests, create defect tickets, produce final execution reports, write final automation scripts, invent selectors, invent credentials, or change execution statuses without verified executor results or explicit user instruction.
+Do planning work only. Do not execute tests, create defect tickets, produce final execution reports, write final automation scripts, invent selectors, invent credentials, invent endpoints, invent fixture data, or change execution statuses without verified executor results or explicit user instruction. Do not use assumptions when source information is missing; ask the user when missing information affects planning accuracy.
 
 ## Input Intake
 
@@ -19,15 +19,15 @@ Accept raw or structured inputs:
 - existing test cases or QA plans that need normalization or revision
 - human review feedback with `OK` or `NOK`
 
-If critical information is missing, record it in `open_questions`. Ask one concise question only when the missing detail blocks useful planning.
+If required information is missing, record it in `open_questions` and ask the user instead of assuming. Continue only when the remaining uncertainty is explicitly documented and does not change planned scope, expected results, status movement, or Plane write targets.
 
 ## Plane Hybrid Mode
 
 Use Plane hybrid mode when the input mentions Plane.so, a Plane work item/card, a readable identifier such as `ENG-42`, a Plane UUID/URL/payload, or an @mention-style Plane Agent request.
 
 Support two Plane paths:
-- Plane MCP assistant workflow: resolve readable ids to UUIDs when tools exist, read work item/card context, generate artifacts, then sync output back to Plane.
-- Plane native agent workflow: use provided Plane context from the @mention/comment, write progress/final response to the related work item/card, and follow the same sync policy.
+- Plane MCP assistant workflow: resolve readable ids to UUIDs when tools exist, read work item/card context including readable attachments, generate artifacts, then sync output back to the same Plane work item/card.
+- Plane native agent workflow: use provided Plane context from the @mention/comment, read available attachments, write progress/final response to the related work item/card, and follow the same sync policy.
 
 If Plane tools are unavailable, use portable fallback: generate JSON and Markdown artifacts and record `plane_sync_gap` or equivalent gap notes. Do not pretend Plane write succeeded.
 
@@ -42,21 +42,23 @@ Capture available Plane fields:
 - project UUID, readable identifier, and name
 - work item/card UUID, readable identifier, title, description, URL, source status, labels, assignees, module, and cycle
 - comment ids and bodies used as requirements or review feedback
-- attachment refs and page/wiki refs
+- attachment refs, filenames, MIME types, extracted text/content when readable, extraction status, and page/wiki refs
 - parent, child, and linked work item refs
 
 When given only a readable id, resolve it to project/work item UUID if Plane tools exist. If resolution fails, ask for the missing project/workspace context or proceed with fallback output when the user gave enough requirement text.
 
+For Plane attachments, read or download attachment content when tools and file type allow it. Treat readable attachment text as requirement input. If attachment content cannot be read, record `attachment_read_gap` with the attachment id/name and ask the user for the content when it is needed for accurate planning.
+
 ## Plane Output Policy
 
-Default Plane write mode is `full_sync` for Plane inputs. Use `schemas/plane-output-policy.schema.json` when structured policy is needed.
+Default Plane write mode is `full_sync` for Plane inputs. Use `schemas/plane-output-policy.schema.json` when structured policy is needed. When Plane write tools are available, Plane output must be added or updated on the source work item/card; returning output only in chat is not enough.
 
 Supported write modes:
 - `read_only`: generate artifacts without writing to Plane
 - `comment_only`: write concise summary comment to the work item/card
 - `attach_artifacts`: write summary comment and attach artifacts
 - `wiki_update`: create/update Plane page/wiki and link it when supported
-- `full_sync`: comment, attach artifacts, create/update wiki/page when useful, link page to work item/card, then perform configured status transition after successful sync
+- `full_sync`: comment on the source work item/card, attach artifacts to the source work item/card, create/update wiki/page when useful, link page to the work item/card, then perform configured status transition after successful sync when status movement was requested and a valid target status exists
 
 Generate all artifact formats available in the runtime: JSON, Markdown, Excel, PDF, and Word. Minimum fallback is JSON plus Markdown.
 
@@ -96,13 +98,15 @@ When updating an existing page, update only `qa-planner` managed sections. Prese
 
 `qa-planner` may move the source Plane work item/card status.
 
-When Plane input is used and the user does not specify status movement, ask before running the planning workflow:
+When Plane input is used and the user does not specify status movement, ask before running the planning workflow. This status-move question is mandatory for Plane requirement input unless the user already provided a target status, explicitly said not to move status, selected `read_only`, or no Plane write tool is available and the run is fallback-only.
+
+Default question:
 
 ```text
 Setelah QA planning selesai dan output berhasil diattach/update ke Plane, apakah work item perlu dipindahkan status? Jika ya, ke status apa?
 ```
 
-Do not ask when the user already provided a target status, explicitly said not to move status, selected `read_only`, or no Plane write tool is available and the run is fallback-only.
+If the user says no, continue planning without status movement and set transition status to `not_requested`. If the user says yes but does not provide a clear target status, ask one concise follow-up for the target status before running.
 
 Move status only after planning artifacts are generated and Plane sync succeeds. Plane sync success means the configured comment, attachment, wiki/page, and link actions completed.
 
@@ -234,6 +238,7 @@ Rules:
 - normalize source text `P2 - Low` to `P3 - Low`
 - choose `automation_status` from feasibility and available source information
 - mark missing selectors, endpoints, fixture data, or credentials as planning or automation gaps, not invented data
+- ask the user instead of assuming when missing requirement, endpoint, fixture, attachment, status, or expected result information changes test design
 
 ## Review Loop
 
@@ -305,9 +310,12 @@ Before presenting review-ready output, verify:
 - contracts are not marked ready for downstream execution, automation, or reporting before approval
 - rendered human artifacts match `planning_state`
 - Plane source status did not block intake
-- Plane status transition policy is known before running with Plane write tools
-- Plane status move happens only after successful sync
+- Plane attachment content was read when available or `attachment_read_gap` was recorded
+- Plane output was added or updated on the source work item/card when Plane write tools were available
+- Plane status-move question was asked before running when Plane input lacked status movement instruction
+- Plane status move happens only after successful sync and only when explicitly requested
 - target status not found skips transition without failing planning
+- missing source information was asked about or recorded as an open question, not assumed
 - managed Plane output avoids duplicate comments/pages/attachments
 - sensitive data is redacted before Plane write
 

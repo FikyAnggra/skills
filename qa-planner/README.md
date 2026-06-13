@@ -22,7 +22,7 @@ For platforms without plugin support, copy `skills/qa-planner/` as a skill folde
 
 Provide requirements, Plane work item/card ids or payloads, PRDs, acceptance criteria, UI or API notes, screenshots, technical constraints, or existing QA artifacts. For revision, provide human review feedback with `OK` or `NOK` and the target area.
 
-Plane inputs can come from work item/card title and description, comments, attachments, wiki/pages, parent or child work items, linked work items, modules, cycles, or direct MCP/API payloads. Plane source status is metadata only; `qa-planner` may plan from any source status when the user provides the requirement input.
+Plane inputs can come from work item/card title and description, comments, readable attachment content, wiki/pages, parent or child work items, linked work items, modules, cycles, or direct MCP/API payloads. Plane source status is metadata only; `qa-planner` may plan from any source status when the user provides the requirement input. If required information is missing, the planner asks the user instead of assuming.
 
 ## Outputs
 
@@ -38,13 +38,15 @@ Expected outputs include:
 
 ## Plane Hybrid Sync
 
-Default Plane write mode is `full_sync`: add or update a concise work item/card comment, attach generated artifacts, create or update a wiki/page when useful, link the page to the work item/card, and move status only after sync succeeds when a target status was configured.
+Default Plane write mode is `full_sync`: add or update a concise comment on the source work item/card, attach generated artifacts to that source item, create or update a wiki/page when useful, link the page to the work item/card, and move status only after sync succeeds when a target status was explicitly configured.
 
 When Plane input is used and the user did not provide a status move instruction, the planner must ask before running:
 
 ```text
 Setelah QA planning selesai dan output berhasil diattach/update ke Plane, apakah work item perlu dipindahkan status? Jika ya, ke status apa?
 ```
+
+If the user says no, planning continues without status movement and transition status is `not_requested`.
 
 If the target status is not found, planning and Plane output still complete, status movement is skipped, and the sync record notes `status_transition_skipped`. If Plane tools are unavailable, the planner falls back to JSON and Markdown outputs and records the sync gap.
 

@@ -40,7 +40,11 @@
       "id": "attachment-uuid-req",
       "title": "promo-rules.md",
       "source_url": "https://app.plane.so/acme/attachments/attachment-uuid-req",
-      "type": "requirement"
+      "type": "requirement",
+      "file_name": "promo-rules.md",
+      "mime_type": "text/markdown",
+      "extracted_text": "Promo code SAVE10 gives 10 percent discount. Expired and used codes must not change payable total.",
+      "extraction_status": "readable"
     }
   ],
   "pages": [],

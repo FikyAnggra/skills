@@ -124,6 +124,7 @@
         "target_status_id": { "type": "string" },
         "move_timing": { "type": "string", "enum": ["after_successful_plane_sync"] },
         "requires_user_confirmation": { "type": "boolean" },
+        "on_missing_status_instruction": { "type": "string", "enum": ["ask_user_before_running"] },
         "requested_by": { "type": "string" },
         "status_before": { "type": "string" },
         "status_after": { "type": "string" },
