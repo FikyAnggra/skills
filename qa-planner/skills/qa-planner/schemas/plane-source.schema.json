@@ -66,6 +66,24 @@
       },
       "default": []
     },
+    "activities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["activity_id"],
+        "properties": {
+          "activity_id": { "type": "string" },
+          "actor": { "type": "string" },
+          "action": { "type": "string" },
+          "field": { "type": "string" },
+          "old_value": {},
+          "new_value": {},
+          "created_at": { "type": "string" }
+        }
+      },
+      "default": []
+    },
     "attachments": {
       "type": "array",
       "items": { "$ref": "#/$defs/ref" },
@@ -91,12 +109,37 @@
       "items": { "$ref": "#/$defs/ref" },
       "default": []
     },
+    "relations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/relation" },
+      "default": []
+    },
     "module_refs": {
       "type": "array",
       "items": { "$ref": "#/$defs/ref" },
       "default": []
     },
     "cycle_refs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/ref" },
+      "default": []
+    },
+    "project_members": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/ref" },
+      "default": []
+    },
+    "states": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/ref" },
+      "default": []
+    },
+    "work_item_properties": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/ref" },
+      "default": []
+    },
+    "work_item_types": {
       "type": "array",
       "items": { "$ref": "#/$defs/ref" },
       "default": []
@@ -124,6 +167,19 @@
         "extracted_text": { "type": "string" },
         "extraction_status": { "type": "string", "enum": ["not_attempted", "readable", "unreadable", "failed"] },
         "read_gap": { "type": "string" }
+      }
+    },
+    "relation": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["relation_type", "related_work_item_id"],
+      "properties": {
+        "relation_type": { "type": "string", "enum": ["blocking", "blocked_by", "duplicate", "duplicate_of", "relates_to"] },
+        "related_work_item_id": { "type": "string" },
+        "readable_identifier": { "type": "string" },
+        "title": { "type": "string" },
+        "source_url": { "type": "string" },
+        "planning_impact": { "type": "string" }
       }
     }
   }

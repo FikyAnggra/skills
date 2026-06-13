@@ -1,5 +1,33 @@
 # Changelog
 
+## 0.2.5 - 2026-06-13
+
+- Added concrete Plane MCP tool mapping for readable id resolution, work item payloads, comments, activities, relations, cycle/module scope, links, states, members, custom properties, and work item types.
+- Added Plane planning-state enrichment for project members, states, work item properties/types, relations, and batch scope.
+- Added deterministic Plane write-back guidance for managed comments, HTML pages, external links, dynamic status movement, and optional labels/fields.
+- Added Plane handoff tracking guidance for creating QA execution tracker work items and adding them to QA cycles.
+- Extended Plane schemas and handoff contracts for MCP context, external links, execution tracker refs, and handoff tracking policy.
+
+## 0.2.4 - 2026-06-13
+
+- Added inline `planning_state.json` fallback skeleton to make state generation deterministic without schema files.
+- Added explicit automation status decision rules.
+- Added controlled `test_type` values and updated `planning-state.schema.json` to enforce them.
+- Added blocking versus non-blocking ambiguity rules.
+- Added inline coverage map format and status values.
+- Added inline handoff contract fallback shape for executor, automation, and reporter.
+- Added large-input batching guidance for large PRDs and high test case counts.
+
+## 0.2.3 - 2026-06-13
+
+- Reduced Plane bias in `SKILL.md` by moving detailed Plane behavior into `references/plane-hybrid.md`, loaded only for Plane inputs.
+- Reworked workflow into explicit standard and Plane paths.
+- Replaced invalid priority remapping with an `open_questions` clarification rule for any unsupported priority value.
+- Split quality gates into content, Plane sync, and status transition groups.
+- Unified review behavior into one review loop that supports OK, NOK, and partial feedback.
+- Added explicit output decision rules and resource fallback instructions.
+- Added source conflict handling and clearer `scenario` versus `summary` examples.
+
 ## 0.2.2 - 2026-06-12
 
 - Restored mandatory status-move clarification for Plane requirement input when no status movement instruction is provided.

@@ -31,6 +31,16 @@
       "items": { "$ref": "#/$defs/plane_ref" },
       "default": []
     },
+    "external_link_refs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/plane_ref" },
+      "default": []
+    },
+    "execution_work_item_refs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/plane_ref" },
+      "default": []
+    },
     "artifact_versions": {
       "type": "array",
       "items": { "$ref": "#/$defs/artifact_ref" },
@@ -89,7 +99,9 @@
         "id": { "type": "string" },
         "source_url": { "type": "string" },
         "title": { "type": "string" },
-        "type": { "type": "string" }
+        "type": { "type": "string" },
+        "readable_identifier": { "type": "string" },
+        "relation": { "type": "string" }
       }
     },
     "artifact_ref": {

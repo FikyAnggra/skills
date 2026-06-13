@@ -159,7 +159,9 @@
         "source_url": { "type": "string" },
         "comment_ids": { "type": "array", "items": { "type": "string" }, "default": [] },
         "attachment_ids": { "type": "array", "items": { "type": "string" }, "default": [] },
-        "page_ids": { "type": "array", "items": { "type": "string" }, "default": [] }
+        "page_ids": { "type": "array", "items": { "type": "string" }, "default": [] },
+        "execution_work_item_ids": { "type": "array", "items": { "type": "string" }, "default": [] },
+        "execution_cycle_id": { "type": "string" }
       }
     },
     "custom_fields": {

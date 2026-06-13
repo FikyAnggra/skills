@@ -136,6 +136,42 @@
       "items": { "$ref": "plane-sync-record.schema.json" },
       "default": []
     },
+    "plane_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "project_members": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/plane_member" },
+          "default": []
+        },
+        "states": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/plane_state" },
+          "default": []
+        },
+        "work_item_properties": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/plane_property" },
+          "default": []
+        },
+        "work_item_types": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/plane_work_item_type" },
+          "default": []
+        },
+        "relations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/plane_relation" },
+          "default": []
+        },
+        "batch_scope": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/plane_batch_item" },
+          "default": []
+        }
+      }
+    },
     "custom_fields": { "type": "object", "additionalProperties": true, "default": {} }
   },
   "$defs": {
@@ -208,7 +244,24 @@
         "tc_id": { "type": "string", "pattern": "^TC[0-9]{4,}$" },
         "scenario": { "type": "string", "minLength": 1 },
         "summary": { "type": "string", "minLength": 1 },
-        "test_type": { "type": "string", "minLength": 1 },
+        "test_type": {
+          "type": "string",
+          "enum": [
+            "Functional",
+            "API",
+            "UI",
+            "E2E",
+            "Integration",
+            "Regression",
+            "Smoke",
+            "Negative",
+            "Boundary",
+            "Accessibility",
+            "Performance",
+            "Security",
+            "Usability"
+          ]
+        },
         "priority": { "$ref": "#/$defs/priority" },
         "pre_conditions": { "type": "string" },
         "test_steps": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
@@ -263,6 +316,78 @@
         "plane_page_id": { "type": "string" },
         "source_url": { "type": "string" },
         "custom_fields": { "type": "object", "additionalProperties": true, "default": {} }
+      }
+    },
+    "plane_member": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["member_id"],
+      "properties": {
+        "member_id": { "type": "string" },
+        "display_name": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string" }
+      }
+    },
+    "plane_state": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["state_id", "name"],
+      "properties": {
+        "state_id": { "type": "string" },
+        "name": { "type": "string" },
+        "group": { "type": "string" },
+        "is_default": { "type": "boolean" }
+      }
+    },
+    "plane_property": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["property_id", "name"],
+      "properties": {
+        "property_id": { "type": "string" },
+        "name": { "type": "string" },
+        "data_type": { "type": "string" },
+        "value": {}
+      }
+    },
+    "plane_work_item_type": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["type_id", "name"],
+      "properties": {
+        "type_id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" }
+      }
+    },
+    "plane_relation": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["relation_type", "source_work_item_id", "target_work_item_id"],
+      "properties": {
+        "relation_type": { "type": "string", "enum": ["blocking", "blocked_by", "duplicate", "duplicate_of", "relates_to"] },
+        "source_work_item_id": { "type": "string" },
+        "source_readable_identifier": { "type": "string" },
+        "target_work_item_id": { "type": "string" },
+        "target_readable_identifier": { "type": "string" },
+        "summary": { "type": "string" },
+        "planning_impact": { "type": "string" }
+      }
+    },
+    "plane_batch_item": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["work_item_id"],
+      "properties": {
+        "work_item_id": { "type": "string" },
+        "readable_identifier": { "type": "string" },
+        "title": { "type": "string" },
+        "source_type": { "type": "string", "enum": ["cycle", "module", "linked", "manual"] },
+        "module_id": { "type": "string" },
+        "cycle_id": { "type": "string" },
+        "coverage_status": { "type": "string", "enum": ["included", "excluded", "deferred"] },
+        "notes": { "type": "string" }
       }
     }
   }

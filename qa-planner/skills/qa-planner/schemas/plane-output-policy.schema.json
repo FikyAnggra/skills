@@ -44,9 +44,24 @@
       "properties": {
         "enabled": { "type": "boolean", "default": true },
         "create_or_update_when_useful": { "type": "boolean", "default": true },
+        "target": { "type": "string", "enum": ["project_page", "workspace_page"], "default": "project_page" },
+        "html_body_required": { "type": "boolean", "default": true },
         "page_title_template": { "type": "string", "default": "QA Plan - <PROJECT>-<SEQ> - <feature title>" },
         "preserve_manual_sections": { "type": "boolean", "default": true },
         "managed_section_marker": { "type": "string", "default": "qa-planner-managed" }
+      }
+    },
+    "link_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean", "default": true },
+        "dedupe_existing_links": { "type": "boolean", "default": true },
+        "allowed_link_types": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["qa_plan", "external_doc"]
+        }
       }
     },
     "transition_policy": {
@@ -57,6 +72,7 @@
         "enabled": { "type": "boolean", "default": false },
         "target_status": { "type": "string" },
         "target_status_id": { "type": "string" },
+        "resolve_target_with_list_states": { "type": "boolean", "default": true },
         "move_timing": { "type": "string", "enum": ["after_successful_plane_sync"] },
         "requires_user_confirmation": { "type": "boolean", "default": true },
         "on_missing_status_instruction": { "type": "string", "enum": ["ask_user_before_running"], "default": "ask_user_before_running" },
@@ -69,6 +85,17 @@
       "type": "string",
       "enum": ["render_local_json_markdown", "return_chat_artifacts"],
       "default": "render_local_json_markdown"
+    },
+    "handoff_tracking_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean", "default": false },
+        "create_execution_work_items": { "type": "boolean", "default": false },
+        "grouping": { "type": "string", "enum": ["module", "risk", "test_type", "environment", "cycle", "manual"], "default": "module" },
+        "add_to_cycle": { "type": "boolean", "default": false },
+        "target_cycle_id": { "type": "string" }
+      }
     },
     "custom_fields": {
       "type": "object",

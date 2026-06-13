@@ -1,7 +1,7 @@
 {
   "name": "qa-planner",
-  "version": "0.2.2",
-  "description": "Portable QA planning plugin for Claude-compatible agents with Plane hybrid work item/card intake, readable attachment intake, artifact sync guidance back to the source card/work item, wiki/page updates, no-assumption planning rules, required status-move clarification when omitted, and explicit status transition policy. It uses skills/qa-planner/SKILL.md as the canonical instruction source and preserves the Codex plugin wrapper.",
+  "version": "0.2.5",
+  "description": "Portable QA planning plugin for Claude-compatible agents with core QA planning in SKILL.md and conditional Plane MCP hybrid guidance in references/plane-hybrid.md. It uses skills/qa-planner/SKILL.md as the canonical instruction source and preserves the Codex plugin wrapper.",
   "author": {
     "name": "Local developer"
   },
@@ -11,15 +11,19 @@
   "resources": {
     "schemas": "../skills/qa-planner/schemas/",
     "templates": "../skills/qa-planner/templates/",
-    "examples": "../skills/qa-planner/examples/"
+    "examples": "../skills/qa-planner/examples/",
+    "references": "../skills/qa-planner/references/"
   },
   "capabilities": [
     "qa_planning",
     "plane_hybrid_planning",
     "plane_work_item_intake",
+    "plane_mcp_context_enrichment",
     "plane_artifact_sync",
     "plane_wiki_update",
+    "plane_link_sync",
     "plane_status_transition",
+    "plane_handoff_tracking",
     "planning_state_json",
     "test_plan",
     "test_case_design",
