@@ -122,7 +122,7 @@ Notion path:
 2. Resolve destination parent page/database or ask the user when no destination is clear.
 3. Continue with the standard path.
 4. Create or update a Notion test plan page.
-5. Create or update a Notion test case database. Test cases must use a Notion database when `notion-create-database` is available.
+5. Create or update a Notion test case database. Test cases must use a Notion database with the exact Template Test Case columns when `notion-create-database` and required `notion-update-data-source` support are available.
 6. Store Notion page/database URLs in `planning_state.artifact_outputs`, `planning_state.notion_context`, and handoff contracts.
 
 Large-input handling:
@@ -275,7 +275,7 @@ Produce additional artifacts only under these rules:
 - Handoff contracts: produce only when approved, explicitly requested, or clearly marked draft.
 - Spreadsheet: produce when user asks for Excel/Sheets, when Plane/full-sync policy requests attachments, or when test cases are large enough that a table is hard to review in Markdown.
 - Plane comment/page/sync outputs: produce only when Plane path is active and Plane write policy allows it.
-- Notion page/database outputs: produce only when Notion path is active and Notion write policy allows it. Test plan output is a page; test case output is a database unless database tooling is unavailable or user explicitly requests fallback.
+- Notion page/database outputs: produce only when Notion path is active and Notion write policy allows it. Test plan output is a page rendered from `templates/test-plan.md`; test case output is a database with exact `templates/test-case.md` columns unless database/schema tooling is unavailable, in which case create a Notion page containing that same test case table.
 
 If schemas or templates are unavailable, generate inline JSON/Markdown structures from the field model and rules in this skill. Do not fail solely because `/schemas/` or `/templates/` files are unavailable.
 
@@ -303,8 +303,10 @@ Plane sync gates, apply only on Plane path:
 Notion sync gates, apply only on Notion path:
 - Destination parent page/database was resolved or the user approved fallback.
 - Test plan was created or updated as a Notion page when write tools were available.
-- Test cases were created or updated as a Notion database when `notion-create-database` was available.
-- Test case database has required properties for `TC ID`, `Scenario`, `Summary`, `Test Type`, `Priority`, `Status`, `Automation Status`, `Requirement Refs`, `Owner`, and `Last Updated`.
+- Test plan page follows the structure of `templates/test-plan.md` and avoids raw JSON dumps.
+- Test cases were created or updated as a Notion database when `notion-create-database` and required `notion-update-data-source` support were available.
+- Test case database has exact Template Test Case properties: `tc_id`, `scenario`, `summary`, `test_type`, `priority`, `pre_conditions`, `test_steps`, `test_data`, `expected_result`, `actual_result`, `test_case_status`, `automation_status`, and `notes`.
+- If database/schema tools were unavailable, fallback Notion page contains a table with the same Template Test Case columns and records the database/schema gap.
 - Notion page/database links were captured in `planning_state` and handoff contracts.
 - Managed Notion artifacts avoid duplicate pages/databases for the same package id.
 - Sensitive data is redacted before Notion write.

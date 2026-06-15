@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.7 - 2026-06-15
+
+- Updated Notion test case database rules to use exact `templates/test-case.md` columns, including long fields as database properties.
+- Added Notion fallback behavior that creates a page with the same test case table when database creation or schema update is unavailable.
+- Clarified Notion test plan page rendering must follow `templates/test-plan.md` with clean Notion page structure.
+
 ## 0.2.6 - 2026-06-15
 
 - Added conditional Notion MCP reference for creating QA test plan pages and mandatory test case databases.

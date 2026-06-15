@@ -1,6 +1,6 @@
 {
   "name": "qa-planner",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Portable QA planning plugin for converting requirements into planning_state JSON, test plans, test cases, coverage maps, review feedback, and downstream handoff contracts, with conditional Plane MCP and Notion MCP output integration.",
   "author": {
     "name": "Local developer"
@@ -9,7 +9,7 @@
   "interface": {
     "displayName": "QA Planner",
     "shortDescription": "Create QA plans from requirements, Plane, or Notion.",
-    "longDescription": "QA Planner provides portable QA planning for normalizing requirements, resolving blocking ambiguity and conflicting sources without unsupported assumptions, creating deterministic planning_state JSON, rendering test plans, coverage maps, and test cases from the Template Test Case field model, managing OK/NOK and partial review loops, handling large inputs incrementally, and producing governed handoff contracts for qa-executor, qa-automation, and qa-reporter. Plane.so MCP integration is documented as a conditional reference loaded only for Plane inputs. Notion MCP integration is documented as a conditional reference loaded only for Notion outputs and creates a test plan page plus a mandatory test case database when database tooling is available.",
+    "longDescription": "QA Planner provides portable QA planning for normalizing requirements, resolving blocking ambiguity and conflicting sources without unsupported assumptions, creating deterministic planning_state JSON, rendering test plans, coverage maps, and test cases from the Template Test Case field model, managing OK/NOK and partial review loops, handling large inputs incrementally, and producing governed handoff contracts for qa-executor, qa-automation, and qa-reporter. Plane.so MCP integration is documented as a conditional reference loaded only for Plane inputs. Notion MCP integration is documented as a conditional reference loaded only for Notion outputs and creates a test plan page plus a mandatory test case database with exact Template Test Case columns when database tooling is available.",
     "developerName": "Local developer",
     "category": "Productivity",
     "capabilities": [],

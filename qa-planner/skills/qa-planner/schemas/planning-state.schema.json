@@ -148,6 +148,9 @@
         "test_plan_page_url": { "type": "string" },
         "test_case_database_id": { "type": "string" },
         "test_case_database_url": { "type": "string" },
+        "fallback_test_case_page_id": { "type": "string" },
+        "fallback_test_case_page_url": { "type": "string" },
+        "test_cases_database_status": { "type": "string", "enum": ["created", "updated", "unavailable", "not_requested"] },
         "test_case_row_pages": {
           "type": "array",
           "items": { "$ref": "#/$defs/notion_page_ref" },

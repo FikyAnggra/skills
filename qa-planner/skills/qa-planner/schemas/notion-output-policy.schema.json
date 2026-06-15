@@ -43,7 +43,41 @@
         "required_properties": {
           "type": "array",
           "items": { "type": "string" },
-          "default": ["TC ID", "Scenario", "Summary", "Test Type", "Priority", "Status", "Automation Status", "Requirement Refs", "Owner", "Last Updated"]
+          "default": ["tc_id", "scenario", "summary", "test_type", "priority", "pre_conditions", "test_steps", "test_data", "expected_result", "actual_result", "test_case_status", "automation_status", "notes"]
+        },
+        "required_property_types": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "tc_id": { "type": "string", "const": "title" },
+            "scenario": { "type": "string", "const": "rich_text" },
+            "summary": { "type": "string", "const": "rich_text" },
+            "test_type": { "type": "string", "const": "select" },
+            "priority": { "type": "string", "const": "select" },
+            "pre_conditions": { "type": "string", "const": "rich_text" },
+            "test_steps": { "type": "string", "const": "rich_text" },
+            "test_data": { "type": "string", "const": "rich_text" },
+            "expected_result": { "type": "string", "const": "rich_text" },
+            "actual_result": { "type": "string", "const": "rich_text" },
+            "test_case_status": { "type": "string", "const": "select" },
+            "automation_status": { "type": "string", "const": "select" },
+            "notes": { "type": "string", "const": "rich_text" }
+          },
+          "default": {
+            "tc_id": "title",
+            "scenario": "rich_text",
+            "summary": "rich_text",
+            "test_type": "select",
+            "priority": "select",
+            "pre_conditions": "rich_text",
+            "test_steps": "rich_text",
+            "test_data": "rich_text",
+            "expected_result": "rich_text",
+            "actual_result": "rich_text",
+            "test_case_status": "select",
+            "automation_status": "select",
+            "notes": "rich_text"
+          }
         },
         "views": {
           "type": "array",
@@ -74,8 +108,8 @@
     },
     "fallback_behavior": {
       "type": "string",
-      "enum": ["ask_before_page_only_fallback", "render_local_json_markdown", "return_chat_artifacts"],
-      "default": "ask_before_page_only_fallback"
+      "enum": ["page_with_template_table", "render_local_json_markdown", "return_chat_artifacts"],
+      "default": "page_with_template_table"
     },
     "custom_fields": {
       "type": "object",

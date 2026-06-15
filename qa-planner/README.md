@@ -26,7 +26,7 @@ Provide requirements, Plane work item/card ids or payloads, PRDs, acceptance cri
 
 Plane inputs can come from work item/card title and description, comments, activities, readable attachment content, wiki/pages, parent or child work items, relations, linked work items, modules, cycles, or direct MCP/API payloads. Plane-specific rules live in `skills/qa-planner/references/plane-hybrid.md` and are loaded only for Plane inputs. If Plane MCP tools are available, the planner resolves readable ids such as `ENG-42`, reads comments and activity history, expands requested cycle/module scope, captures relations and project metadata, and asks the user instead of assuming when required information is missing or conflicting.
 
-Notion output can create or update a QA test plan page and a Notion test case database. The test case artifact must be a Notion database when `notion-create-database` is available, so cases can be filtered by priority, test type, status, automation status, requirement refs, owner, and update date. Notion page/database links are stored in `planning_state`, handoff contracts, and other active platform sync outputs.
+Notion output can create or update a QA test plan page and a Notion test case database. The test case artifact must be a Notion database when `notion-create-database` and required `notion-update-data-source` support are available. Database columns match `templates/test-case.md` exactly, including long fields such as `pre_conditions`, `test_steps`, `test_data`, `expected_result`, and `notes`. Notion page/database links are stored in `planning_state`, handoff contracts, and other active platform sync outputs.
 
 ## Outputs
 
@@ -43,9 +43,9 @@ Expected outputs include:
 
 ## Notion MCP Output
 
-When Notion output is requested, `qa-planner` creates the test plan as a Notion page and test cases as a Notion database. Each test case becomes a database row/page with properties for `TC ID`, `Scenario`, `Summary`, `Test Type`, `Priority`, `Status`, `Automation Status`, `Requirement Refs`, `Owner`, and `Last Updated`; long fields such as preconditions, steps, test data, expected result, and notes are written in the row page body.
+When Notion output is requested, `qa-planner` creates the test plan as a Notion page and test cases as a Notion database. The test plan page follows `templates/test-plan.md` with clean headings, compact tables, and bullet lists. Each test case becomes a database row/page with properties matching `templates/test-case.md`: `tc_id`, `scenario`, `summary`, `test_type`, `priority`, `pre_conditions`, `test_steps`, `test_data`, `expected_result`, `actual_result`, `test_case_status`, `automation_status`, and `notes`.
 
-The planner captures `test_plan_page_url` and `test_case_database_url` in `planning_state.notion_context` and mirrors them into `artifact_outputs` and handoff contracts. If database creation is unavailable, the planner asks before using page-only fallback and records a Notion database gap.
+The planner captures `test_plan_page_url` and `test_case_database_url` in `planning_state.notion_context` and mirrors them into `artifact_outputs` and handoff contracts. If database creation or schema update is unavailable, the planner creates a fallback Notion page containing a table with the same test case columns and records a Notion database/schema gap.
 
 ## Plane Hybrid Sync
 

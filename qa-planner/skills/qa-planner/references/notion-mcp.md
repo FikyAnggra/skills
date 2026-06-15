@@ -15,10 +15,10 @@ Intake and review tools:
 - `notion-get-users`, `notion-get-user`, `notion-get-self`: resolve owners, reviewers, and connected workspace/bot context when available.
 
 Output tools:
-- `notion-create-pages`: create the QA test plan page and create test case row pages inside the test case database.
-- `notion-update-page`: update managed sections of an existing test plan page or test case row page.
+- `notion-create-pages`: create the QA test plan page, create test case row pages inside the test case database, or create a fallback page containing a test case table.
+- `notion-update-page`: update managed sections of an existing test plan page or fallback table page.
 - `notion-create-database`: create the Notion test case database. This is mandatory for `test_cases` when Notion output is requested and the tool is available.
-- `notion-update-data-source`: update the test case database/data source schema when required properties are missing.
+- `notion-update-data-source`: update the test case database/data source schema when template columns are missing or have invalid types.
 - `notion-create-view`: create useful database views such as All Cases, By Priority, By Status, Automation Candidates, and Manual Only.
 - `notion-update-view`: update existing views when rerunning a managed QA package.
 - `notion-create-comment`: add review/status comments to the test plan page when requested or useful for review handoff.
@@ -32,48 +32,34 @@ Rate behavior:
 
 When Notion output is requested:
 - Create one Notion page for the test plan.
-- Create one Notion database for test cases. Do not use a plain table page unless `notion-create-database` is unavailable or the user explicitly requests page-only fallback.
-- Create each test case as a database row/page using `notion-create-pages` with database properties and detailed body content.
+- Create one Notion database for test cases. Do not use a plain table page unless `notion-create-database` or required `notion-update-data-source` schema update is unavailable, or the user explicitly requests page-only fallback.
+- Create each test case as a database row/page using `notion-create-pages`; put all Template Test Case fields into database properties, including long fields.
 - Store created or reused Notion URLs and IDs in `planning_state.artifact_outputs`, `planning_state.notion_context`, and relevant handoff contracts.
 
-Required test case database properties:
-- `TC ID`: title or rich text, stable test case id such as `TC0001`
-- `Scenario`: rich text
-- `Summary`: rich text
-- `Test Type`: select with qa-planner allowed `test_type` values
-- `Priority`: select with qa-planner allowed priority values
-- `Status`: select with qa-planner allowed test case status values
-- `Automation Status`: select with qa-planner allowed automation status values
-- `Requirement Refs`: multi-select or rich text
-- `Owner`: people or rich text
-- `Last Updated`: date
+Required test case database properties must match `templates/test-case.md` exactly:
+- `tc_id`: title, stable test case id such as `TC0001`
+- `scenario`: rich text
+- `summary`: rich text
+- `test_type`: select with qa-planner allowed `test_type` values
+- `priority`: select with qa-planner allowed priority values
+- `pre_conditions`: rich text
+- `test_steps`: rich text; preserve ordered steps as newline-separated text
+- `test_data`: rich text
+- `expected_result`: rich text
+- `actual_result`: rich text; blank before execution
+- `test_case_status`: select with qa-planner allowed test case status values
+- `automation_status`: select with qa-planner allowed automation status values
+- `notes`: rich text
 
-Recommended database properties:
-- `Package ID`: rich text
-- `Planning Status`: select
-- `Source`: URL or rich text
-- `Tags`: multi-select
-- `Execution Link`: URL
+Do not move `pre_conditions`, `test_steps`, `test_data`, `expected_result`, `actual_result`, or `notes` into row page body by default. The row body can remain empty or contain only optional source backlinks when the user asks for richer row pages.
 
-Test case row/page body must include long fields that do not fit cleanly as properties:
-- preconditions
-- ordered test steps
-- test data
-- expected result
-- notes/gaps
-- source refs and requirement refs
-
-Required test plan page sections:
-- package summary and version
-- source refs
-- scope and exclusions
-- risks
-- test strategy
-- coverage summary
-- Notion test case database link
-- open questions and gaps
-- handoff links
-- changelog
+Test plan page rendering must follow `templates/test-plan.md` and stay readable in Notion:
+- Use clear headings matching the template: Metadata, Objective, Source Inputs, Scope, Assumptions and Open Questions, Risk Analysis, Test Strategy, Environment, Entry Criteria, Exit Criteria, Dependencies, Coverage Summary, Handoff Summary.
+- Render compact Notion tables for template table sections.
+- Render in-scope, out-of-scope, entry criteria, exit criteria, and dependencies as bullet lists.
+- Add a `Test Case Database` section containing the Notion database link and summary counts.
+- Add managed marker `qa-planner-managed` near the top or in a hidden/low-noise marker line.
+- Avoid raw JSON dumps in the Notion page unless the user explicitly asks.
 
 ## Link Handling
 
@@ -104,9 +90,9 @@ Never create duplicate databases for the same package id unless versioning is ex
 
 1. Resolve destination parent page/database using user input or `notion-search`.
 2. If destination is missing, ask the user for destination unless private-page creation is explicitly acceptable.
-3. Create or reuse the test plan page with `notion-create-pages` / `notion-update-page`.
-4. Create or reuse the test case database with `notion-create-database`.
-5. Ensure required database properties exist with `notion-fetch` and `notion-update-data-source` when needed.
+3. Create or reuse the test plan page with `notion-create-pages` / `notion-update-page`, rendering content from `templates/test-plan.md`.
+4. Create or reuse the test case database with `notion-create-database` using the exact Template Test Case columns.
+5. Ensure required database properties exist with `notion-fetch` and `notion-update-data-source` when needed; if this cannot be done, switch to fallback only after recording the gap.
 6. Create/update views with `notion-create-view` or `notion-update-view`.
 7. Create test case row pages with `notion-create-pages` in batches.
 8. Update the test plan page with the database link and summary counts.
@@ -114,9 +100,11 @@ Never create duplicate databases for the same package id unless versioning is ex
 
 ## Fallback
 
-If `notion-create-database` is unavailable:
-- Ask the user whether to continue with Markdown/JSON output or page-only fallback.
-- Page-only fallback may render a Markdown table inside the test plan page, but must mark `test_cases_database_status = unavailable` and record `notion_database_gap`.
+If `notion-create-database` or required `notion-update-data-source` cannot be used:
+- Create or update a Notion page with a test case table matching `templates/test-case.md` exactly.
+- Include columns: `tc_id`, `scenario`, `summary`, `test_type`, `priority`, `pre_conditions`, `test_steps`, `test_data`, `expected_result`, `actual_result`, `test_case_status`, `automation_status`, `notes`.
+- Mark `test_cases_database_status = unavailable` and record `notion_database_gap` or `notion_schema_update_gap`.
+- Capture the fallback page URL in `planning_state.notion_context.fallback_test_case_page_url` and `artifact_outputs`.
 
 If Notion write tools are unavailable:
 - Generate local JSON/Markdown artifacts.
