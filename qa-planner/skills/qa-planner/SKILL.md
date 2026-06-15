@@ -1,6 +1,6 @@
 ---
 name: qa-planner
-description: Portable QA planning agent for converting requirements, PRDs, user stories, API specs, UI flows, screenshots, database notes, technical constraints, and optional Plane.so work items/cards into governed planning_state JSON, test plans, test cases using the Template Test Case field model, coverage maps, OK/NOK or partial review updates, and handoff contracts for qa-executor, qa-automation, and qa-reporter. Use when asked to create or revise QA plans, QA scenarios, test cases, requirement coverage, downstream QA handoffs, Plane-attached planning artifacts, or planning review packages. Do not use for running tests, creating defect tickets, writing final automation scripts, or producing final execution reports.
+description: Portable QA planning agent for converting requirements, PRDs, user stories, API specs, UI flows, screenshots, database notes, technical constraints, optional Plane.so work items/cards, and optional Notion pages/databases into governed planning_state JSON, test plans, test cases using the Template Test Case field model, coverage maps, OK/NOK or partial review updates, Notion test plan pages, Notion test case databases, copied Notion links, and handoff contracts for qa-executor, qa-automation, and qa-reporter. Use when asked to create or revise QA plans, QA scenarios, test cases, requirement coverage, downstream QA handoffs, Plane-attached planning artifacts, Notion-published planning artifacts, or planning review packages. Do not use for running tests, creating defect tickets, writing final automation scripts, or producing final execution reports.
 ---
 
 # QA Planner
@@ -20,8 +20,11 @@ Accept raw or structured inputs:
 - existing test cases or QA plans that need normalization or revision
 - human review feedback with `OK`, `NOK`, or partial target feedback
 - Plane.so work items/cards, comments, readable attachments, pages/wiki, modules, cycles, parent/child items, or linked items
+- Notion pages/databases, Notion output destinations, or requests to publish/copy/share Notion links for test plans and test cases
 
 If the input contains Plane.so signals such as `Plane`, a Plane work item/card, a readable id like `ENG-42`, a Plane URL/UUID/payload, or an @mention-style Plane Agent request, read `references/plane-hybrid.md` before continuing.
+
+If the input or requested output contains Notion signals such as a Notion URL, page/database id, request to create a Notion test plan, request to create test cases in Notion, or request to copy a Notion link, read `references/notion-mcp.md` before continuing.
 
 If sources conflict, do not choose silently. Add an `open_question` that names both sources and their conflicting values, then ask the user which source wins before planning impacted cases.
 
@@ -113,6 +116,14 @@ Plane path:
 4. Continue with the standard path.
 5. Sync outputs back to the source Plane work item/card according to the Plane output policy.
 6. Move Plane status only after successful sync and only when the user requested a valid target status.
+
+Notion path:
+1. Read `references/notion-mcp.md`.
+2. Resolve destination parent page/database or ask the user when no destination is clear.
+3. Continue with the standard path.
+4. Create or update a Notion test plan page.
+5. Create or update a Notion test case database. Test cases must use a Notion database when `notion-create-database` is available.
+6. Store Notion page/database URLs in `planning_state.artifact_outputs`, `planning_state.notion_context`, and handoff contracts.
 
 Large-input handling:
 - If estimated test cases exceed 50, propose batching by feature, module, epic, API group, or risk priority before generating all cases.
@@ -264,6 +275,7 @@ Produce additional artifacts only under these rules:
 - Handoff contracts: produce only when approved, explicitly requested, or clearly marked draft.
 - Spreadsheet: produce when user asks for Excel/Sheets, when Plane/full-sync policy requests attachments, or when test cases are large enough that a table is hard to review in Markdown.
 - Plane comment/page/sync outputs: produce only when Plane path is active and Plane write policy allows it.
+- Notion page/database outputs: produce only when Notion path is active and Notion write policy allows it. Test plan output is a page; test case output is a database unless database tooling is unavailable or user explicitly requests fallback.
 
 If schemas or templates are unavailable, generate inline JSON/Markdown structures from the field model and rules in this skill. Do not fail solely because `/schemas/` or `/templates/` files are unavailable.
 
@@ -288,6 +300,15 @@ Plane sync gates, apply only on Plane path:
 - Plane handoff tracker work items are created only when requested or required by an approved handoff contract.
 - Sensitive data is redacted before Plane write.
 
+Notion sync gates, apply only on Notion path:
+- Destination parent page/database was resolved or the user approved fallback.
+- Test plan was created or updated as a Notion page when write tools were available.
+- Test cases were created or updated as a Notion database when `notion-create-database` was available.
+- Test case database has required properties for `TC ID`, `Scenario`, `Summary`, `Test Type`, `Priority`, `Status`, `Automation Status`, `Requirement Refs`, `Owner`, and `Last Updated`.
+- Notion page/database links were captured in `planning_state` and handoff contracts.
+- Managed Notion artifacts avoid duplicate pages/databases for the same package id.
+- Sensitive data is redacted before Notion write.
+
 Status transition gates, apply only when Plane status movement is requested:
 - Status-move question was asked before running when Plane input lacked movement instruction.
 - Status movement happens only after successful Plane sync.
@@ -301,9 +322,11 @@ Use platform-native document, spreadsheet, or JSON tools when available. If a pl
 
 Read only when needed:
 - `references/plane-hybrid.md`: Plane MCP tool mapping, intake, attachment, planning enrichment, sync, wiki/page, links, idempotency, status movement, handoff tracking, and safety rules
+- `references/notion-mcp.md`: Notion MCP tool mapping, test plan page output, mandatory test case database output, link capture, idempotency, batching, fallback, and safety rules
 - `schemas/planning-state.schema.json`: canonical planning state schema
 - `schemas/handoff-contract.schema.json`: downstream contract schema
 - `schemas/review-feedback.schema.json`: OK/NOK/partial review feedback schema
+- `schemas/notion-output-policy.schema.json`: Notion page/database write policy, only for Notion path
 - `schemas/plane-source.schema.json`: Plane source schema, only for Plane path
 - `schemas/plane-output-policy.schema.json`: Plane write and status policy schema, only for Plane path
 - `schemas/plane-sync-record.schema.json`: Plane sync/idempotency schema, only for Plane path

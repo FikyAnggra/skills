@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.6 - 2026-06-15
+
+- Added conditional Notion MCP reference for creating QA test plan pages and mandatory test case databases.
+- Added Notion output policy schema for page/database creation, database property requirements, views, link capture, idempotency, and fallback behavior.
+- Extended planning state and handoff contracts with Notion page/database URLs and IDs.
+- Updated core workflow, output rules, quality gates, README, and manifests for Notion MCP output.
+
 ## 0.2.5 - 2026-06-13
 
 - Added concrete Plane MCP tool mapping for readable id resolution, work item payloads, comments, activities, relations, cycle/module scope, links, states, members, custom properties, and work item types.

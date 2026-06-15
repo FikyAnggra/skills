@@ -115,6 +115,7 @@
       "default": []
     },
     "plane_output_policy": { "$ref": "plane-output-policy.schema.json" },
+    "notion_output_policy": { "$ref": "notion-output-policy.schema.json" },
     "plane_transition_policy": {
       "type": "object",
       "additionalProperties": false,
@@ -135,6 +136,34 @@
       "type": "array",
       "items": { "$ref": "plane-sync-record.schema.json" },
       "default": []
+    },
+    "notion_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "workspace_id": { "type": "string" },
+        "parent_page_id": { "type": "string" },
+        "parent_page_url": { "type": "string" },
+        "test_plan_page_id": { "type": "string" },
+        "test_plan_page_url": { "type": "string" },
+        "test_case_database_id": { "type": "string" },
+        "test_case_database_url": { "type": "string" },
+        "test_case_row_pages": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/notion_page_ref" },
+          "default": []
+        },
+        "views": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/notion_view_ref" },
+          "default": []
+        },
+        "sync_status": {
+          "type": "string",
+          "enum": ["not_requested", "not_started", "page_synced", "database_synced", "full_sync_succeeded", "sync_failed"]
+        },
+        "gap_notes": { "type": "array", "items": { "type": "string" }, "default": [] }
+      }
     },
     "plane_context": {
       "type": "object",
@@ -307,15 +336,40 @@
       "properties": {
         "artifact_id": { "type": "string" },
         "artifact_type": { "type": "string" },
-        "format": { "type": "string", "enum": ["json", "markdown", "excel", "pdf", "word"] },
+        "format": { "type": "string", "enum": ["json", "markdown", "excel", "pdf", "word", "notion"] },
         "version": { "type": "string" },
         "path_or_ref": { "type": "string" },
         "checksum": { "type": "string" },
         "plane_comment_id": { "type": "string" },
         "plane_attachment_id": { "type": "string" },
         "plane_page_id": { "type": "string" },
+        "notion_page_id": { "type": "string" },
+        "notion_database_id": { "type": "string" },
+        "notion_url": { "type": "string" },
         "source_url": { "type": "string" },
         "custom_fields": { "type": "object", "additionalProperties": true, "default": {} }
+      }
+    },
+    "notion_page_ref": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["page_id"],
+      "properties": {
+        "page_id": { "type": "string" },
+        "url": { "type": "string" },
+        "title": { "type": "string" },
+        "tc_id": { "type": "string" },
+        "last_edited_time": { "type": "string" }
+      }
+    },
+    "notion_view_ref": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["view_id", "name"],
+      "properties": {
+        "view_id": { "type": "string" },
+        "name": { "type": "string" },
+        "url": { "type": "string" }
       }
     },
     "plane_member": {

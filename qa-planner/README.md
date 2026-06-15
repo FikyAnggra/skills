@@ -8,6 +8,7 @@
 - `.claude-plugin/plugin.json`: Claude-compatible metadata wrapper.
 - `skills/qa-planner/SKILL.md`: canonical portable planner instructions.
 - `skills/qa-planner/references/plane-hybrid.md`: conditional Plane integration instructions loaded only for Plane inputs.
+- `skills/qa-planner/references/notion-mcp.md`: conditional Notion integration instructions loaded only for Notion output or Notion source inputs.
 - `skills/qa-planner/schemas/`: JSON Schemas for planning state, handoff contracts, review feedback, Plane sources, Plane output policy, and Plane sync records.
 - `skills/qa-planner/templates/`: Markdown, JSON, Excel, Plane comment, and Plane page templates for QA planning outputs.
 - `skills/qa-planner/examples/`: sample requirement, planning state, Plane work item input, Plane sync record, Plane comment, and rendered test cases.
@@ -25,6 +26,8 @@ Provide requirements, Plane work item/card ids or payloads, PRDs, acceptance cri
 
 Plane inputs can come from work item/card title and description, comments, activities, readable attachment content, wiki/pages, parent or child work items, relations, linked work items, modules, cycles, or direct MCP/API payloads. Plane-specific rules live in `skills/qa-planner/references/plane-hybrid.md` and are loaded only for Plane inputs. If Plane MCP tools are available, the planner resolves readable ids such as `ENG-42`, reads comments and activity history, expands requested cycle/module scope, captures relations and project metadata, and asks the user instead of assuming when required information is missing or conflicting.
 
+Notion output can create or update a QA test plan page and a Notion test case database. The test case artifact must be a Notion database when `notion-create-database` is available, so cases can be filtered by priority, test type, status, automation status, requirement refs, owner, and update date. Notion page/database links are stored in `planning_state`, handoff contracts, and other active platform sync outputs.
+
 ## Outputs
 
 The source of truth is `planning_state.json`. Human-readable plans, test cases, coverage maps, spreadsheet outputs, and downstream handoff contracts are rendered from that state.
@@ -35,7 +38,14 @@ Expected outputs include:
 - requirement coverage map
 - `qa-executor`, `qa-automation`, and `qa-reporter` handoff contracts
 - Plane comment, attachment, wiki/page, page link, sync record, and optional status transition output when Plane tools are available
+- Notion test plan page, Notion test case database, Notion views, and captured Notion links when Notion tools are available
 - review history and changelog entries
+
+## Notion MCP Output
+
+When Notion output is requested, `qa-planner` creates the test plan as a Notion page and test cases as a Notion database. Each test case becomes a database row/page with properties for `TC ID`, `Scenario`, `Summary`, `Test Type`, `Priority`, `Status`, `Automation Status`, `Requirement Refs`, `Owner`, and `Last Updated`; long fields such as preconditions, steps, test data, expected result, and notes are written in the row page body.
+
+The planner captures `test_plan_page_url` and `test_case_database_url` in `planning_state.notion_context` and mirrors them into `artifact_outputs` and handoff contracts. If database creation is unavailable, the planner asks before using page-only fallback and records a Notion database gap.
 
 ## Plane Hybrid Sync
 
