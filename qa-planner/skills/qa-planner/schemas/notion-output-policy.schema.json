@@ -43,40 +43,59 @@
         "required_properties": {
           "type": "array",
           "items": { "type": "string" },
-          "default": ["tc_id", "scenario", "summary", "test_type", "priority", "pre_conditions", "test_steps", "test_data", "expected_result", "actual_result", "test_case_status", "automation_status", "notes"]
+          "default": ["TC ID", "Scenario", "Summary", "Test Type", "Priority", "Pre Conditions", "Test Steps", "Test Data", "Expected Result", "Actual Result", "Test Case Status", "Automation Status", "Notes"]
         },
         "required_property_types": {
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "tc_id": { "type": "string", "const": "title" },
-            "scenario": { "type": "string", "const": "rich_text" },
-            "summary": { "type": "string", "const": "rich_text" },
-            "test_type": { "type": "string", "const": "select" },
-            "priority": { "type": "string", "const": "select" },
-            "pre_conditions": { "type": "string", "const": "rich_text" },
-            "test_steps": { "type": "string", "const": "rich_text" },
-            "test_data": { "type": "string", "const": "rich_text" },
-            "expected_result": { "type": "string", "const": "rich_text" },
-            "actual_result": { "type": "string", "const": "rich_text" },
-            "test_case_status": { "type": "string", "const": "select" },
-            "automation_status": { "type": "string", "const": "select" },
-            "notes": { "type": "string", "const": "rich_text" }
+            "TC ID": { "type": "string", "const": "title" },
+            "Scenario": { "type": "string", "const": "rich_text" },
+            "Summary": { "type": "string", "const": "rich_text" },
+            "Test Type": { "type": "string", "const": "select" },
+            "Priority": { "type": "string", "const": "select" },
+            "Pre Conditions": { "type": "string", "const": "rich_text" },
+            "Test Steps": { "type": "string", "const": "rich_text" },
+            "Test Data": { "type": "string", "const": "rich_text" },
+            "Expected Result": { "type": "string", "const": "rich_text" },
+            "Actual Result": { "type": "string", "const": "rich_text" },
+            "Test Case Status": { "type": "string", "const": "select" },
+            "Automation Status": { "type": "string", "const": "select" },
+            "Notes": { "type": "string", "const": "rich_text" }
           },
           "default": {
-            "tc_id": "title",
-            "scenario": "rich_text",
-            "summary": "rich_text",
-            "test_type": "select",
-            "priority": "select",
-            "pre_conditions": "rich_text",
-            "test_steps": "rich_text",
-            "test_data": "rich_text",
-            "expected_result": "rich_text",
-            "actual_result": "rich_text",
-            "test_case_status": "select",
-            "automation_status": "select",
-            "notes": "rich_text"
+            "TC ID": "title",
+            "Scenario": "rich_text",
+            "Summary": "rich_text",
+            "Test Type": "select",
+            "Priority": "select",
+            "Pre Conditions": "rich_text",
+            "Test Steps": "rich_text",
+            "Test Data": "rich_text",
+            "Expected Result": "rich_text",
+            "Actual Result": "rich_text",
+            "Test Case Status": "select",
+            "Automation Status": "select",
+            "Notes": "rich_text"
+          }
+        },
+        "logical_field_mapping": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "TC ID": { "type": "string", "const": "tc_id" },
+            "Scenario": { "type": "string", "const": "scenario" },
+            "Summary": { "type": "string", "const": "summary" },
+            "Test Type": { "type": "string", "const": "test_type" },
+            "Priority": { "type": "string", "const": "priority" },
+            "Pre Conditions": { "type": "string", "const": "pre_conditions" },
+            "Test Steps": { "type": "string", "const": "test_steps" },
+            "Test Data": { "type": "string", "const": "test_data" },
+            "Expected Result": { "type": "string", "const": "expected_result" },
+            "Actual Result": { "type": "string", "const": "actual_result" },
+            "Test Case Status": { "type": "string", "const": "test_case_status" },
+            "Automation Status": { "type": "string", "const": "automation_status" },
+            "Notes": { "type": "string", "const": "notes" }
           }
         },
         "views": {

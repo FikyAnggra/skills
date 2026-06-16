@@ -36,22 +36,22 @@ When Notion output is requested:
 - Create each test case as a database row/page using `notion-create-pages`; put all Template Test Case fields into database properties, including long fields.
 - Store created or reused Notion URLs and IDs in `planning_state.artifact_outputs`, `planning_state.notion_context`, and relevant handoff contracts.
 
-Required test case database properties must match `templates/test-case.md` exactly:
-- `tc_id`: title, stable test case id such as `TC0001`
-- `scenario`: rich text
-- `summary`: rich text
-- `test_type`: select with qa-planner allowed `test_type` values
-- `priority`: select with qa-planner allowed priority values
-- `pre_conditions`: rich text
-- `test_steps`: rich text; preserve ordered steps as newline-separated text
-- `test_data`: rich text
-- `expected_result`: rich text
-- `actual_result`: rich text; blank before execution
-- `test_case_status`: select with qa-planner allowed test case status values
-- `automation_status`: select with qa-planner allowed automation status values
-- `notes`: rich text
+Required test case database properties must use this exact Notion display order and names:
+1. `TC ID`: title, mapped from `tc_id`, stable test case id such as `TC0001`
+2. `Scenario`: rich text, mapped from `scenario`
+3. `Summary`: rich text, mapped from `summary`
+4. `Test Type`: select with qa-planner allowed `test_type` values
+5. `Priority`: select with qa-planner allowed priority values
+6. `Pre Conditions`: rich text, mapped from `pre_conditions`
+7. `Test Steps`: rich text, mapped from `test_steps`; preserve ordered steps as newline-separated text
+8. `Test Data`: rich text, mapped from `test_data`
+9. `Expected Result`: rich text, mapped from `expected_result`
+10. `Actual Result`: rich text, mapped from `actual_result`; blank before execution
+11. `Test Case Status`: select with qa-planner allowed test case status values
+12. `Automation Status`: select with qa-planner allowed automation status values
+13. `Notes`: rich text, mapped from `notes`
 
-Do not move `pre_conditions`, `test_steps`, `test_data`, `expected_result`, `actual_result`, or `notes` into row page body by default. The row body can remain empty or contain only optional source backlinks when the user asks for richer row pages.
+Do not reorder these columns. Do not move `Pre Conditions`, `Test Steps`, `Test Data`, `Expected Result`, `Actual Result`, or `Notes` into row page body by default. The row body can remain empty or contain only optional source backlinks when the user asks for richer row pages.
 
 Test plan page rendering must follow `templates/test-plan.md` and stay readable in Notion:
 - Use clear headings matching the template: Metadata, Objective, Source Inputs, Scope, Assumptions and Open Questions, Risk Analysis, Test Strategy, Environment, Entry Criteria, Exit Criteria, Dependencies, Coverage Summary, Handoff Summary.
@@ -91,7 +91,7 @@ Never create duplicate databases for the same package id unless versioning is ex
 1. Resolve destination parent page/database using user input or `notion-search`.
 2. If destination is missing, ask the user for destination unless private-page creation is explicitly acceptable.
 3. Create or reuse the test plan page with `notion-create-pages` / `notion-update-page`, rendering content from `templates/test-plan.md`.
-4. Create or reuse the test case database with `notion-create-database` using the exact Template Test Case columns.
+4. Create or reuse the test case database with `notion-create-database` using the exact Notion display columns and order listed above.
 5. Ensure required database properties exist with `notion-fetch` and `notion-update-data-source` when needed; if this cannot be done, switch to fallback only after recording the gap.
 6. Create/update views with `notion-create-view` or `notion-update-view`.
 7. Create test case row pages with `notion-create-pages` in batches.
@@ -102,7 +102,7 @@ Never create duplicate databases for the same package id unless versioning is ex
 
 If `notion-create-database` or required `notion-update-data-source` cannot be used:
 - Create or update a Notion page with a test case table matching `templates/test-case.md` exactly.
-- Include columns: `tc_id`, `scenario`, `summary`, `test_type`, `priority`, `pre_conditions`, `test_steps`, `test_data`, `expected_result`, `actual_result`, `test_case_status`, `automation_status`, `notes`.
+- Include columns in this exact order: `TC ID`, `Scenario`, `Summary`, `Test Type`, `Priority`, `Pre Conditions`, `Test Steps`, `Test Data`, `Expected Result`, `Actual Result`, `Test Case Status`, `Automation Status`, `Notes`.
 - Mark `test_cases_database_status = unavailable` and record `notion_database_gap` or `notion_schema_update_gap`.
 - Capture the fallback page URL in `planning_state.notion_context.fallback_test_case_page_url` and `artifact_outputs`.
 

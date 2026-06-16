@@ -305,8 +305,8 @@ Notion sync gates, apply only on Notion path:
 - Test plan was created or updated as a Notion page when write tools were available.
 - Test plan page follows the structure of `templates/test-plan.md` and avoids raw JSON dumps.
 - Test cases were created or updated as a Notion database when `notion-create-database` and required `notion-update-data-source` support were available.
-- Test case database has exact Template Test Case properties: `tc_id`, `scenario`, `summary`, `test_type`, `priority`, `pre_conditions`, `test_steps`, `test_data`, `expected_result`, `actual_result`, `test_case_status`, `automation_status`, and `notes`.
-- If database/schema tools were unavailable, fallback Notion page contains a table with the same Template Test Case columns and records the database/schema gap.
+- Test case database has exact Notion display columns in this order: `TC ID`, `Scenario`, `Summary`, `Test Type`, `Priority`, `Pre Conditions`, `Test Steps`, `Test Data`, `Expected Result`, `Actual Result`, `Test Case Status`, `Automation Status`, `Notes`.
+- If database/schema tools were unavailable, fallback Notion page contains a table with the same ordered display columns and records the database/schema gap.
 - Notion page/database links were captured in `planning_state` and handoff contracts.
 - Managed Notion artifacts avoid duplicate pages/databases for the same package id.
 - Sensitive data is redacted before Notion write.

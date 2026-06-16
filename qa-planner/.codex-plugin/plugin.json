@@ -1,6 +1,6 @@
 {
   "name": "qa-planner",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "Portable QA planning plugin for converting requirements into planning_state JSON, test plans, test cases, coverage maps, review feedback, and downstream handoff contracts, with conditional Plane MCP and Notion MCP output integration.",
   "author": {
     "name": "Local developer"

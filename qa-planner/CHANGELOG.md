@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.8 - 2026-06-16
+
+- Enforced exact Notion test case database display column order: TC ID, Scenario, Summary, Test Type, Priority, Pre Conditions, Test Steps, Test Data, Expected Result, Actual Result, Test Case Status, Automation Status, Notes.
+- Added logical field mapping from Notion display columns to qa-planner internal test case fields.
+
 ## 0.2.7 - 2026-06-15
 
 - Updated Notion test case database rules to use exact `templates/test-case.md` columns, including long fields as database properties.
