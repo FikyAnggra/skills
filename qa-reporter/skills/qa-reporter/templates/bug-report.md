@@ -47,8 +47,10 @@ Submission mode: `{{submission_mode}}`
 Plane project: `{{custom_fields.plane.project_identifier}}` / `{{custom_fields.plane.project_id}}`
 Plane work item: `{{custom_fields.plane.readable_identifier}}` / `{{custom_fields.plane.work_item_id}}`
 Duplicate check: `{{duplicate_check.status}}`
+State mapping approval: `{{custom_fields.plane.state_mapping.approval_status}}`
 
 ## Submission Gate
 
 Do not submit this issue until the issue package is approved, redaction status is `passed`, required fields are complete, tool/config exists, and the user explicitly asks to submit.
+
 

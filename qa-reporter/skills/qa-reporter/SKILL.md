@@ -198,16 +198,45 @@ Map reporter issue data to Plane work item fields:
 
 Use `custom_fields.plane` for Plane-specific IDs and routing data instead of adding platform-specific top-level fields outside the schema.
 
+### Plane State Discovery and Recommendation
+
+Do not assume Plane state names, state groups, or default workflow order. Plane projects can use custom workflows. Before creating, syncing, or reconciling Plane work items, fetch or receive states for the target project, show every available state to the user, recommend an intent mapping, and ask the user to approve or edit it.
+
+State discovery workflow:
+1. Resolve the target Plane project. Prefer exact `project_id`; otherwise match `project_identifier` or project name from user input.
+2. Fetch/list project states with the available Plane MCP state tool. In local adapters this may be `list_states(project_id)`.
+3. Display each state with id, name, group/category, sequence/order, default marker, and description when available.
+4. Recommend mapping to qa-reporter intents using Plane metadata first. Use state names/order only as weak signals when metadata is missing.
+5. Ask the user to approve or edit the mapping before using it. If the user does not approve, stop before create/update/sync actions.
+6. Store the approved mapping under `custom_fields.plane.state_mapping` with project id, approval status, recommendation basis, approver, and timestamp.
+7. Re-run discovery when the target project changes, state list changes, mapping is missing, or mapping approval is not `approved`.
+
+Recommend these intents:
+- `issue_created_state`: prefer backlog group, default state, or lowest sequence state.
+- `fix_in_progress_states`: prefer started states.
+- `fix_done_states`: prefer completed states; if a completed state mentions QA, retest, validation, or verification, recommend it before a generic completed state.
+- `rejected_or_canceled_states`: prefer cancelled/canceled states.
+- `reopened_state`: prefer a started state unless the user chooses another state.
+
+Recommendation output must be explicit:
+- list all Plane states found
+- mark recommendation basis as `metadata`, `name_order`, or `manual`
+- show recommended state ids and names for each qa-reporter intent
+- explain any weak recommendation
+- ask one clear approval question before using the mapping
+
+Never hardcode or silently infer state names such as `Done`, `Triage`, `In Progress`, `Backlog`, `Selected`, or `Canceled`. Example names in docs are examples only, not default behavior.
 ### Plane Submission Workflow
 
 1. Resolve target project with Plane project tools. Prefer exact `project_id`; otherwise match `project_identifier` or project name from user input.
-2. Resolve optional state, labels, type, cycle, module, assignees, and duplicate candidates.
-3. Run duplicate check with Plane work item search using issue title, affected test case ids, and key error text. If likely duplicate exists, stop and ask whether to comment on the existing work item or create a new one.
-4. Render `description_html` from the approved issue package. Keep expected result, actual result, reproduction steps, evidence refs, severity reason, redaction status, and report gaps visible.
-5. For `submission_mode = intake`, create an intake work item when the connected Plane MCP server exposes intake tools. For `work_item`, create a project work item. For `comment_existing`, add a comment to the resolved work item.
-6. Add evidence links, cycle/module membership, relation, and worklog only when those IDs are explicitly resolved and user intent covers them.
-7. Read back the created or updated work item by UUID or readable identifier. Only mark `submission_status = submitted` after read-back confirms the expected title/body/target.
-8. Record Plane submission result in `submission_result` and `submission_history` with tool `plane`, external work item UUID, readable identifier, URL when known, timestamp, and submitter.
+2. Fetch/list Plane states, show them to the user, recommend `custom_fields.plane.state_mapping`, and get user approval before using any state id.
+3. Resolve optional labels, type, cycle, module, assignees, and duplicate candidates.
+4. Run duplicate check with Plane work item search using issue title, affected test case ids, and key error text. If likely duplicate exists, stop and ask whether to comment on the existing work item or create a new one.
+5. Render `description_html` from the approved issue package. Keep expected result, actual result, reproduction steps, evidence refs, severity reason, redaction status, and report gaps visible.
+6. For `submission_mode = intake`, create an intake work item when the connected Plane MCP server exposes intake tools. For `work_item`, create a project work item. For `comment_existing`, add a comment to the resolved work item.
+7. Add evidence links, cycle/module membership, relation, and worklog only when those IDs are explicitly resolved and user intent covers them.
+8. Read back the created or updated work item by UUID or readable identifier. Only mark `submission_status = submitted` after read-back confirms the expected title/body/target.
+9. Record Plane submission result in `submission_result` and `submission_history` with tool `plane`, external work item UUID, readable identifier, URL when known, timestamp, and submitter.
 
 ### Plane Failure Handling
 
@@ -261,6 +290,7 @@ Read only when needed:
 - `references/plane-mcp.md`: Plane MCP setup, field mapping, tool behavior, and troubleshooting notes
 - `templates/`: reusable report, issue, SIT/UAT, coverage/risk, and state skeletons
 - `examples/`: sample manual result, exploratory issue, report state, and rendered outputs
+
 
 
 

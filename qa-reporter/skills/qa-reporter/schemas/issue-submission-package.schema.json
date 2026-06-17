@@ -1,140 +1,631 @@
 ﻿{
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local.qa/qa-reporter/issue-submission-package.schema.json",
-  "title": "QA Reporter Issue Submission Package",
-  "type": "object",
-  "additionalProperties": false,
-  "required": [
-    "issue_id",
-    "title",
-    "severity",
-    "priority",
-    "status",
-    "expected_result",
-    "redaction_status",
-    "submission_status"
-  ],
-  "properties": {
-    "issue_id": { "type": "string", "minLength": 1 },
-    "source_issue_candidate_id": { "type": "string" },
-    "title": { "type": "string", "minLength": 1 },
-    "summary": { "type": "string" },
-    "severity": { "type": "string", "enum": ["Critical", "High", "Medium", "Low"] },
-    "priority": { "type": "string", "enum": ["P0", "P1", "P2", "P3", "P0 - Critical", "P1 - High", "P2 - Medium", "P3 - Low"] },
-    "status": { "type": "string", "enum": ["draft", "ready_for_review", "revision_required", "approved", "rejected"] },
-    "affected_test_cases": { "type": "array", "items": { "type": "string" } },
-    "environment": { "type": "string" },
-    "expected_result": { "type": "string", "minLength": 1 },
-    "actual_result": { "type": "string" },
-    "blocker_detail": { "type": "string" },
-    "reproduction_steps": { "type": "array", "items": { "type": "string" } },
-    "evidence_refs": { "type": "array", "items": { "type": "string" } },
-    "report_gaps": { "type": "array", "items": { "type": "string" } },
-    "suggested_owner": { "type": "string" },
-    "target_tracker": { "type": "string", "enum": ["none", "plane", "jira", "linear", "github", "other"] },
-    "submission_mode": { "type": "string", "enum": ["dry_run", "intake", "work_item", "comment_existing"] },
-    "duplicate_check": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "status": { "type": "string", "enum": ["not_run", "passed", "possible_duplicate", "waived"] },
-        "checked_at": { "type": "string" },
-        "query": { "type": "string" },
-        "matched_items": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "tracker": { "type": "string", "enum": ["plane", "jira", "linear", "github", "other"] },
-              "external_issue_id": { "type": "string" },
-              "readable_identifier": { "type": "string" },
-              "title": { "type": "string" },
-              "url": { "type": "string" },
-              "match_reason": { "type": "string" }
-            }
-          }
-        },
-        "waiver": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["reviewer", "reason", "timestamp"],
-          "properties": {
-            "reviewer": { "type": "string" },
-            "reason": { "type": "string" },
-            "timestamp": { "type": "string" }
-          }
-        }
-      }
-    },
-    "severity_normalization": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "source_severity": { "type": "string" },
-        "normalization_inputs": { "type": "array", "items": { "type": "string" } },
-        "reason": { "type": "string" },
-        "override": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["reviewer", "reason", "timestamp", "previous_severity", "final_severity"],
-          "properties": {
-            "reviewer": { "type": "string" },
-            "reason": { "type": "string" },
-            "timestamp": { "type": "string" },
-            "previous_severity": { "type": "string", "enum": ["Critical", "High", "Medium", "Low"] },
-            "final_severity": { "type": "string", "enum": ["Critical", "High", "Medium", "Low"] }
-          }
-        }
-      }
-    },
-    "redaction_status": { "type": "string", "enum": ["not_checked", "pending", "passed", "failed"] },
-    "submission_status": { "type": "string", "enum": ["not_submitted", "submission_requested", "submitted", "submission_failed"] },
-    "submission_result": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "submitted": { "type": "boolean" },
-        "tool": { "type": "string", "enum": ["plane", "jira", "linear", "github", "other"] },
-        "external_issue_id": { "type": "string" },
-        "readable_identifier": { "type": "string" },
-        "external_issue_url": { "type": "string" },
-        "submitted_at": { "type": "string" },
-        "submitted_by": { "type": "string" },
-        "verified_at": { "type": "string" },
-        "verification_status": { "type": "string", "enum": ["not_run", "verified", "failed"] },
-        "error": { "type": "string" }
-      }
-    },
-    "custom_fields": {
-      "type": "object",
-      "additionalProperties": true,
-      "properties": {
-        "plane": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "workspace_slug": { "type": "string" },
-            "project_id": { "type": "string" },
-            "project_identifier": { "type": "string" },
-            "project_name": { "type": "string" },
-            "work_item_id": { "type": "string" },
-            "readable_identifier": { "type": "string" },
-            "state_id": { "type": "string" },
-            "state_name": { "type": "string" },
-            "type_id": { "type": "string" },
-            "type_name": { "type": "string" },
-            "label_ids": { "type": "array", "items": { "type": "string" } },
-            "label_names": { "type": "array", "items": { "type": "string" } },
-            "assignee_ids": { "type": "array", "items": { "type": "string" } },
-            "cycle_id": { "type": "string" },
-            "module_id": { "type": "string" },
-            "relation": { "type": "string", "enum": ["blocking", "blocked_by", "duplicate_of", "duplicate", "relates_to"] },
-            "related_work_item_id": { "type": "string" },
-            "external_url": { "type": "string" }
-          }
-        }
-      }
-    }
-  }
+    "$schema":  "https://json-schema.org/draft/2020-12/schema",
+    "$id":  "https://local.qa/qa-reporter/issue-submission-package.schema.json",
+    "title":  "QA Reporter Issue Submission Package",
+    "type":  "object",
+    "additionalProperties":  false,
+    "required":  [
+                     "issue_id",
+                     "title",
+                     "severity",
+                     "priority",
+                     "status",
+                     "expected_result",
+                     "redaction_status",
+                     "submission_status"
+                 ],
+    "properties":  {
+                       "issue_id":  {
+                                        "type":  "string",
+                                        "minLength":  1
+                                    },
+                       "source_issue_candidate_id":  {
+                                                         "type":  "string"
+                                                     },
+                       "title":  {
+                                     "type":  "string",
+                                     "minLength":  1
+                                 },
+                       "summary":  {
+                                       "type":  "string"
+                                   },
+                       "severity":  {
+                                        "type":  "string",
+                                        "enum":  [
+                                                     "Critical",
+                                                     "High",
+                                                     "Medium",
+                                                     "Low"
+                                                 ]
+                                    },
+                       "priority":  {
+                                        "type":  "string",
+                                        "enum":  [
+                                                     "P0",
+                                                     "P1",
+                                                     "P2",
+                                                     "P3",
+                                                     "P0 - Critical",
+                                                     "P1 - High",
+                                                     "P2 - Medium",
+                                                     "P3 - Low"
+                                                 ]
+                                    },
+                       "status":  {
+                                      "type":  "string",
+                                      "enum":  [
+                                                   "draft",
+                                                   "ready_for_review",
+                                                   "revision_required",
+                                                   "approved",
+                                                   "rejected"
+                                               ]
+                                  },
+                       "affected_test_cases":  {
+                                                   "type":  "array",
+                                                   "items":  {
+                                                                 "type":  "string"
+                                                             }
+                                               },
+                       "environment":  {
+                                           "type":  "string"
+                                       },
+                       "expected_result":  {
+                                               "type":  "string",
+                                               "minLength":  1
+                                           },
+                       "actual_result":  {
+                                             "type":  "string"
+                                         },
+                       "blocker_detail":  {
+                                              "type":  "string"
+                                          },
+                       "reproduction_steps":  {
+                                                  "type":  "array",
+                                                  "items":  {
+                                                                "type":  "string"
+                                                            }
+                                              },
+                       "evidence_refs":  {
+                                             "type":  "array",
+                                             "items":  {
+                                                           "type":  "string"
+                                                       }
+                                         },
+                       "report_gaps":  {
+                                           "type":  "array",
+                                           "items":  {
+                                                         "type":  "string"
+                                                     }
+                                       },
+                       "suggested_owner":  {
+                                               "type":  "string"
+                                           },
+                       "target_tracker":  {
+                                              "type":  "string",
+                                              "enum":  [
+                                                           "none",
+                                                           "plane",
+                                                           "jira",
+                                                           "linear",
+                                                           "github",
+                                                           "other"
+                                                       ]
+                                          },
+                       "submission_mode":  {
+                                               "type":  "string",
+                                               "enum":  [
+                                                            "dry_run",
+                                                            "intake",
+                                                            "work_item",
+                                                            "comment_existing"
+                                                        ]
+                                           },
+                       "duplicate_check":  {
+                                               "type":  "object",
+                                               "additionalProperties":  false,
+                                               "properties":  {
+                                                                  "status":  {
+                                                                                 "type":  "string",
+                                                                                 "enum":  [
+                                                                                              "not_run",
+                                                                                              "passed",
+                                                                                              "possible_duplicate",
+                                                                                              "waived"
+                                                                                          ]
+                                                                             },
+                                                                  "checked_at":  {
+                                                                                     "type":  "string"
+                                                                                 },
+                                                                  "query":  {
+                                                                                "type":  "string"
+                                                                            },
+                                                                  "matched_items":  {
+                                                                                        "type":  "array",
+                                                                                        "items":  {
+                                                                                                      "type":  "object",
+                                                                                                      "additionalProperties":  false,
+                                                                                                      "properties":  {
+                                                                                                                         "tracker":  {
+                                                                                                                                         "type":  "string",
+                                                                                                                                         "enum":  [
+                                                                                                                                                      "plane",
+                                                                                                                                                      "jira",
+                                                                                                                                                      "linear",
+                                                                                                                                                      "github",
+                                                                                                                                                      "other"
+                                                                                                                                                  ]
+                                                                                                                                     },
+                                                                                                                         "external_issue_id":  {
+                                                                                                                                                   "type":  "string"
+                                                                                                                                               },
+                                                                                                                         "readable_identifier":  {
+                                                                                                                                                     "type":  "string"
+                                                                                                                                                 },
+                                                                                                                         "title":  {
+                                                                                                                                       "type":  "string"
+                                                                                                                                   },
+                                                                                                                         "url":  {
+                                                                                                                                     "type":  "string"
+                                                                                                                                 },
+                                                                                                                         "match_reason":  {
+                                                                                                                                              "type":  "string"
+                                                                                                                                          }
+                                                                                                                     }
+                                                                                                  }
+                                                                                    },
+                                                                  "waiver":  {
+                                                                                 "type":  "object",
+                                                                                 "additionalProperties":  false,
+                                                                                 "required":  [
+                                                                                                  "reviewer",
+                                                                                                  "reason",
+                                                                                                  "timestamp"
+                                                                                              ],
+                                                                                 "properties":  {
+                                                                                                    "reviewer":  {
+                                                                                                                     "type":  "string"
+                                                                                                                 },
+                                                                                                    "reason":  {
+                                                                                                                   "type":  "string"
+                                                                                                               },
+                                                                                                    "timestamp":  {
+                                                                                                                      "type":  "string"
+                                                                                                                  }
+                                                                                                }
+                                                                             }
+                                                              }
+                                           },
+                       "severity_normalization":  {
+                                                      "type":  "object",
+                                                      "additionalProperties":  false,
+                                                      "properties":  {
+                                                                         "source_severity":  {
+                                                                                                 "type":  "string"
+                                                                                             },
+                                                                         "normalization_inputs":  {
+                                                                                                      "type":  "array",
+                                                                                                      "items":  {
+                                                                                                                    "type":  "string"
+                                                                                                                }
+                                                                                                  },
+                                                                         "reason":  {
+                                                                                        "type":  "string"
+                                                                                    },
+                                                                         "override":  {
+                                                                                          "type":  "object",
+                                                                                          "additionalProperties":  false,
+                                                                                          "required":  [
+                                                                                                           "reviewer",
+                                                                                                           "reason",
+                                                                                                           "timestamp",
+                                                                                                           "previous_severity",
+                                                                                                           "final_severity"
+                                                                                                       ],
+                                                                                          "properties":  {
+                                                                                                             "reviewer":  {
+                                                                                                                              "type":  "string"
+                                                                                                                          },
+                                                                                                             "reason":  {
+                                                                                                                            "type":  "string"
+                                                                                                                        },
+                                                                                                             "timestamp":  {
+                                                                                                                               "type":  "string"
+                                                                                                                           },
+                                                                                                             "previous_severity":  {
+                                                                                                                                       "type":  "string",
+                                                                                                                                       "enum":  [
+                                                                                                                                                    "Critical",
+                                                                                                                                                    "High",
+                                                                                                                                                    "Medium",
+                                                                                                                                                    "Low"
+                                                                                                                                                ]
+                                                                                                                                   },
+                                                                                                             "final_severity":  {
+                                                                                                                                    "type":  "string",
+                                                                                                                                    "enum":  [
+                                                                                                                                                 "Critical",
+                                                                                                                                                 "High",
+                                                                                                                                                 "Medium",
+                                                                                                                                                 "Low"
+                                                                                                                                             ]
+                                                                                                                                }
+                                                                                                         }
+                                                                                      }
+                                                                     }
+                                                  },
+                       "redaction_status":  {
+                                                "type":  "string",
+                                                "enum":  [
+                                                             "not_checked",
+                                                             "pending",
+                                                             "passed",
+                                                             "failed"
+                                                         ]
+                                            },
+                       "submission_status":  {
+                                                 "type":  "string",
+                                                 "enum":  [
+                                                              "not_submitted",
+                                                              "submission_requested",
+                                                              "submitted",
+                                                              "submission_failed"
+                                                          ]
+                                             },
+                       "submission_result":  {
+                                                 "type":  "object",
+                                                 "additionalProperties":  false,
+                                                 "properties":  {
+                                                                    "submitted":  {
+                                                                                      "type":  "boolean"
+                                                                                  },
+                                                                    "tool":  {
+                                                                                 "type":  "string",
+                                                                                 "enum":  [
+                                                                                              "plane",
+                                                                                              "jira",
+                                                                                              "linear",
+                                                                                              "github",
+                                                                                              "other"
+                                                                                          ]
+                                                                             },
+                                                                    "external_issue_id":  {
+                                                                                              "type":  "string"
+                                                                                          },
+                                                                    "readable_identifier":  {
+                                                                                                "type":  "string"
+                                                                                            },
+                                                                    "external_issue_url":  {
+                                                                                               "type":  "string"
+                                                                                           },
+                                                                    "submitted_at":  {
+                                                                                         "type":  "string"
+                                                                                     },
+                                                                    "submitted_by":  {
+                                                                                         "type":  "string"
+                                                                                     },
+                                                                    "verified_at":  {
+                                                                                        "type":  "string"
+                                                                                    },
+                                                                    "verification_status":  {
+                                                                                                "type":  "string",
+                                                                                                "enum":  [
+                                                                                                             "not_run",
+                                                                                                             "verified",
+                                                                                                             "failed"
+                                                                                                         ]
+                                                                                            },
+                                                                    "error":  {
+                                                                                  "type":  "string"
+                                                                              }
+                                                                }
+                                             },
+                       "custom_fields":  {
+                                             "type":  "object",
+                                             "additionalProperties":  true,
+                                             "properties":  {
+                                                                "plane":  {
+                                                                              "type":  "object",
+                                                                              "additionalProperties":  false,
+                                                                              "properties":  {
+                                                                                                 "workspace_slug":  {
+                                                                                                                        "type":  "string"
+                                                                                                                    },
+                                                                                                 "project_id":  {
+                                                                                                                    "type":  "string"
+                                                                                                                },
+                                                                                                 "project_identifier":  {
+                                                                                                                            "type":  "string"
+                                                                                                                        },
+                                                                                                 "project_name":  {
+                                                                                                                      "type":  "string"
+                                                                                                                  },
+                                                                                                 "work_item_id":  {
+                                                                                                                      "type":  "string"
+                                                                                                                  },
+                                                                                                 "readable_identifier":  {
+                                                                                                                             "type":  "string"
+                                                                                                                         },
+                                                                                                 "state_id":  {
+                                                                                                                  "type":  "string"
+                                                                                                              },
+                                                                                                 "state_name":  {
+                                                                                                                    "type":  "string"
+                                                                                                                },
+                                                                                                 "type_id":  {
+                                                                                                                 "type":  "string"
+                                                                                                             },
+                                                                                                 "type_name":  {
+                                                                                                                   "type":  "string"
+                                                                                                               },
+                                                                                                 "label_ids":  {
+                                                                                                                   "type":  "array",
+                                                                                                                   "items":  {
+                                                                                                                                 "type":  "string"
+                                                                                                                             }
+                                                                                                               },
+                                                                                                 "label_names":  {
+                                                                                                                     "type":  "array",
+                                                                                                                     "items":  {
+                                                                                                                                   "type":  "string"
+                                                                                                                               }
+                                                                                                                 },
+                                                                                                 "assignee_ids":  {
+                                                                                                                      "type":  "array",
+                                                                                                                      "items":  {
+                                                                                                                                    "type":  "string"
+                                                                                                                                }
+                                                                                                                  },
+                                                                                                 "cycle_id":  {
+                                                                                                                  "type":  "string"
+                                                                                                              },
+                                                                                                 "module_id":  {
+                                                                                                                   "type":  "string"
+                                                                                                               },
+                                                                                                 "relation":  {
+                                                                                                                  "type":  "string",
+                                                                                                                  "enum":  [
+                                                                                                                               "blocking",
+                                                                                                                               "blocked_by",
+                                                                                                                               "duplicate_of",
+                                                                                                                               "duplicate",
+                                                                                                                               "relates_to"
+                                                                                                                           ]
+                                                                                                              },
+                                                                                                 "related_work_item_id":  {
+                                                                                                                              "type":  "string"
+                                                                                                                          },
+                                                                                                 "external_url":  {
+                                                                                                                      "type":  "string"
+                                                                                                                  },
+                                                                                                 "state_mapping":  {
+                                                                                                                       "type":  "object",
+                                                                                                                       "additionalProperties":  false,
+                                                                                                                       "required":  [
+                                                                                                                                        "project_id",
+                                                                                                                                        "approval_status",
+                                                                                                                                        "recommendation_basis"
+                                                                                                                                    ],
+                                                                                                                       "properties":  {
+                                                                                                                                          "project_id":  {
+                                                                                                                                                             "type":  "string"
+                                                                                                                                                         },
+                                                                                                                                          "project_identifier":  {
+                                                                                                                                                                     "type":  "string"
+                                                                                                                                                                 },
+                                                                                                                                          "fetched_at":  {
+                                                                                                                                                             "type":  "string"
+                                                                                                                                                         },
+                                                                                                                                          "verified_at":  {
+                                                                                                                                                              "type":  "string"
+                                                                                                                                                          },
+                                                                                                                                          "approved_by":  {
+                                                                                                                                                              "type":  "string"
+                                                                                                                                                          },
+                                                                                                                                          "approval_status":  {
+                                                                                                                                                                  "type":  "string",
+                                                                                                                                                                  "enum":  [
+                                                                                                                                                                               "pending",
+                                                                                                                                                                               "approved",
+                                                                                                                                                                               "rejected"
+                                                                                                                                                                           ]
+                                                                                                                                                              },
+                                                                                                                                          "recommendation_basis":  {
+                                                                                                                                                                       "type":  "string",
+                                                                                                                                                                       "enum":  [
+                                                                                                                                                                                    "metadata",
+                                                                                                                                                                                    "name_order",
+                                                                                                                                                                                    "manual"
+                                                                                                                                                                                ]
+                                                                                                                                                                   },
+                                                                                                                                          "available_states":  {
+                                                                                                                                                                   "type":  "array",
+                                                                                                                                                                   "items":  {
+                                                                                                                                                                                 "type":  "object",
+                                                                                                                                                                                 "additionalProperties":  false,
+                                                                                                                                                                                 "required":  [
+                                                                                                                                                                                                  "id",
+                                                                                                                                                                                                  "name"
+                                                                                                                                                                                              ],
+                                                                                                                                                                                 "properties":  {
+                                                                                                                                                                                                    "id":  {
+                                                                                                                                                                                                               "type":  "string"
+                                                                                                                                                                                                           },
+                                                                                                                                                                                                    "name":  {
+                                                                                                                                                                                                                 "type":  "string"
+                                                                                                                                                                                                             },
+                                                                                                                                                                                                    "group":  {
+                                                                                                                                                                                                                  "type":  "string"
+                                                                                                                                                                                                              },
+                                                                                                                                                                                                    "sequence":  {
+                                                                                                                                                                                                                     "type":  "number"
+                                                                                                                                                                                                                 },
+                                                                                                                                                                                                    "is_default":  {
+                                                                                                                                                                                                                       "type":  "boolean"
+                                                                                                                                                                                                                   },
+                                                                                                                                                                                                    "description":  {
+                                                                                                                                                                                                                        "type":  "string"
+                                                                                                                                                                                                                    }
+                                                                                                                                                                                                }
+                                                                                                                                                                             }
+                                                                                                                                                               },
+                                                                                                                                          "issue_created_state":  {
+                                                                                                                                                                      "type":  "object",
+                                                                                                                                                                      "additionalProperties":  false,
+                                                                                                                                                                      "required":  [
+                                                                                                                                                                                       "id",
+                                                                                                                                                                                       "name"
+                                                                                                                                                                                   ],
+                                                                                                                                                                      "properties":  {
+                                                                                                                                                                                         "id":  {
+                                                                                                                                                                                                    "type":  "string"
+                                                                                                                                                                                                },
+                                                                                                                                                                                         "name":  {
+                                                                                                                                                                                                      "type":  "string"
+                                                                                                                                                                                                  },
+                                                                                                                                                                                         "group":  {
+                                                                                                                                                                                                       "type":  "string"
+                                                                                                                                                                                                   },
+                                                                                                                                                                                         "sequence":  {
+                                                                                                                                                                                                          "type":  "number"
+                                                                                                                                                                                                      },
+                                                                                                                                                                                         "is_default":  {
+                                                                                                                                                                                                            "type":  "boolean"
+                                                                                                                                                                                                        },
+                                                                                                                                                                                         "recommendation_reason":  {
+                                                                                                                                                                                                                       "type":  "string"
+                                                                                                                                                                                                                   }
+                                                                                                                                                                                     }
+                                                                                                                                                                  },
+                                                                                                                                          "fix_in_progress_states":  {
+                                                                                                                                                                         "type":  "array",
+                                                                                                                                                                         "items":  {
+                                                                                                                                                                                       "type":  "object",
+                                                                                                                                                                                       "additionalProperties":  false,
+                                                                                                                                                                                       "required":  [
+                                                                                                                                                                                                        "id",
+                                                                                                                                                                                                        "name"
+                                                                                                                                                                                                    ],
+                                                                                                                                                                                       "properties":  {
+                                                                                                                                                                                                          "id":  {
+                                                                                                                                                                                                                     "type":  "string"
+                                                                                                                                                                                                                 },
+                                                                                                                                                                                                          "name":  {
+                                                                                                                                                                                                                       "type":  "string"
+                                                                                                                                                                                                                   },
+                                                                                                                                                                                                          "group":  {
+                                                                                                                                                                                                                        "type":  "string"
+                                                                                                                                                                                                                    },
+                                                                                                                                                                                                          "sequence":  {
+                                                                                                                                                                                                                           "type":  "number"
+                                                                                                                                                                                                                       },
+                                                                                                                                                                                                          "is_default":  {
+                                                                                                                                                                                                                             "type":  "boolean"
+                                                                                                                                                                                                                         },
+                                                                                                                                                                                                          "recommendation_reason":  {
+                                                                                                                                                                                                                                        "type":  "string"
+                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                      }
+                                                                                                                                                                                   }
+                                                                                                                                                                     },
+                                                                                                                                          "fix_done_states":  {
+                                                                                                                                                                  "type":  "array",
+                                                                                                                                                                  "items":  {
+                                                                                                                                                                                "type":  "object",
+                                                                                                                                                                                "additionalProperties":  false,
+                                                                                                                                                                                "required":  [
+                                                                                                                                                                                                 "id",
+                                                                                                                                                                                                 "name"
+                                                                                                                                                                                             ],
+                                                                                                                                                                                "properties":  {
+                                                                                                                                                                                                   "id":  {
+                                                                                                                                                                                                              "type":  "string"
+                                                                                                                                                                                                          },
+                                                                                                                                                                                                   "name":  {
+                                                                                                                                                                                                                "type":  "string"
+                                                                                                                                                                                                            },
+                                                                                                                                                                                                   "group":  {
+                                                                                                                                                                                                                 "type":  "string"
+                                                                                                                                                                                                             },
+                                                                                                                                                                                                   "sequence":  {
+                                                                                                                                                                                                                    "type":  "number"
+                                                                                                                                                                                                                },
+                                                                                                                                                                                                   "is_default":  {
+                                                                                                                                                                                                                      "type":  "boolean"
+                                                                                                                                                                                                                  },
+                                                                                                                                                                                                   "recommendation_reason":  {
+                                                                                                                                                                                                                                 "type":  "string"
+                                                                                                                                                                                                                             }
+                                                                                                                                                                                               }
+                                                                                                                                                                            }
+                                                                                                                                                              },
+                                                                                                                                          "rejected_or_canceled_states":  {
+                                                                                                                                                                              "type":  "array",
+                                                                                                                                                                              "items":  {
+                                                                                                                                                                                            "type":  "object",
+                                                                                                                                                                                            "additionalProperties":  false,
+                                                                                                                                                                                            "required":  [
+                                                                                                                                                                                                             "id",
+                                                                                                                                                                                                             "name"
+                                                                                                                                                                                                         ],
+                                                                                                                                                                                            "properties":  {
+                                                                                                                                                                                                               "id":  {
+                                                                                                                                                                                                                          "type":  "string"
+                                                                                                                                                                                                                      },
+                                                                                                                                                                                                               "name":  {
+                                                                                                                                                                                                                            "type":  "string"
+                                                                                                                                                                                                                        },
+                                                                                                                                                                                                               "group":  {
+                                                                                                                                                                                                                             "type":  "string"
+                                                                                                                                                                                                                         },
+                                                                                                                                                                                                               "sequence":  {
+                                                                                                                                                                                                                                "type":  "number"
+                                                                                                                                                                                                                            },
+                                                                                                                                                                                                               "is_default":  {
+                                                                                                                                                                                                                                  "type":  "boolean"
+                                                                                                                                                                                                                              },
+                                                                                                                                                                                                               "recommendation_reason":  {
+                                                                                                                                                                                                                                             "type":  "string"
+                                                                                                                                                                                                                                         }
+                                                                                                                                                                                                           }
+                                                                                                                                                                                        }
+                                                                                                                                                                          },
+                                                                                                                                          "reopened_state":  {
+                                                                                                                                                                 "type":  "object",
+                                                                                                                                                                 "additionalProperties":  false,
+                                                                                                                                                                 "required":  [
+                                                                                                                                                                                  "id",
+                                                                                                                                                                                  "name"
+                                                                                                                                                                              ],
+                                                                                                                                                                 "properties":  {
+                                                                                                                                                                                    "id":  {
+                                                                                                                                                                                               "type":  "string"
+                                                                                                                                                                                           },
+                                                                                                                                                                                    "name":  {
+                                                                                                                                                                                                 "type":  "string"
+                                                                                                                                                                                             },
+                                                                                                                                                                                    "group":  {
+                                                                                                                                                                                                  "type":  "string"
+                                                                                                                                                                                              },
+                                                                                                                                                                                    "sequence":  {
+                                                                                                                                                                                                     "type":  "number"
+                                                                                                                                                                                                 },
+                                                                                                                                                                                    "is_default":  {
+                                                                                                                                                                                                       "type":  "boolean"
+                                                                                                                                                                                                   },
+                                                                                                                                                                                    "recommendation_reason":  {
+                                                                                                                                                                                                                  "type":  "string"
+                                                                                                                                                                                                              }
+                                                                                                                                                                                }
+                                                                                                                                                             },
+                                                                                                                                          "reviewer_note":  {
+                                                                                                                                                                "type":  "string"
+                                                                                                                                                            }
+                                                                                                                                      }
+                                                                                                                   }
+                                                                                             }
+                                                                          }
+                                                            }
+                                         }
+                   }
 }

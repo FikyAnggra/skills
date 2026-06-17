@@ -40,6 +40,28 @@ Prefer current Plane MCP work item terminology when available:
 
 Some local MCP adapters may expose legacy issue names such as `create_issue`, `list_project_issues`, `add_issue_comment`, `add_cycle_issues`, or `add_module_issues`. Use them only as equivalent aliases when those are the tools present in the current runtime.
 
+## State Discovery and Recommendation
+
+Before any Plane create/update/sync action, fetch/list states for the target project and show them to the user. The local Plane MCP adapter exposes this as `list_states(project_id)`; newer Plane MCP servers may expose equivalent work item state tools.
+
+Display each fetched state with:
+- id/UUID
+- name
+- group/category when available
+- sequence/order when available
+- default marker when available
+- description when available
+
+Recommend qa-reporter intent mapping from available states:
+- `issue_created_state`: prefer backlog group, default state, or lowest sequence state.
+- `fix_in_progress_states`: prefer started states.
+- `fix_done_states`: prefer completed states; prefer completed states with QA/retest/validation wording over generic completed states.
+- `rejected_or_canceled_states`: prefer cancelled/canceled states.
+- `reopened_state`: prefer started state unless user chooses another state.
+
+If state group metadata is unavailable, make weak recommendations from state names and sequence/order, label the basis as `name_order`, and ask the user to confirm. Never use weak recommendations without approval.
+
+Persist approved mapping under `custom_fields.plane.state_mapping` with `approval_status = approved`, `approved_by`, `verified_at`, `recommendation_basis`, and selected state ids/names. If approval is missing, keep `approval_status = pending` and do not use the mapping for create/update/sync.
 ## Priority Mapping
 
 Map QA values to Plane priority:
@@ -93,3 +115,4 @@ Common Plane MCP failures:
 - resource not found: verify UUID/readable identifier and deletion status
 - validation error: check required fields and allowed values
 - network error: verify Plane base URL and connectivity
+

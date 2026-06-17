@@ -1,6 +1,6 @@
 ﻿{
     "name":  "qa-reporter",
-    "version":  "0.2.0",
+    "version":  "0.3.0",
     "description":  "Portable QA reporting plugin with a qa-reporter skill for producing report_state JSON, test reports, issue packages, SIT/UAT documents, coverage-risk summaries, sign-off recommendations, and optional Plane MCP issue submission packages.",
     "author":  {
                    "name":  "Local developer"
@@ -9,7 +9,7 @@
     "interface":  {
                       "displayName":  "QA Reporter",
                       "shortDescription":  "Build QA reports and sign-off packages.",
-                      "longDescription":  "QA Reporter provides a portable skill for converting planner, executor, manual execution, or exploratory issue input into governed report_state JSON, review-ready reports, issue submission packages, SIT/UAT documents, coverage-risk summaries, Go/Conditional Go/No-Go/Not Assessed recommendations, and optional Plane MCP issue tracker submission after explicit approval.",
+                      "longDescription":  "QA Reporter provides a portable skill for converting planner, executor, manual execution, or exploratory issue input into governed report_state JSON, review-ready reports, issue submission packages, SIT/UAT documents, coverage-risk summaries, sign-off recommendations, optional Plane MCP submission, and dynamic Plane state discovery/recommendation with user approval before state use.",
                       "developerName":  "Local developer",
                       "category":  "Productivity",
                       "capabilities":  [

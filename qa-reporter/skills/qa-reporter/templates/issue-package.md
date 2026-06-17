@@ -64,6 +64,26 @@ Labels: `{{custom_fields.plane.label_names}}`
 Cycle: `{{custom_fields.plane.cycle_id}}`
 Module: `{{custom_fields.plane.module_id}}`
 
+
+### Plane State Mapping Recommendation
+
+Mapping approval: `{{custom_fields.plane.state_mapping.approval_status}}`
+Recommendation basis: `{{custom_fields.plane.state_mapping.recommendation_basis}}`
+Project: `{{custom_fields.plane.state_mapping.project_identifier}}` / `{{custom_fields.plane.state_mapping.project_id}}`
+
+Available states:
+{{#custom_fields.plane.state_mapping.available_states}}
+- `{{name}}` (`{{id}}`) group=`{{group}}` sequence=`{{sequence}}` default=`{{is_default}}`
+{{/custom_fields.plane.state_mapping.available_states}}
+
+Recommended mapping:
+- issue_created_state: `{{custom_fields.plane.state_mapping.issue_created_state.name}}` (`{{custom_fields.plane.state_mapping.issue_created_state.id}}`) - {{custom_fields.plane.state_mapping.issue_created_state.recommendation_reason}}
+- fix_in_progress_states: `{{custom_fields.plane.state_mapping.fix_in_progress_states}}`
+- fix_done_states: `{{custom_fields.plane.state_mapping.fix_done_states}}`
+- rejected_or_canceled_states: `{{custom_fields.plane.state_mapping.rejected_or_canceled_states}}`
+- reopened_state: `{{custom_fields.plane.state_mapping.reopened_state.name}}` (`{{custom_fields.plane.state_mapping.reopened_state.id}}`) - {{custom_fields.plane.state_mapping.reopened_state.recommendation_reason}}
+
+State mapping must be approved by the user before qa-reporter uses any Plane state id.
 ### Duplicate Check
 
 Status: `{{duplicate_check.status}}`
@@ -83,4 +103,5 @@ Query: `{{duplicate_check.query}}`
 - {{.}}
 {{/report_gaps}}
 {{/issue_package.issues}}
+
 

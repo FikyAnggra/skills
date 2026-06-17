@@ -1,5 +1,12 @@
 ﻿# Changelog
 
+## 0.3.0 - 2026-06-17
+
+- Added dynamic Plane state discovery and recommendation workflow.
+- Added user approval gate before using any Plane state id for create/update/sync.
+- Added `custom_fields.plane.state_mapping` schema with available states, recommendation basis, approval status, and per-intent state selections.
+- Removed example use of fixed Plane state names as default behavior; examples now show pending user-approved mapping.
+- Updated issue templates to display fetched Plane states and recommended mapping for review.
 ## 0.2.0 - 2026-06-17
 
 - Added optional Plane MCP adapter guidance for approved issue submission packages.
@@ -18,4 +25,5 @@
 - Added examples for manual execution, exploratory issues, canonical report state, rendered test report, and rendered issue package.
 - Compatibility target: portable agent package with Codex plugin metadata and Claude-compatible wrapper metadata.
 - Future migration note: keep schema changes versioned and preserve `custom_fields` for platform-specific extensions.
+
 

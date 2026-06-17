@@ -142,7 +142,7 @@
                                                                                  "work_item_id":  "",
                                                                                  "readable_identifier":  "",
                                                                                  "state_id":  "",
-                                                                                 "state_name":  "Triage",
+                                                                                 "state_name":  "",
                                                                                  "type_id":  "",
                                                                                  "type_name":  "Bug",
                                                                                  "label_ids":  [
@@ -160,7 +160,97 @@
                                                                                                   ],
                                                                                  "cycle_id":  "",
                                                                                  "module_id":  "",
-                                                                                 "external_url":  ""
+                                                                                 "external_url":  "",
+                                                                                 "state_mapping":  {
+                                                                                                       "project_id":  "00000000-0000-4000-8000-000000000001",
+                                                                                                       "project_identifier":  "AUTH",
+                                                                                                       "fetched_at":  "2026-06-11T15:04:00+07:00",
+                                                                                                       "verified_at":  "",
+                                                                                                       "approved_by":  "",
+                                                                                                       "approval_status":  "pending",
+                                                                                                       "recommendation_basis":  "metadata",
+                                                                                                       "available_states":  [
+                                                                                                                                {
+                                                                                                                                    "id":  "00000000-0000-4000-8000-000000000101",
+                                                                                                                                    "name":  "Backlog",
+                                                                                                                                    "group":  "backlog",
+                                                                                                                                    "sequence":  100,
+                                                                                                                                    "is_default":  true,
+                                                                                                                                    "description":  "Fetched from Plane project states."
+                                                                                                                                },
+                                                                                                                                {
+                                                                                                                                    "id":  "00000000-0000-4000-8000-000000000102",
+                                                                                                                                    "name":  "Started",
+                                                                                                                                    "group":  "started",
+                                                                                                                                    "sequence":  300,
+                                                                                                                                    "is_default":  false,
+                                                                                                                                    "description":  "Fetched from Plane project states."
+                                                                                                                                },
+                                                                                                                                {
+                                                                                                                                    "id":  "00000000-0000-4000-8000-000000000103",
+                                                                                                                                    "name":  "Ready for QA",
+                                                                                                                                    "group":  "completed",
+                                                                                                                                    "sequence":  400,
+                                                                                                                                    "is_default":  false,
+                                                                                                                                    "description":  "Fetched from Plane project states."
+                                                                                                                                },
+                                                                                                                                {
+                                                                                                                                    "id":  "00000000-0000-4000-8000-000000000104",
+                                                                                                                                    "name":  "Canceled",
+                                                                                                                                    "group":  "cancelled",
+                                                                                                                                    "sequence":  500,
+                                                                                                                                    "is_default":  false,
+                                                                                                                                    "description":  "Fetched from Plane project states."
+                                                                                                                                }
+                                                                                                                            ],
+                                                                                                       "issue_created_state":  {
+                                                                                                                                   "id":  "00000000-0000-4000-8000-000000000101",
+                                                                                                                                   "name":  "Backlog",
+                                                                                                                                   "group":  "backlog",
+                                                                                                                                   "sequence":  100,
+                                                                                                                                   "is_default":  true,
+                                                                                                                                   "recommendation_reason":  "Recommended from backlog group/default marker."
+                                                                                                                               },
+                                                                                                       "fix_in_progress_states":  [
+                                                                                                                                      {
+                                                                                                                                          "id":  "00000000-0000-4000-8000-000000000102",
+                                                                                                                                          "name":  "Started",
+                                                                                                                                          "group":  "started",
+                                                                                                                                          "sequence":  300,
+                                                                                                                                          "is_default":  false,
+                                                                                                                                          "recommendation_reason":  "Recommended from started group."
+                                                                                                                                      }
+                                                                                                                                  ],
+                                                                                                       "fix_done_states":  [
+                                                                                                                               {
+                                                                                                                                   "id":  "00000000-0000-4000-8000-000000000103",
+                                                                                                                                   "name":  "Ready for QA",
+                                                                                                                                   "group":  "completed",
+                                                                                                                                   "sequence":  400,
+                                                                                                                                   "is_default":  false,
+                                                                                                                                   "recommendation_reason":  "Recommended from completed group and QA-specific name."
+                                                                                                                               }
+                                                                                                                           ],
+                                                                                                       "rejected_or_canceled_states":  [
+                                                                                                                                           {
+                                                                                                                                               "id":  "00000000-0000-4000-8000-000000000104",
+                                                                                                                                               "name":  "Canceled",
+                                                                                                                                               "group":  "cancelled",
+                                                                                                                                               "sequence":  500,
+                                                                                                                                               "is_default":  false,
+                                                                                                                                               "recommendation_reason":  "Recommended from cancelled group."
+                                                                                                                                           }
+                                                                                                                                       ],
+                                                                                                       "reopened_state":  {
+                                                                                                                              "id":  "00000000-0000-4000-8000-000000000102",
+                                                                                                                              "name":  "Started",
+                                                                                                                              "group":  "started",
+                                                                                                                              "sequence":  300,
+                                                                                                                              "is_default":  false,
+                                                                                                                              "recommendation_reason":  "Recommended from started group; requires user approval."
+                                                                                                                          },
+                                                                                                       "reviewer_note":  "Pending user approval. Do not use this mapping until approval_status is approved."
+                                                                                                   }
                                                                              }
                                                                },
                                              "target_tracker":  "plane",
