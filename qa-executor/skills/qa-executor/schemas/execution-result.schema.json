@@ -54,6 +54,7 @@
     },
     "qa_reporter_handoff": { "$ref": "#/$defs/reporter_handoff" },
     "qa_automation_signal": { "$ref": "#/$defs/automation_signal" },
+    "plane_sync": { "$ref": "#/$defs/plane_sync" },
     "custom_fields": {
       "type": "object",
       "additionalProperties": true
@@ -343,6 +344,49 @@
         "data_gaps": { "type": "array" },
         "flaky_technical_failures": { "type": "array" },
         "update_candidates": { "type": "array" }
+      }
+    },
+    "plane_sync": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source_work_item": { "type": "string" },
+        "managed_comment_id": { "type": ["string", "null"] },
+        "wiki_page_id": { "type": ["string", "null"] },
+        "worklog_id": { "type": ["string", "null"] },
+        "status_before": { "type": ["string", "null"] },
+        "status_after": { "type": ["string", "null"] },
+        "status_transition_reason": { "type": "string" },
+        "linked_refs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["ref_type", "ref"],
+            "properties": {
+              "ref_type": {
+                "type": "string",
+                "enum": ["evidence", "execution_result", "issue_candidate", "reporter_handoff", "automation_signal", "followup_item", "other"]
+              },
+              "ref": { "type": "string", "minLength": 1 },
+              "target_id": { "type": "string" },
+              "sync_status": {
+                "type": "string",
+                "enum": ["not_started", "synced", "partial", "failed", "skipped"]
+              }
+            }
+          }
+        },
+        "sync_status": {
+          "type": "string",
+          "enum": ["not_started", "synced", "partial", "failed", "skipped"]
+        },
+        "sync_errors": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "idempotency_key": { "type": "string" },
+        "status_transition_gap": { "type": "string" }
       }
     }
   }

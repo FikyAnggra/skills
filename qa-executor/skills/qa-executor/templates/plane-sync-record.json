@@ -1,0 +1,15 @@
+{
+  "sync_record_id": "PLANE-SYNC-EXEC-20260617-001-comment",
+  "execution_id": "EXEC-20260617-001",
+  "plane_work_item_id": "plane-work-item-uuid",
+  "readable_identifier": "ENG-42",
+  "target_type": "comment",
+  "target_id": null,
+  "action": "create",
+  "idempotency_key": "qa-executor:EXEC-20260617-001:ENG-42:comment",
+  "content_hash": null,
+  "sync_status": "not_started",
+  "last_synced_at": null,
+  "errors": [],
+  "custom_fields": {}
+}

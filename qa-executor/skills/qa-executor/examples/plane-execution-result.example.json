@@ -1,0 +1,221 @@
+{
+  "execution_id": "EXEC-20260617-001",
+  "source_agent": "qa-executor",
+  "package_id": "EXEC-PKG-ENG-42-20260617",
+  "planning_state_ref": "plane://ENG-42/comment/qa-planner-handoff",
+  "run_policy": {
+    "mode": "targeted",
+    "selected_tc_ids": ["TC0001", "TC0002"],
+    "parallel_allowed": false,
+    "notes": "Targeted run requested from Plane command."
+  },
+  "environment": {
+    "name": "Staging",
+    "base_url": "https://staging.example.com",
+    "build": "2026.06.17.1",
+    "data_refs": ["approved-secret-source/auth-users"],
+    "constraints": ["Redact credentials before Plane sync."]
+  },
+  "started_at": "2026-06-17T10:00:00+07:00",
+  "finished_at": "2026-06-17T10:12:00+07:00",
+  "summary": {
+    "total": 2,
+    "selected": 2,
+    "passed": 1,
+    "failed": 1,
+    "blocked": 0,
+    "untested": 0,
+    "retest": 0,
+    "pass_rate": 50,
+    "completion_rate": 100
+  },
+  "results": [
+    {
+      "tc_id": "TC0001",
+      "scenario": "Valid active user logs in",
+      "selected": true,
+      "execution_mode": "ui",
+      "test_case_status": "Passed",
+      "expected_result": "User lands on dashboard.",
+      "actual_result": "User landed on dashboard.",
+      "started_at": "2026-06-17T10:00:00+07:00",
+      "finished_at": "2026-06-17T10:04:00+07:00",
+      "duration_ms": 240000,
+      "steps": [
+        {
+          "step_number": 1,
+          "instruction": "Open login page, enter active user email and password, submit.",
+          "expected_result": "User lands on dashboard.",
+          "actual_result": "Dashboard heading was visible.",
+          "status": "Passed",
+          "evidence_refs": ["evidence/ENG-42/TC0001-dashboard.png"]
+        }
+      ],
+      "assertions": [
+        {
+          "assertion": "Dashboard visible after login.",
+          "expected": "Dashboard visible.",
+          "actual": "Dashboard visible.",
+          "status": "Passed"
+        }
+      ],
+      "blocker": null,
+      "retries": [],
+      "evidence": {
+        "executor": "qa-executor",
+        "redaction_status": "passed",
+        "ui": {
+          "screenshot_refs": ["evidence/ENG-42/TC0001-dashboard.png"],
+          "video_refs": [],
+          "trace_refs": [],
+          "observation": "Dashboard heading visible after login."
+        },
+        "evidence_gaps": []
+      },
+      "issue_candidate": null,
+      "automation_update_signal": null,
+      "notes": "Passed."
+    },
+    {
+      "tc_id": "TC0002",
+      "scenario": "Invalid password is rejected",
+      "selected": true,
+      "execution_mode": "hybrid",
+      "test_case_status": "Failed",
+      "expected_result": "Generic invalid credential message is shown.",
+      "actual_result": "User landed on dashboard.",
+      "started_at": "2026-06-17T10:05:00+07:00",
+      "finished_at": "2026-06-17T10:12:00+07:00",
+      "duration_ms": 420000,
+      "steps": [
+        {
+          "step_number": 1,
+          "instruction": "Open login page, enter active user email and invalid password, submit.",
+          "expected_result": "Generic invalid credential message is shown.",
+          "actual_result": "Dashboard opened after submit.",
+          "status": "Failed",
+          "evidence_refs": ["evidence/ENG-42/TC0002-invalid-password-dashboard.png"]
+        }
+      ],
+      "assertions": [
+        {
+          "assertion": "Invalid password must not authenticate user.",
+          "expected": "Authentication rejected.",
+          "actual": "Authentication accepted.",
+          "status": "Failed"
+        }
+      ],
+      "blocker": null,
+      "retries": [],
+      "evidence": {
+        "executor": "qa-executor",
+        "redaction_status": "passed",
+        "api": [
+          {
+            "method": "POST",
+            "url": "https://staging.example.com/api/auth/login",
+            "request_headers": { "authorization": "[REDACTED]" },
+            "request_body_summary": { "email": "active_user@example.com", "password": "[REDACTED]" },
+            "response_status": 200,
+            "response_body_summary": { "token": "[REDACTED]", "user_id": "usr_123" }
+          }
+        ],
+        "ui": {
+          "screenshot_refs": ["evidence/ENG-42/TC0002-invalid-password-dashboard.png"],
+          "video_refs": [],
+          "trace_refs": ["evidence/ENG-42/TC0002-trace.zip"],
+          "observation": "Dashboard route loaded after invalid password submit."
+        },
+        "evidence_gaps": []
+      },
+      "issue_candidate": {
+        "issue_candidate_id": "ISSUE-CAND-TC0002",
+        "tc_id": "TC0002",
+        "severity_suggestion": "High",
+        "title": "Invalid password allows dashboard access",
+        "summary": "Invalid password returned dashboard access instead of the expected generic credential error.",
+        "reproduction_steps": [
+          "Open the staging login page.",
+          "Enter active user email and invalid password.",
+          "Submit the login form."
+        ],
+        "expected_result": "Generic invalid credential message is shown.",
+        "actual_result": "User landed on dashboard.",
+        "evidence_refs": ["evidence/ENG-42/TC0002-invalid-password-dashboard.png"],
+        "suggested_owner": "dev",
+        "requires_human_review": true,
+        "custom_fields": {}
+      },
+      "automation_update_signal": {
+        "signal_type": "script_update_candidate",
+        "reason": "Automation should assert invalid credential rejection path."
+      },
+      "notes": "Business assertion failure; no retry performed."
+    }
+  ],
+  "issue_candidates": [
+    {
+      "issue_candidate_id": "ISSUE-CAND-TC0002",
+      "tc_id": "TC0002",
+      "severity_suggestion": "High",
+      "title": "Invalid password allows dashboard access",
+      "summary": "Invalid password returned dashboard access instead of the expected generic credential error.",
+      "reproduction_steps": ["Open login page.", "Submit active email with invalid password."],
+      "expected_result": "Generic invalid credential message is shown.",
+      "actual_result": "User landed on dashboard.",
+      "evidence_refs": ["evidence/ENG-42/TC0002-invalid-password-dashboard.png"],
+      "suggested_owner": "dev",
+      "requires_human_review": true,
+      "custom_fields": {}
+    }
+  ],
+  "execution_review_history": [
+    {
+      "review_status": "OK",
+      "reviewer": "QA Lead",
+      "reviewed_at": "2026-06-17T10:20:00+07:00",
+      "note": "Plane execution sync accepted."
+    }
+  ],
+  "qa_reporter_handoff": {
+    "source_agent": "qa-executor",
+    "execution_result_ref": "execution_result.json",
+    "approval_status": "OK",
+    "issue_candidate_refs": ["ISSUE-CAND-TC0002"]
+  },
+  "qa_automation_signal": {
+    "source_agent": "qa-executor",
+    "execution_result_ref": "execution_result.json",
+    "selector_gaps": [],
+    "api_gaps": [],
+    "data_gaps": [],
+    "flaky_technical_failures": [],
+    "update_candidates": [
+      {
+        "tc_id": "TC0002",
+        "reason": "Invalid credential assertion should remain strict in automation."
+      }
+    ]
+  },
+  "plane_sync": {
+    "source_work_item": "ENG-42",
+    "managed_comment_id": "comment-uuid-managed",
+    "wiki_page_id": null,
+    "worklog_id": "worklog-uuid",
+    "status_before": "Ready for QA",
+    "status_after": "QA Failed",
+    "status_transition_reason": "At least one selected test failed.",
+    "linked_refs": [
+      {
+        "ref_type": "issue_candidate",
+        "ref": "ISSUE-CAND-TC0002",
+        "target_id": "ENG-42",
+        "sync_status": "synced"
+      }
+    ],
+    "sync_status": "synced",
+    "sync_errors": [],
+    "idempotency_key": "qa-executor:EXEC-20260617-001:ENG-42"
+  },
+  "custom_fields": {}
+}

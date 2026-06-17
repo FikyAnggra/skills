@@ -9,7 +9,7 @@
     "package_id": { "type": "string", "minLength": 1 },
     "source_agent": {
       "type": "string",
-      "enum": ["qa-planner", "human", "qa-executor", "external"]
+      "enum": ["qa-planner", "human", "qa-executor", "plane", "external"]
     },
     "source_refs": {
       "type": "array",
@@ -20,7 +20,7 @@
         "properties": {
           "ref_type": {
             "type": "string",
-            "enum": ["planning_state", "qa_executor_handoff", "manual_test_cases", "spreadsheet", "document", "json", "plain_text", "other"]
+            "enum": ["planning_state", "qa_executor_handoff", "manual_test_cases", "plane_work_item", "plane_comment", "plane_wiki", "plane_attachment", "plane_mcp_payload", "spreadsheet", "document", "json", "plain_text", "other"]
           },
           "ref": { "type": "string", "minLength": 1 },
           "summary": { "type": "string" }
@@ -102,12 +102,95 @@
       "minItems": 1,
       "items": { "$ref": "#/$defs/test_case" }
     },
+    "plane_context": { "$ref": "#/$defs/plane_context" },
+    "plane_write_policy": { "$ref": "#/$defs/plane_write_policy" },
+    "plane_status_mapping": { "$ref": "#/$defs/plane_status_mapping" },
     "custom_fields": {
       "type": "object",
       "additionalProperties": true
     }
   },
   "$defs": {
+    "plane_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "workspace_id": { "type": "string" },
+        "project_id": { "type": "string" },
+        "project_identifier": { "type": "string" },
+        "work_item_id": { "type": "string" },
+        "readable_identifier": { "type": "string" },
+        "url": { "type": "string" },
+        "state": { "type": "string" },
+        "assignees": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "labels": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "cycle": {
+          "type": ["object", "null"],
+          "additionalProperties": true
+        },
+        "module": {
+          "type": ["object", "null"],
+          "additionalProperties": true
+        },
+        "relations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "source_comments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "attachments_or_links": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "read_gaps": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "plane_write_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "comment_sync": { "type": "boolean", "default": true },
+        "status_sync": { "type": "boolean", "default": true },
+        "worklog_sync": { "type": "boolean", "default": false },
+        "link_sync": { "type": "boolean", "default": false },
+        "wiki_sync": { "type": "boolean", "default": false },
+        "create_followup_items": { "type": "boolean", "default": false },
+        "requires_confirmation": { "type": "boolean", "default": true },
+        "notes": { "type": "string" }
+      }
+    },
+    "plane_status_mapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "on_start": { "type": "string" },
+        "on_all_passed": { "type": "string" },
+        "on_any_failed": { "type": "string" },
+        "on_blocked": { "type": "string" },
+        "on_partial": { "type": "string" },
+        "on_cancelled": { "type": "string" }
+      }
+    },
     "test_case": {
       "type": "object",
       "additionalProperties": false,

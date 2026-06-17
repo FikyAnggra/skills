@@ -1,4 +1,4 @@
 interface:
   display_name: "QA Executor"
-  short_description: "Run QA cases and capture evidence."
-  default_prompt: "Use $qa-executor to execute approved QA cases and produce execution_result.json."
+  short_description: "Run QA cases, capture evidence, sync Plane."
+  default_prompt: "Use $qa-executor to execute approved QA cases, optionally sync managed Plane output, and produce execution_result.json."

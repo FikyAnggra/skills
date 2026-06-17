@@ -1,21 +1,25 @@
 # QA Executor
 
-`qa-executor` is a portable QA execution skill package. It runs approved test cases when tools and access are safe, produces manual execution instructions when they are not, captures redacted evidence, and writes `execution_result.json` for downstream QA reporting and automation agents.
+`qa-executor` is a portable QA execution skill package. It runs approved test cases when tools and access are safe, produces manual execution instructions when they are not, captures redacted evidence, writes `execution_result.json`, and can sync managed execution output back to Plane.so work items.
 
 ## Contents
 
 - `.codex-plugin/plugin.json`: Codex plugin wrapper.
 - `.claude-plugin/plugin.json`: Claude-compatible wrapper.
 - `skills/qa-executor/SKILL.md`: canonical platform-neutral executor instructions.
-- `skills/qa-executor/schemas/`: JSON schemas for execution packages, results, reviews, and issue candidates.
-- `skills/qa-executor/templates/`: reusable result, report, issue, reporter handoff, and automation signal templates.
-- `skills/qa-executor/examples/`: manual input and sample execution outputs.
+- `skills/qa-executor/schemas/`: JSON schemas for execution packages, results, reviews, issue candidates, and Plane sync records.
+- `skills/qa-executor/templates/`: reusable result, report, issue, reporter handoff, automation signal, Plane comment, Plane wiki/page, and sync record templates.
+- `skills/qa-executor/examples/`: manual and Plane input examples plus sample execution outputs.
 
 ## Usage
 
 Use planner-driven input when `qa-planner` has produced a `qa_executor` handoff contract with approved cases, environment constraints, test data refs, and run policy.
 
 Use manual input when a human provides test cases from Excel, Google Sheets, Markdown, Word/PDF tables, Notion, JSON, or plain text. Minimum manual fields are `TC ID`, `Scenario`, `Test Step`, and `Expected Result`.
+
+Use Plane input when a user provides a Plane readable id such as `ENG-42`, a Plane URL, UUID, or MCP payload. Plane content is executable only when it contains an executor handoff, structured execution package, or minimum test case fields. Raw requirements should be routed to `qa-planner` instead of executed.
+
+For Plane Managed Sync, resolve status mapping and write policy before execution. Mapping covers start, all passed, any failed, blocked, partial, and cancelled outcomes. Write policy controls managed comments, status movement, worklogs, links, wiki/page sync, follow-up creation, and confirmation requirements.
 
 Expected outputs are:
 - `execution_result.json` as source of truth.
@@ -24,6 +28,9 @@ Expected outputs are:
 - issue candidates for failed and blocked cases.
 - `qa_reporter_handoff` after human OK review.
 - `qa_automation_signal` when automation gaps or update candidates exist.
+- managed Plane execution comment when `comment_sync` is enabled.
+- Plane worklog/status/link sync when enabled.
+- Plane wiki/page only when `wiki_sync` is explicitly true.
 
 ## Status Model
 
@@ -32,6 +39,12 @@ Allowed test case statuses are `Untested`, `On Progress`, `Passed`, `Failed`, `B
 ## Review Loop
 
 Execution output goes through human `OK` or `NOK` review. `OK` accepts the package and enables reporter and automation handoffs. `NOK` records feedback, patches documentation or evidence, and reruns only when new evidence is required and safe.
+
+## Plane Managed Sync
+
+Plane is a synced workflow surface, not the canonical state. `execution_result.json` remains the source of truth.
+
+Managed Plane output uses idempotency keys and a comment marker to avoid duplicate comments, worklogs, wiki pages, links, and follow-up items. Wiki/page sync and follow-up work item creation are off by default. Secrets, tokens, cookies, credentials, authorization values, session ids, and PII must be redacted before any Plane write.
 
 ## Downstream Handoff
 

@@ -1,0 +1,127 @@
+{
+  "package_id": "EXEC-PKG-ENG-42-20260617",
+  "source_agent": "plane",
+  "source_refs": [
+    {
+      "ref_type": "plane_work_item",
+      "ref": "ENG-42",
+      "summary": "Plane work item contains approved login regression test cases."
+    },
+    {
+      "ref_type": "qa_executor_handoff",
+      "ref": "plane://ENG-42/comment/qa-planner-handoff",
+      "summary": "Planner handoff embedded in a Plane comment."
+    }
+  ],
+  "approval_state": {
+    "status": "approved_by_user",
+    "approved_by": "QA Lead",
+    "approved_at": "2026-06-17T09:00:00+07:00",
+    "notes": "Plane work item moved to Ready for QA and user approved targeted run."
+  },
+  "run_policy": {
+    "mode": "targeted",
+    "selected_tc_ids": ["TC0001", "TC0002"],
+    "priority_filter": [],
+    "tag_filter": ["auth"],
+    "parallel_allowed": false,
+    "notes": "Run requested from Plane comment: run TC0001, TC0002."
+  },
+  "environment": {
+    "name": "Staging",
+    "base_url": "https://staging.example.com",
+    "build": "2026.06.17.1",
+    "data_refs": ["approved-secret-source/auth-users"],
+    "constraints": ["Redact credentials before Plane sync."]
+  },
+  "execution_scope": {
+    "selected_count": 2,
+    "excluded_tc_ids": [],
+    "selection_reason": "Targeted Plane command selected TC0001 and TC0002."
+  },
+  "test_cases": [
+    {
+      "tc_id": "TC0001",
+      "scenario": "Valid active user logs in",
+      "summary": "Verify active user can log in through the UI.",
+      "priority": "P0 - Critical",
+      "pre_conditions": ["Staging web is reachable.", "Active user exists."],
+      "steps": [
+        {
+          "step_number": 1,
+          "instruction": "Open login page, enter active user email and password, submit.",
+          "expected_result": "User lands on dashboard."
+        }
+      ],
+      "test_data": ["active_user@example.com", "password from approved secret source"],
+      "expected_result": "User lands on dashboard.",
+      "test_case_status": "Untested",
+      "execution_mode": "ui",
+      "dependencies": [],
+      "tags": ["auth", "smoke"],
+      "custom_fields": {}
+    },
+    {
+      "tc_id": "TC0002",
+      "scenario": "Invalid password is rejected",
+      "summary": "Verify invalid credentials do not authenticate the user.",
+      "priority": "P1 - High",
+      "pre_conditions": ["Staging web is reachable.", "Active user exists."],
+      "steps": [
+        {
+          "step_number": 1,
+          "instruction": "Open login page, enter active user email and invalid password, submit.",
+          "expected_result": "Generic invalid credential message is shown."
+        }
+      ],
+      "test_data": ["active_user@example.com", "invalid password"],
+      "expected_result": "Generic invalid credential message is shown.",
+      "test_case_status": "Untested",
+      "execution_mode": "hybrid",
+      "dependencies": [],
+      "tags": ["auth", "negative"],
+      "custom_fields": {}
+    }
+  ],
+  "plane_context": {
+    "workspace_id": "workspace-uuid",
+    "project_id": "project-uuid",
+    "project_identifier": "ENG",
+    "work_item_id": "work-item-uuid",
+    "readable_identifier": "ENG-42",
+    "url": "https://app.plane.so/acme/projects/eng/issues/42",
+    "state": "Ready for QA",
+    "assignees": ["qa.lead@example.com"],
+    "labels": ["auth", "regression"],
+    "cycle": { "id": "cycle-uuid", "name": "Sprint 24" },
+    "module": { "id": "module-uuid", "name": "Authentication" },
+    "relations": [],
+    "source_comments": [
+      {
+        "comment_id": "comment-uuid",
+        "summary": "run TC0001, TC0002"
+      }
+    ],
+    "attachments_or_links": [],
+    "read_gaps": []
+  },
+  "plane_write_policy": {
+    "comment_sync": true,
+    "status_sync": true,
+    "worklog_sync": true,
+    "link_sync": false,
+    "wiki_sync": false,
+    "create_followup_items": false,
+    "requires_confirmation": true,
+    "notes": "Managed Plane QA Sync approved; wiki and follow-up creation disabled."
+  },
+  "plane_status_mapping": {
+    "on_start": "In Progress",
+    "on_all_passed": "QA Passed",
+    "on_any_failed": "QA Failed",
+    "on_blocked": "Blocked",
+    "on_partial": "In Progress",
+    "on_cancelled": "Cancelled"
+  },
+  "custom_fields": {}
+}
