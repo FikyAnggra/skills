@@ -25,7 +25,7 @@ Use Notion input when a user provides a Notion page URL, database URL, data sour
 
 For Notion Managed Sync, resolve write policy before writes. Policy controls source database row updates, managed execution page sync, result database rows, comments, issue candidate pages/rows, and confirmation requirements. Notion output is a synced view, not the source of truth.
 
-Use Notion + Plane bridge when Plane tracks the QA work item and Notion stores test cases or execution output. The bridge can discover Notion links from Plane descriptions/comments/links, classify them, and cross-link Plane and Notion rendered outputs while keeping `execution_result.json` canonical.
+Use Notion + Plane bridge when Plane tracks the QA work item and Notion stores test cases or execution output. The bridge can discover Notion links from Plane descriptions/comments/links, classify them, and cross-link Plane and Notion rendered outputs while keeping `execution_result.json` canonical. If no Notion URL is found, Notion stays disabled.
 
 Expected outputs are:
 - `execution_result.json` as source of truth.
@@ -63,6 +63,8 @@ Managed Notion output uses idempotency keys and a managed marker to avoid duplic
 ## Notion + Plane Bridge
 
 When one execution uses both Plane and Notion, `notion_plane_bridge` records the Plane work item ref, discovered Notion refs, Notion test case source ref, Notion execution page ref, sync direction, cross-links, and bridge idempotency key. Discovered Notion refs are classified as `test_case_source`, `execution_page`, `result_database`, `issue_candidate_database`, or `unknown`. The bridge can add the Notion execution page link to Plane output and the Plane work item link to the Notion execution page. Partial bridge sync does not invalidate the execution result.
+
+Auto Notion reporting can be enabled from discovered links. When exactly one high-confidence Notion `test_case_source` is found in Plane/text, the executor can prepare `source_database_update = true` for databases and `execution_page_sync = true`, while keeping result database, comments, and issue candidate sync off unless requested. Confirmation is still required before writes.
 
 ## Downstream Handoff
 

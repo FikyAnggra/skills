@@ -107,6 +107,14 @@
         "read_status": "read"
       }
     ],
+    "auto_notion_report": {
+      "enabled": true,
+      "trigger": "notion_url_discovered",
+      "source_database_update": true,
+      "execution_page_sync": true,
+      "requires_confirmation": true,
+      "reason": "Plane description contained one high-confidence Notion test case database, so qa-executor prepared Notion row updates and an execution page after confirmation."
+    },
     "sync_direction": "bidirectional_rendered_views",
     "source_of_truth": "execution_result.json",
     "cross_links": [

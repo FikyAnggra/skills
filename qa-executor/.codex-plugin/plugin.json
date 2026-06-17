@@ -1,7 +1,7 @@
 {
   "name": "qa-executor",
-  "version": "0.5.0",
-  "description": "Portable QA execution plugin with a qa-executor skill for running or guiding approved QA test cases, capturing evidence, producing execution_result JSON, syncing managed Plane.so and Notion execution output with bridge support, and handing structured results to QA reporter and automation agents.",
+  "version": "0.6.0",
+  "description": "Portable QA execution plugin with a qa-executor skill for running or guiding approved QA test cases, capturing evidence, producing execution_result JSON, syncing managed Plane.so and Notion execution output, auto-preparing Notion reports from discovered links, and handing structured results to QA reporter and automation agents.",
   "author": {
     "name": "Local developer"
   },
@@ -9,7 +9,7 @@
   "interface": {
     "displayName": "QA Executor",
     "shortDescription": "Execute QA cases and capture evidence.",
-    "longDescription": "QA Executor provides a portable skill for normalizing planner-driven, manual, Plane.so, or Notion test cases, resolving run policy scope, executing API, UI, DB, hybrid, or manual-instruction checks, capturing redacted evidence, producing execution_result JSON, discovering Notion links from Plane, managing Plane and Notion sync with bridge cross-links, preflight policy, and idempotency, managing OK/NOK execution review, and generating handoffs for qa-reporter and qa-automation.",
+    "longDescription": "QA Executor provides a portable skill for normalizing planner-driven, manual, Plane.so, or Notion test cases, resolving run policy scope, executing API, UI, DB, hybrid, or manual-instruction checks, capturing redacted evidence, producing execution_result JSON, discovering Notion links from Plane, auto-preparing Notion execution reports when a high-confidence Notion test source is found, managing Plane and Notion sync with bridge cross-links, preflight policy, and idempotency, managing OK/NOK execution review, and generating handoffs for qa-reporter and qa-automation.",
     "developerName": "Local developer",
     "category": "Productivity",
     "capabilities": [],

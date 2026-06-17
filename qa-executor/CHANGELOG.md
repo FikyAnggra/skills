@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.0 - 2026-06-17
+
+- Added Auto Notion Report Rule for Notion URLs discovered in Plane or user-provided text.
+- Added `auto_notion_report` to `notion_plane_bridge` schema sections.
+- Default auto behavior prepares source database updates and a managed Notion execution page when one high-confidence Notion test case source is discovered.
+- Notion remains disabled when no Notion URL is found; ambiguous or unreadable links require clarification or access.
+- Migration note: auto Notion report still requires confirmation before any Notion write.
+
 ## 0.5.0 - 2026-06-17
 
 - Added Plane-to-Notion discovery for Notion URLs found in Plane descriptions, comments, links, and attachment refs.

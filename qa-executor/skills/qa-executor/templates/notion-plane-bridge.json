@@ -13,6 +13,14 @@
       "read_status": "read"
     }
   ],
+  "auto_notion_report": {
+    "enabled": true,
+    "trigger": "notion_url_discovered",
+    "source_database_update": true,
+    "execution_page_sync": true,
+    "requires_confirmation": true,
+    "reason": "One high-confidence Notion test case source was discovered from Plane."
+  },
   "sync_direction": "bidirectional_rendered_views",
   "source_of_truth": "execution_result.json",
   "cross_links": [
