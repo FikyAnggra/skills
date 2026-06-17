@@ -19,6 +19,8 @@ Priority: `P1`
 Suggested owner: `dev`
 Submission status: `not_submitted`
 Redaction status: `passed`
+Target tracker: `plane`
+Submission mode: `work_item`
 
 ### Summary
 
@@ -47,10 +49,20 @@ User landed on dashboard.
 
 - `evidence/invalid-password-dashboard.png`
 
+### Plane Routing
+
+Workspace slug: `customer-portal`
+Project: `AUTH` / `00000000-0000-4000-8000-000000000001`
+State: `Triage`
+Type: `Bug`
+Labels: `qa-reported`, `bug`, `severity-high`, `source-manual`, `needs-retest`
+Duplicate check: `passed`
+
 ### Severity Normalization
 
 High severity because a major authentication flow accepts invalid credentials with limited workaround.
 
 ### Submission Status
 
-Not submitted. Issue submission requires explicit user request after package approval and tool/config confirmation.
+Not submitted. Plane work item creation requires explicit user request after package approval, duplicate check, redaction pass, Plane project resolution, and read-back verification.
+

@@ -20,6 +20,8 @@ Priority: `{{priority}}`
 Suggested owner: `{{suggested_owner}}`
 Submission status: `{{submission_status}}`
 Redaction status: `{{redaction_status}}`
+Target tracker: `{{target_tracker}}`
+Submission mode: `{{submission_mode}}`
 
 ### Summary
 
@@ -51,6 +53,26 @@ Redaction status: `{{redaction_status}}`
 - {{.}}
 {{/evidence_refs}}
 
+### Plane Routing
+
+Workspace slug: `{{custom_fields.plane.workspace_slug}}`
+Project: `{{custom_fields.plane.project_identifier}}` / `{{custom_fields.plane.project_id}}`
+Work item: `{{custom_fields.plane.readable_identifier}}` / `{{custom_fields.plane.work_item_id}}`
+State: `{{custom_fields.plane.state_name}}`
+Type: `{{custom_fields.plane.type_name}}`
+Labels: `{{custom_fields.plane.label_names}}`
+Cycle: `{{custom_fields.plane.cycle_id}}`
+Module: `{{custom_fields.plane.module_id}}`
+
+### Duplicate Check
+
+Status: `{{duplicate_check.status}}`
+Query: `{{duplicate_check.query}}`
+
+{{#duplicate_check.matched_items}}
+- `{{readable_identifier}}` {{title}} - {{match_reason}}
+{{/duplicate_check.matched_items}}
+
 ### Severity Normalization
 
 {{severity_normalization.reason}}
@@ -61,3 +83,4 @@ Redaction status: `{{redaction_status}}`
 - {{.}}
 {{/report_gaps}}
 {{/issue_package.issues}}
+

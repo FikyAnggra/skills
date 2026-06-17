@@ -1,35 +1,36 @@
 ﻿{
-  "name": "qa-reporter",
-  "version": "0.1.0",
-  "description": "Portable QA reporting plugin for Claude-compatible agents. It uses skills/qa-reporter/SKILL.md as the canonical instruction source and preserves the Codex plugin wrapper.",
-  "author": {
-    "name": "Local developer"
-  },
-  "entrypoints": {
-    "primary_skill": "../skills/qa-reporter/SKILL.md"
-  },
-  "resources": {
-    "schemas": "../skills/qa-reporter/schemas/",
-    "templates": "../skills/qa-reporter/templates/",
-    "examples": "../skills/qa-reporter/examples/"
-  },
-  "capabilities": [
-    "qa_reporting",
-    "report_state_json",
-    "test_report",
-    "issue_submission_package",
-    "bug_report",
-    "sit_uat_documentation",
-    "coverage_risk_summary",
-    "release_signoff_recommendation"
-  ],
-  "compatibility": {
-    "codex": {
-      "manifest": "../.codex-plugin/plugin.json",
-      "skill": "../skills/qa-reporter/SKILL.md"
-    },
-    "claude": {
-      "canonical_skill": "../skills/qa-reporter/SKILL.md"
-    }
-  }
+    "name":  "qa-reporter",
+    "version":  "0.2.0",
+    "description":  "Portable QA reporting plugin for Claude-compatible agents with optional Plane MCP issue submission guidance. It uses skills/qa-reporter/SKILL.md as the canonical instruction source and preserves the Codex plugin wrapper.",
+    "author":  {
+                   "name":  "Local developer"
+               },
+    "entrypoints":  {
+                        "primary_skill":  "../skills/qa-reporter/SKILL.md"
+                    },
+    "resources":  {
+                      "schemas":  "../skills/qa-reporter/schemas/",
+                      "templates":  "../skills/qa-reporter/templates/",
+                      "examples":  "../skills/qa-reporter/examples/"
+                  },
+    "capabilities":  [
+                         "qa_reporting",
+                         "report_state_json",
+                         "test_report",
+                         "issue_submission_package",
+                         "bug_report",
+                         "sit_uat_documentation",
+                         "coverage_risk_summary",
+                         "release_signoff_recommendation",
+                         "plane_mcp_issue_submission"
+                     ],
+    "compatibility":  {
+                          "codex":  {
+                                        "manifest":  "../.codex-plugin/plugin.json",
+                                        "skill":  "../skills/qa-reporter/SKILL.md"
+                                    },
+                          "claude":  {
+                                         "canonical_skill":  "../skills/qa-reporter/SKILL.md"
+                                     }
+                      }
 }

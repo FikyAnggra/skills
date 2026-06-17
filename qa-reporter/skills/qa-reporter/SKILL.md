@@ -1,4 +1,4 @@
----
+﻿---
 name: qa-reporter
 description: Portable QA reporting agent for converting qa-planner data, qa-executor results, manual execution results, or exploratory issue findings into governed report_state JSON, test reports, issue packages, bug reports, SIT/UAT documents, coverage-risk summaries, OK/NOK review updates, and Go/Conditional Go/No-Go/Not Assessed sign-off recommendations. Use when asked to create or revise QA reports, normalize failed/blocked issues for review, prepare issue submission packages, generate SIT or UAT evidence summaries, summarize coverage/risk, or process human report review feedback. Do not use for creating test cases, running tests, writing automation scripts, or submitting final issues without explicit user approval and approved package/config.
 ---
@@ -169,8 +169,52 @@ For `OK`:
 - lock artifacts as approved version
 - allow issue submission only if the user explicitly requests it and config/tool exists
 
-## Outputs
+## Plane MCP Adapter
 
+Use Plane as an optional issue tracker adapter only after the normal reporter governance gate passes. Plane integration is not the default reporting path; default output remains a review-ready issue package.
+
+Plane submission is allowed only when all conditions are true:
+- user explicitly asks to submit to Plane
+- issue package status is `approved`
+- issue package `target_tracker = plane`
+- issue package `submission_mode` is `work_item`, `intake`, or `comment_existing`
+- `redaction_status = passed`
+- required Plane target data is resolved: workspace slug when needed, project UUID, and work item UUID for comment/update modes
+- duplicate check is completed or explicitly waived by the reviewer
+
+Never store Plane API keys, PATs, OAuth tokens, cookies, or workspace secrets in `report_state.json`, templates, examples, or comments. Refer to configured MCP server/auth state only.
+
+### Plane Field Mapping
+
+Map reporter issue data to Plane work item fields:
+- `title` -> `name`
+- issue body -> `description_html`
+- `severity`/`priority` -> Plane `priority`: `Critical` or `P0` maps to `urgent`, `High` or `P1` maps to `high`, `Medium` or `P2` maps to `medium`, `Low` or `P3` maps to `low`, unknown maps to `none`
+- `suggested_owner` -> resolve to Plane assignee UUID only when an exact workspace/project member match exists
+- QA tags -> Plane labels such as `qa-reported`, `bug`, `severity-high`, `source-manual`, `source-exploratory`, or `needs-retest`
+- issue type -> Plane work item type, prefer `Bug` when a matching active type exists
+- `evidence_refs` -> description links and, when URLs are valid, Plane work item links
+- affected test cases, report id, package id, recommendation, and report gaps -> description HTML or comment
+
+Use `custom_fields.plane` for Plane-specific IDs and routing data instead of adding platform-specific top-level fields outside the schema.
+
+### Plane Submission Workflow
+
+1. Resolve target project with Plane project tools. Prefer exact `project_id`; otherwise match `project_identifier` or project name from user input.
+2. Resolve optional state, labels, type, cycle, module, assignees, and duplicate candidates.
+3. Run duplicate check with Plane work item search using issue title, affected test case ids, and key error text. If likely duplicate exists, stop and ask whether to comment on the existing work item or create a new one.
+4. Render `description_html` from the approved issue package. Keep expected result, actual result, reproduction steps, evidence refs, severity reason, redaction status, and report gaps visible.
+5. For `submission_mode = intake`, create an intake work item when the connected Plane MCP server exposes intake tools. For `work_item`, create a project work item. For `comment_existing`, add a comment to the resolved work item.
+6. Add evidence links, cycle/module membership, relation, and worklog only when those IDs are explicitly resolved and user intent covers them.
+7. Read back the created or updated work item by UUID or readable identifier. Only mark `submission_status = submitted` after read-back confirms the expected title/body/target.
+8. Record Plane submission result in `submission_result` and `submission_history` with tool `plane`, external work item UUID, readable identifier, URL when known, timestamp, and submitter.
+
+### Plane Failure Handling
+
+If Plane MCP tooling is unavailable, auth fails, permissions are insufficient, IDs cannot be resolved, duplicate status is unclear, or read-back verification fails, do not retry blindly and do not mark submitted. Keep `submission_status = submission_failed`, record the error, and preserve the approved issue package for manual submission.
+
+Read `references/plane-mcp.md` when Plane setup, auth mode, identifier behavior, tool mapping, or troubleshooting details are needed.
+## Outputs
 Produce these artifacts when requested or useful:
 
 - `report_state.json`: canonical source of truth using `templates/report-state.json`
@@ -214,5 +258,9 @@ Read only when needed:
 - `schemas/issue-submission-package.schema.json`: governed issue package schema
 - `schemas/reporter-review.schema.json`: OK/NOK review feedback schema
 - `schemas/signoff-recommendation.schema.json`: release sign-off recommendation schema
+- `references/plane-mcp.md`: Plane MCP setup, field mapping, tool behavior, and troubleshooting notes
 - `templates/`: reusable report, issue, SIT/UAT, coverage/risk, and state skeletons
 - `examples/`: sample manual result, exploratory issue, report state, and rendered outputs
+
+
+

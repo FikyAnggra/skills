@@ -29,8 +29,13 @@ Recommendations are `Go`, `Conditional Go`, `No-Go`, or `Not Assessed`. The reco
 
 Reports use multi-level `OK`/`NOK` review. `NOK` feedback updates `report_state.json` and re-renders impacted artifacts. `OK` approves the package.
 
-Issue submission is never automatic. Submission requires explicit user request, approved issue package, available tool/config, complete required fields, and redaction status `passed`.
+Issue submission is never automatic. Submission requires explicit user request, approved issue package, available tool/config, complete required fields, duplicate handling when relevant, and redaction status `passed`.
+
+## Plane MCP Adapter
+
+QA Reporter includes an optional Plane adapter for approved issue packages. It can prepare Plane work item payloads, resolve project routing data, run duplicate checks, create a work item or intake item when tools are available, comment on an existing work item, attach evidence links, and record read-back verification in `submission_history`. Plane-specific IDs live under `custom_fields.plane` so the core package stays portable.
 
 ## Downstream Workflow
 
 `qa-planner` creates planning state and reporter handoff data. `qa-executor` produces execution results, evidence refs, issue candidates, and reporter handoff data. `qa-reporter` creates the governed reporting package and optional approved issue submission package.
+

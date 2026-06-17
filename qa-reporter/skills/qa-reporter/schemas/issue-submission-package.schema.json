@@ -31,6 +31,42 @@
     "evidence_refs": { "type": "array", "items": { "type": "string" } },
     "report_gaps": { "type": "array", "items": { "type": "string" } },
     "suggested_owner": { "type": "string" },
+    "target_tracker": { "type": "string", "enum": ["none", "plane", "jira", "linear", "github", "other"] },
+    "submission_mode": { "type": "string", "enum": ["dry_run", "intake", "work_item", "comment_existing"] },
+    "duplicate_check": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "status": { "type": "string", "enum": ["not_run", "passed", "possible_duplicate", "waived"] },
+        "checked_at": { "type": "string" },
+        "query": { "type": "string" },
+        "matched_items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "tracker": { "type": "string", "enum": ["plane", "jira", "linear", "github", "other"] },
+              "external_issue_id": { "type": "string" },
+              "readable_identifier": { "type": "string" },
+              "title": { "type": "string" },
+              "url": { "type": "string" },
+              "match_reason": { "type": "string" }
+            }
+          }
+        },
+        "waiver": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["reviewer", "reason", "timestamp"],
+          "properties": {
+            "reviewer": { "type": "string" },
+            "reason": { "type": "string" },
+            "timestamp": { "type": "string" }
+          }
+        }
+      }
+    },
     "severity_normalization": {
       "type": "object",
       "additionalProperties": false,
@@ -59,14 +95,46 @@
       "additionalProperties": false,
       "properties": {
         "submitted": { "type": "boolean" },
-        "tool": { "type": "string", "enum": ["jira", "linear", "github", "other"] },
+        "tool": { "type": "string", "enum": ["plane", "jira", "linear", "github", "other"] },
         "external_issue_id": { "type": "string" },
+        "readable_identifier": { "type": "string" },
         "external_issue_url": { "type": "string" },
         "submitted_at": { "type": "string" },
         "submitted_by": { "type": "string" },
+        "verified_at": { "type": "string" },
+        "verification_status": { "type": "string", "enum": ["not_run", "verified", "failed"] },
         "error": { "type": "string" }
       }
     },
-    "custom_fields": { "type": "object", "additionalProperties": true }
+    "custom_fields": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "plane": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "workspace_slug": { "type": "string" },
+            "project_id": { "type": "string" },
+            "project_identifier": { "type": "string" },
+            "project_name": { "type": "string" },
+            "work_item_id": { "type": "string" },
+            "readable_identifier": { "type": "string" },
+            "state_id": { "type": "string" },
+            "state_name": { "type": "string" },
+            "type_id": { "type": "string" },
+            "type_name": { "type": "string" },
+            "label_ids": { "type": "array", "items": { "type": "string" } },
+            "label_names": { "type": "array", "items": { "type": "string" } },
+            "assignee_ids": { "type": "array", "items": { "type": "string" } },
+            "cycle_id": { "type": "string" },
+            "module_id": { "type": "string" },
+            "relation": { "type": "string", "enum": ["blocking", "blocked_by", "duplicate_of", "duplicate", "relates_to"] },
+            "related_work_item_id": { "type": "string" },
+            "external_url": { "type": "string" }
+          }
+        }
+      }
+    }
   }
 }
