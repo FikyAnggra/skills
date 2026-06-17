@@ -33,6 +33,49 @@ Exploratory issue finding input:
 - title or summary, reproduction steps, expected result, actual result, environment, evidence or clear observation, and impact/severity hint
 - if minimum issue data is missing, ask one concise question or record `report_gap`
 
+## Cross-System Source Intake
+
+Use this workflow when the reporting source is a Plane work item, a Notion page/database, or a Plane work item that contains Notion links. This intake enriches reporting context and traceability only; it must not create test cases or execute tests.
+
+### Plane Work Item Source Intake
+
+Accept Plane readable identifiers such as `ENG-42` as report source refs.
+
+Workflow:
+1. Parse the readable identifier into project identifier and work item number.
+2. Fetch the Plane work item with the available Plane MCP retrieval tool. Local adapters may expose `get_issue_using_readable_identifier`; newer adapters may expose `retrieve_work_item_by_identifier`.
+3. Read title, description, priority, state, labels, assignees, module, cycle, comments, links, relations, parent, and child/sub work items when available.
+4. Extract Notion URLs from Plane description, comments, and links.
+5. Store the Plane source under `report_state.source_refs` with role such as `source_requirement`, `planner_report_anchor`, `executor_report_anchor`, or `release_anchor`.
+6. Store Plane-specific IDs and extracted Notion URLs under `report_state.custom_fields.plane.source_work_item`.
+7. Do not update the Plane work item during source intake unless the user explicitly asks.
+
+If the user asks to create test cases from a Plane requirement, route that work to `qa-planner`. `qa-reporter` may summarize requirement context and traceability for reports only.
+
+### Notion Link Resolver
+
+When Notion URLs are found or provided, resolve them before generating report artifacts.
+
+Workflow:
+1. Fetch each Notion page, database, or data source with Notion MCP fetch tools.
+2. If the URL is a database, fetch first to identify the correct data source and schema. Use the data source id for database row creation or querying.
+3. Classify each Notion source role: `planner_test_cases`, `planner_report`, `executor_execution_report`, `executor_test_case_updates`, `reporter_publish_target`, `release_page`, or `unknown`.
+4. Extract report context, execution summaries, test case status data, evidence refs, and issue candidates only when visible in the source.
+5. Store Notion refs under `report_state.source_refs` and `report_state.custom_fields.notion.source_pages` or `source_databases`.
+6. If required Notion content is missing, mark `report_gap` instead of inventing data.
+
+Before updating any Notion database row, fetch the database/data source schema and use exact property names. If property mapping is missing or ambiguous, ask the user for mapping before update.
+
+### Cross-System Traceability
+
+Keep every cross-system link explicit:
+- Plane source work item -> Notion planner report/test case database
+- Plane source work item -> Notion executor report/execution database
+- Reporter output -> Notion testing report, SIT, UAT, and coverage/risk pages
+- Reporter bug work item/sub work item -> source Plane work item and source Notion evidence refs
+- Plane summary comment -> published Notion reporter page links
+
+Do not store secrets from Plane or Notion. Store IDs, URLs, page titles, database/data source ids, and role labels only.
 ## Report State
 
 Create or update `report_state.json` before rendering outputs. Use `schemas/report-state.schema.json` when validation tooling exists.
@@ -169,6 +212,47 @@ For `OK`:
 - lock artifacts as approved version
 - allow issue submission only if the user explicitly requests it and config/tool exists
 
+## Notion MCP Adapter
+
+Use Notion as an optional source, publishing, review, and status-sync surface for qa-reporter artifacts. `report_state.json` remains the source of truth; Notion pages and database rows are renderings or linked source refs.
+
+### Notion Source Reading
+
+Use Notion MCP to read planner and executor artifacts when the user provides Notion URLs or when Plane work item text/comments/links contain Notion URLs.
+
+Read-only source workflow:
+1. Fetch the Notion entity by URL or id.
+2. For databases, fetch the database first and identify the correct data source id and schema.
+3. Classify the source role and store it in `report_state.source_refs`.
+4. Extract only visible report/test execution data. Do not infer hidden database rows or inaccessible pages.
+5. Preserve source refs for coverage, metric, issue, and evidence claims.
+
+### Notion Publishing
+
+Publish only when the user asks or when a report package explicitly targets Notion.
+
+Publishing workflow:
+1. Resolve target parent page or target data source.
+2. Fetch target database/data source schema before creating or updating rows.
+3. Render Markdown from `report_state` using templates.
+4. Create or update Notion pages for testing report, SIT document, UAT document, coverage/risk summary, and issue package as requested.
+5. Store created Notion page ids, urls, target data source ids, publication status, timestamp, and artifact type in `report_state.publication_history` and `report_state.custom_fields.notion.published_pages`.
+6. Add page/database comments only when the user asks or review flow needs them.
+
+### Notion Status Sync
+
+When syncing Plane-linked bug status to Notion, do not treat Plane fix completion as QA pass. Use dynamic user-approved mappings for both Plane states and Notion statuses.
+
+Safe default behavior:
+- Plane fix-complete intent plus no retest evidence -> update Notion to a user-mapped `ready_for_retest` status.
+- Retest passed with evidence -> update Notion to a user-mapped passed/closed status.
+- Retest failed with evidence -> update Notion to a user-mapped retest-failed status and prepare Plane comment/update for approval.
+
+Before any Notion status update, fetch the data source schema and confirm property names. If Notion status mapping is missing, ask the user to map reporter intents to available Notion options.
+
+### Plane Comment Summary with Notion Links
+
+After publishing reporter artifacts to Notion, qa-reporter may comment back on the source Plane work item when the user asks. The comment should include a compact summary, recommendation, issue counts, risk/coverage notes, and Notion report links. Do not include secrets or raw evidence content in the comment.
 ## Plane MCP Adapter
 
 Use Plane as an optional issue tracker adapter only after the normal reporter governance gate passes. Plane integration is not the default reporting path; default output remains a review-ready issue package.
@@ -288,8 +372,11 @@ Read only when needed:
 - `schemas/reporter-review.schema.json`: OK/NOK review feedback schema
 - `schemas/signoff-recommendation.schema.json`: release sign-off recommendation schema
 - `references/plane-mcp.md`: Plane MCP setup, field mapping, tool behavior, and troubleshooting notes
+- `references/notion-mcp.md`: Notion MCP source reading, publishing, status sync, and review rules
 - `templates/`: reusable report, issue, SIT/UAT, coverage/risk, and state skeletons
 - `examples/`: sample manual result, exploratory issue, report state, and rendered outputs
+
+
 
 
 

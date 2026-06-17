@@ -420,7 +420,184 @@
                        "custom_fields":  {
                                              "type":  "object",
                                              "additionalProperties":  true
-                                         }
+                                         },
+                       "source_refs":  {
+                                           "type":  "array",
+                                           "items":  {
+                                                         "type":  "object",
+                                                         "additionalProperties":  false,
+                                                         "required":  [
+                                                                          "source",
+                                                                          "type",
+                                                                          "role"
+                                                                      ],
+                                                         "properties":  {
+                                                                            "source":  {
+                                                                                           "type":  "string",
+                                                                                           "enum":  [
+                                                                                                        "plane",
+                                                                                                        "notion",
+                                                                                                        "file",
+                                                                                                        "manual",
+                                                                                                        "qa-planner",
+                                                                                                        "qa-executor",
+                                                                                                        "other"
+                                                                                                    ]
+                                                                                       },
+                                                                            "type":  {
+                                                                                         "type":  "string",
+                                                                                         "enum":  [
+                                                                                                      "work_item",
+                                                                                                      "comment",
+                                                                                                      "link",
+                                                                                                      "page",
+                                                                                                      "database",
+                                                                                                      "data_source",
+                                                                                                      "test_case_database",
+                                                                                                      "report",
+                                                                                                      "execution_result",
+                                                                                                      "planning_state",
+                                                                                                      "manual_input",
+                                                                                                      "other"
+                                                                                                  ]
+                                                                                     },
+                                                                            "role":  {
+                                                                                         "type":  "string",
+                                                                                         "enum":  [
+                                                                                                      "source_requirement",
+                                                                                                      "planner_test_cases",
+                                                                                                      "planner_report",
+                                                                                                      "executor_execution_report",
+                                                                                                      "executor_test_case_updates",
+                                                                                                      "planner_report_anchor",
+                                                                                                      "executor_report_anchor",
+                                                                                                      "reporter_publish_target",
+                                                                                                      "release_anchor",
+                                                                                                      "evidence",
+                                                                                                      "unknown"
+                                                                                                  ]
+                                                                                     },
+                                                                            "title":  {
+                                                                                          "type":  "string"
+                                                                                      },
+                                                                            "url":  {
+                                                                                        "type":  "string"
+                                                                                    },
+                                                                            "id":  {
+                                                                                       "type":  "string"
+                                                                                   },
+                                                                            "readable_identifier":  {
+                                                                                                        "type":  "string"
+                                                                                                    },
+                                                                            "page_id":  {
+                                                                                            "type":  "string"
+                                                                                        },
+                                                                            "database_id":  {
+                                                                                                "type":  "string"
+                                                                                            },
+                                                                            "data_source_id":  {
+                                                                                                   "type":  "string"
+                                                                                               },
+                                                                            "fetched_at":  {
+                                                                                               "type":  "string"
+                                                                                           },
+                                                                            "notes":  {
+                                                                                          "type":  "string"
+                                                                                      },
+                                                                            "custom_fields":  {
+                                                                                                  "type":  "object",
+                                                                                                  "additionalProperties":  true
+                                                                                              }
+                                                                        }
+                                                     }
+                                       },
+                       "publication_history":  {
+                                                   "type":  "array",
+                                                   "items":  {
+                                                                 "type":  "object",
+                                                                 "additionalProperties":  false,
+                                                                 "required":  [
+                                                                                  "artifact_type",
+                                                                                  "target",
+                                                                                  "publish_status"
+                                                                              ],
+                                                                 "properties":  {
+                                                                                    "publication_id":  {
+                                                                                                           "type":  "string"
+                                                                                                       },
+                                                                                    "artifact_type":  {
+                                                                                                          "type":  "string",
+                                                                                                          "enum":  [
+                                                                                                                       "test_report",
+                                                                                                                       "issue_package",
+                                                                                                                       "bug_report",
+                                                                                                                       "sit_document",
+                                                                                                                       "uat_document",
+                                                                                                                       "coverage_risk_summary",
+                                                                                                                       "release_signoff_summary",
+                                                                                                                       "plane_summary_comment",
+                                                                                                                       "other"
+                                                                                                                   ]
+                                                                                                      },
+                                                                                    "target":  {
+                                                                                                   "type":  "string",
+                                                                                                   "enum":  [
+                                                                                                                "notion",
+                                                                                                                "plane",
+                                                                                                                "file",
+                                                                                                                "other"
+                                                                                                            ]
+                                                                                               },
+                                                                                    "publish_status":  {
+                                                                                                           "type":  "string",
+                                                                                                           "enum":  [
+                                                                                                                        "not_requested",
+                                                                                                                        "draft",
+                                                                                                                        "published",
+                                                                                                                        "updated",
+                                                                                                                        "failed"
+                                                                                                                    ]
+                                                                                                       },
+                                                                                    "page_id":  {
+                                                                                                    "type":  "string"
+                                                                                                },
+                                                                                    "database_id":  {
+                                                                                                        "type":  "string"
+                                                                                                    },
+                                                                                    "data_source_id":  {
+                                                                                                           "type":  "string"
+                                                                                                       },
+                                                                                    "plane_work_item_id":  {
+                                                                                                               "type":  "string"
+                                                                                                           },
+                                                                                    "plane_readable_identifier":  {
+                                                                                                                      "type":  "string"
+                                                                                                                  },
+                                                                                    "url":  {
+                                                                                                "type":  "string"
+                                                                                            },
+                                                                                    "published_at":  {
+                                                                                                         "type":  "string"
+                                                                                                     },
+                                                                                    "published_by":  {
+                                                                                                         "type":  "string"
+                                                                                                     },
+                                                                                    "source_refs":  {
+                                                                                                        "type":  "array",
+                                                                                                        "items":  {
+                                                                                                                      "type":  "string"
+                                                                                                                  }
+                                                                                                    },
+                                                                                    "error":  {
+                                                                                                  "type":  "string"
+                                                                                              },
+                                                                                    "custom_fields":  {
+                                                                                                          "type":  "object",
+                                                                                                          "additionalProperties":  true
+                                                                                                      }
+                                                                                }
+                                                             }
+                                               }
                    },
     "$defs":  {
                   "document_section":  {

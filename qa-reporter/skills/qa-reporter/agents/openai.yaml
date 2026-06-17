@@ -1,4 +1,5 @@
 ﻿interface:
   display_name: "QA Reporter"
-  short_description: "Build QA reports and sign-off packages."
+  short_description: "Build QA reports, Notion publications, and tracker summaries."
   default_prompt: "Use $qa-reporter to generate report_state.json, QA reports, issue packages, and sign-off recommendations from execution results."
+

@@ -1,111 +1,214 @@
 ﻿{
-  "report_id": "RPT-YYYYMMDD-001",
-  "source_agent": "qa-reporter",
-  "package_id": "",
-  "planning_state_ref": "",
-  "execution_result_ref": "",
-  "report_status": "draft",
-  "metadata": {
-    "project": "",
-    "feature": "",
-    "report_version": "0.1.0",
-    "created_at": "",
-    "updated_at": "",
-    "environment": "",
-    "reporter": "qa-reporter",
-    "custom_fields": {}
-  },
-  "summary": {
-    "objective": "",
-    "overall_status": "",
-    "key_findings": [],
-    "report_gaps": [],
-    "evidence_refs": []
-  },
-  "scope": {
-    "in_scope": [],
-    "out_of_scope": [],
-    "source_refs": []
-  },
-  "coverage": {
-    "coverage_status": "not_assessed",
-    "covered_requirements": 0,
-    "total_requirements": 0,
-    "critical_coverage_status": "not_assessed",
-    "coverage_gaps": [],
-    "source_refs": []
-  },
-  "risk": {
-    "risk_level": "Not Assessed",
-    "open_risks": [],
-    "mitigations": [],
-    "source_refs": []
-  },
-  "execution_metrics": {
-    "total_test_cases": 0,
-    "selected_test_cases": 0,
-    "executed_test_cases": 0,
-    "passed": 0,
-    "failed": 0,
-    "blocked": 0,
-    "untested": 0,
-    "retest": 0,
-    "pass_rate": 0,
-    "execution_completion_rate": 0,
-    "critical_high_issue_count": 0,
-    "open_blocker_count": 0,
-    "source_refs": [],
-    "metric_gaps": []
-  },
-  "issue_package": {
-    "status": "not_required",
-    "issues": [],
-    "report_gaps": []
-  },
-  "sit_document": {
-    "status": "not_required",
-    "objective": "",
-    "scope": [],
-    "environment": "",
-    "execution_summary": "",
-    "coverage_summary": "",
-    "defect_summary": "",
-    "known_limitations": [],
-    "open_risks": [],
-    "evidence_refs": [],
-    "conclusion": "",
-    "signoff_recommendation_ref": "signoff_recommendation",
-    "custom_fields": {}
-  },
-  "uat_document": {
-    "status": "not_required",
-    "objective": "",
-    "scope": [],
-    "environment": "",
-    "execution_summary": "",
-    "coverage_summary": "",
-    "defect_summary": "",
-    "known_limitations": [],
-    "open_risks": [],
-    "evidence_refs": [],
-    "conclusion": "",
-    "signoff_recommendation_ref": "signoff_recommendation",
-    "custom_fields": {}
-  },
-  "signoff_recommendation": {
-    "recommendation": "Not Assessed",
-    "rule": "insufficient_data",
-    "reason": "Report data is not complete enough for release sign-off.",
-    "exit_criteria_status": "not_assessed",
-    "critical_coverage_status": "not_assessed",
-    "open_critical_high_issue_count": 0,
-    "open_blocker_count": 0,
-    "source_refs": [],
-    "generated_at": "",
-    "custom_fields": {}
-  },
-  "review_history": [],
-  "submission_history": [],
-  "changelog": [],
-  "custom_fields": {}
+    "report_id":  "RPT-YYYYMMDD-001",
+    "source_agent":  "qa-reporter",
+    "package_id":  "",
+    "planning_state_ref":  "",
+    "execution_result_ref":  "",
+    "report_status":  "draft",
+    "metadata":  {
+                     "project":  "",
+                     "feature":  "",
+                     "report_version":  "0.1.0",
+                     "created_at":  "",
+                     "updated_at":  "",
+                     "environment":  "",
+                     "reporter":  "qa-reporter",
+                     "custom_fields":  {
+
+                                       }
+                 },
+    "summary":  {
+                    "objective":  "",
+                    "overall_status":  "",
+                    "key_findings":  [
+
+                                     ],
+                    "report_gaps":  [
+
+                                    ],
+                    "evidence_refs":  [
+
+                                      ]
+                },
+    "scope":  {
+                  "in_scope":  [
+
+                               ],
+                  "out_of_scope":  [
+
+                                   ],
+                  "source_refs":  [
+
+                                  ]
+              },
+    "coverage":  {
+                     "coverage_status":  "not_assessed",
+                     "covered_requirements":  0,
+                     "total_requirements":  0,
+                     "critical_coverage_status":  "not_assessed",
+                     "coverage_gaps":  [
+
+                                       ],
+                     "source_refs":  [
+
+                                     ]
+                 },
+    "risk":  {
+                 "risk_level":  "Not Assessed",
+                 "open_risks":  [
+
+                                ],
+                 "mitigations":  [
+
+                                 ],
+                 "source_refs":  [
+
+                                 ]
+             },
+    "execution_metrics":  {
+                              "total_test_cases":  0,
+                              "selected_test_cases":  0,
+                              "executed_test_cases":  0,
+                              "passed":  0,
+                              "failed":  0,
+                              "blocked":  0,
+                              "untested":  0,
+                              "retest":  0,
+                              "pass_rate":  0,
+                              "execution_completion_rate":  0,
+                              "critical_high_issue_count":  0,
+                              "open_blocker_count":  0,
+                              "source_refs":  [
+
+                                              ],
+                              "metric_gaps":  [
+
+                                              ]
+                          },
+    "issue_package":  {
+                          "status":  "not_required",
+                          "issues":  [
+
+                                     ],
+                          "report_gaps":  [
+
+                                          ]
+                      },
+    "sit_document":  {
+                         "status":  "not_required",
+                         "objective":  "",
+                         "scope":  [
+
+                                   ],
+                         "environment":  "",
+                         "execution_summary":  "",
+                         "coverage_summary":  "",
+                         "defect_summary":  "",
+                         "known_limitations":  [
+
+                                               ],
+                         "open_risks":  [
+
+                                        ],
+                         "evidence_refs":  [
+
+                                           ],
+                         "conclusion":  "",
+                         "signoff_recommendation_ref":  "signoff_recommendation",
+                         "custom_fields":  {
+
+                                           }
+                     },
+    "uat_document":  {
+                         "status":  "not_required",
+                         "objective":  "",
+                         "scope":  [
+
+                                   ],
+                         "environment":  "",
+                         "execution_summary":  "",
+                         "coverage_summary":  "",
+                         "defect_summary":  "",
+                         "known_limitations":  [
+
+                                               ],
+                         "open_risks":  [
+
+                                        ],
+                         "evidence_refs":  [
+
+                                           ],
+                         "conclusion":  "",
+                         "signoff_recommendation_ref":  "signoff_recommendation",
+                         "custom_fields":  {
+
+                                           }
+                     },
+    "signoff_recommendation":  {
+                                   "recommendation":  "Not Assessed",
+                                   "rule":  "insufficient_data",
+                                   "reason":  "Report data is not complete enough for release sign-off.",
+                                   "exit_criteria_status":  "not_assessed",
+                                   "critical_coverage_status":  "not_assessed",
+                                   "open_critical_high_issue_count":  0,
+                                   "open_blocker_count":  0,
+                                   "source_refs":  [
+
+                                                   ],
+                                   "generated_at":  "",
+                                   "custom_fields":  {
+
+                                                     }
+                               },
+    "review_history":  [
+
+                       ],
+    "submission_history":  [
+
+                           ],
+    "changelog":  [
+
+                  ],
+    "custom_fields":  {
+                          "plane":  {
+                                        "source_work_item":  {
+                                                                 "readable_identifier":  "",
+                                                                 "work_item_id":  "",
+                                                                 "title":  "",
+                                                                 "url":  "",
+                                                                 "notion_links":  [
+
+                                                                                  ],
+                                                                 "fetched_at":  ""
+                                                             }
+                                    },
+                          "notion":  {
+                                         "source_pages":  [
+
+                                                          ],
+                                         "source_databases":  [
+
+                                                              ],
+                                         "published_pages":  [
+
+                                                             ],
+                                         "property_mapping":  {
+
+                                                              },
+                                         "status_mapping":  {
+                                                                "approval_status":  "pending",
+                                                                "mapped_at":  "",
+                                                                "approved_by":  "",
+                                                                "mappings":  {
+
+                                                                             }
+                                                            }
+                                     }
+                      },
+    "source_refs":  [
+
+                    ],
+    "publication_history":  [
+
+                            ]
 }

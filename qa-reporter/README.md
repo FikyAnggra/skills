@@ -38,8 +38,20 @@ QA Reporter includes an optional Plane adapter for approved issue packages. It c
 
 QA Reporter does not hardcode Plane states. Before creating or syncing Plane work items, it must fetch/list states for the target project, show every available state to the user, recommend a mapping to QA intents, and ask the user to approve or edit the mapping. Approved mapping is stored under `custom_fields.plane.state_mapping` per project.
 
+
+## Plane Work Item and Notion Flow
+
+QA Reporter can use a Plane work item such as `ENG-42` as a reporting anchor. It reads the work item, extracts Notion links from description/comments/links, fetches linked Notion planner and executor artifacts, builds `report_state.json`, publishes testing/SIT/UAT reports back to Notion, and comments a compact summary with Notion links back to Plane when requested.
+
+This is reporting and traceability only. Test case design still belongs to `qa-planner`, and test execution still belongs to `qa-executor`.
+
+Supported linked-source flow:
+- `qa-planner` creates test cases/report in Notion and links them in Plane.
+- `qa-executor` updates Notion test cases/report and links evidence in Plane.
+- `qa-reporter` reads Plane and Notion sources, creates final testing/SIT/UAT reports in Notion, creates bug work items/sub work items in Plane after state mapping approval, and comments summary links back to Plane.
 ## Downstream Workflow
 
 `qa-planner` creates planning state and reporter handoff data. `qa-executor` produces execution results, evidence refs, issue candidates, and reporter handoff data. `qa-reporter` creates the governed reporting package and optional approved issue submission package.
+
 
 

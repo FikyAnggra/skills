@@ -1,5 +1,14 @@
 ﻿# Changelog
 
+## 0.4.0 - 2026-06-17
+
+- Added Plane work item source intake for readable IDs such as `ENG-42`.
+- Added Notion link resolver guidance for Notion URLs found in Plane descriptions, comments, and links.
+- Added Notion publishing workflow for testing report, SIT, UAT, coverage/risk, issue package, and sign-off outputs.
+- Added Plane summary comment workflow with published Notion links.
+- Added `source_refs` and `publication_history` to report state schema and templates.
+- Added `references/notion-mcp.md`, `templates/notion-report-page.md`, and `templates/plane-summary-comment.md`.
+- Updated examples with Plane source work item, Notion planner/executor source refs, Notion published pages, and Plane summary comment history.
 ## 0.3.0 - 2026-06-17
 
 - Added dynamic Plane state discovery and recommendation workflow.
@@ -25,5 +34,6 @@
 - Added examples for manual execution, exploratory issues, canonical report state, rendered test report, and rendered issue package.
 - Compatibility target: portable agent package with Codex plugin metadata and Claude-compatible wrapper metadata.
 - Future migration note: keep schema changes versioned and preserve `custom_fields` for platform-specific extensions.
+
 
 
