@@ -1,0 +1,24 @@
+{
+  "plane_work_item_ref": "ENG-42",
+  "notion_test_case_source_ref": "https://notion.so/workspace/Auth-Test-Cases-db123",
+  "notion_execution_page_ref": "https://notion.so/workspace/QA-Execution-EXEC-20260617-001",
+  "sync_direction": "bidirectional_rendered_views",
+  "source_of_truth": "execution_result.json",
+  "cross_links": [
+    {
+      "link_type": "plane_to_notion",
+      "source_ref": "ENG-42",
+      "target_ref": "https://notion.so/workspace/QA-Execution-EXEC-20260617-001",
+      "sync_status": "not_started"
+    },
+    {
+      "link_type": "notion_to_plane",
+      "source_ref": "https://notion.so/workspace/QA-Execution-EXEC-20260617-001",
+      "target_ref": "ENG-42",
+      "sync_status": "not_started"
+    }
+  ],
+  "idempotency_key": "qa-executor:EXEC-20260617-001:plane:ENG-42:notion:notion-db-auth-tests",
+  "sync_status": "not_started",
+  "sync_errors": []
+}

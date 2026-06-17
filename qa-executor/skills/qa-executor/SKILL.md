@@ -60,6 +60,9 @@ Notion package sections when Notion path is active:
 - `notion_context`: source page/database/data source ids, URLs, title, source rows/pages, comments, linked refs, output target refs, and read gaps.
 - `notion_write_policy`: source database update, execution page sync, execution database sync, comment sync, issue candidate sync, and confirmation settings.
 
+Bridge package section when Plane and Notion are both active:
+- `notion_plane_bridge`: Plane work item ref, Notion test case source ref, Notion execution page ref, sync direction, source of truth, cross-links, idempotency key, and bridge sync status.
+
 Run policy modes:
 - `initial_run`: approved test cases with `Untested` status.
 - `full_regression`: all approved test cases.
@@ -251,6 +254,35 @@ Issue candidate rule: when `issue_candidate_sync = true`, create or update issue
 
 Idempotency rule: use `templates/notion-sync-record.json` and `schemas/notion-sync-record.schema.json` to store one record per Notion write action. Use idempotency keys, managed markers, and content hashes to update existing pages, rows, and comments instead of creating duplicates.
 
+## Notion + Plane Bridge
+
+Activate the bridge when the same execution uses both Plane and Notion inputs or outputs.
+
+Bridge source of truth:
+- Always use `execution_result.json` as canonical state.
+- Treat Notion and Plane as synced views.
+
+Bridge behavior after execution:
+- Update Notion test case rows or pages from `execution_result.json` when `notion_write_policy.source_database_update = true`.
+- Create or update a Notion execution page when `notion_write_policy.execution_page_sync = true`.
+- Update Plane managed comment, status, worklog, and links according to `plane_write_policy`.
+- Add the Notion execution page link to Plane output when `plane_write_policy.link_sync = true`.
+- Add the Plane work item link to the Notion execution page when `notion_write_policy.execution_page_sync = true`.
+
+Bridge idempotency key:
+
+```text
+qa-executor:<execution_id>:plane:<plane_id>:notion:<notion_id>
+```
+
+Bridge sync status:
+- `synced`: Plane and Notion bridge writes completed.
+- `partial`: one side synced and the other failed or was skipped with a gap.
+- `failed`: bridge writes failed on both sides.
+- `skipped`: bridge not attempted by policy.
+
+If one side fails, keep the execution valid, set bridge sync status to `partial` or `failed`, and record sync errors. Do not submit final defects, write final reports, or write automation scripts from the bridge.
+
 ## Retry Policy
 
 Retry only for technical flake: temporary timeout, transient network failure, UI wait or race condition, or temporary service unavailable.
@@ -354,6 +386,14 @@ Notion gates, when Notion path is active:
 - duplicate Notion pages, rows, and comments were avoided.
 - Notion managed output matches `execution_result.json`.
 
+Bridge gates, when both Plane and Notion are active:
+- `notion_plane_bridge.source_of_truth` is `execution_result.json`.
+- Plane work item ref and Notion source ref are recorded.
+- Notion execution page link is added to Plane output when Plane link sync is enabled.
+- Plane work item link is added to Notion execution page when Notion execution page sync is enabled.
+- Bridge idempotency key is recorded.
+- Bridge status is `synced`, `partial`, `failed`, or `skipped` with errors when needed.
+
 ## Platform Fallback
 
 Use platform-native API, browser, DB, document, spreadsheet, and JSON tools when available. If tools are unavailable or unsafe, produce manual instructions and structured templates. Core behavior must remain usable in Codex, Claude, and other agent platforms.
@@ -374,4 +414,5 @@ Read only when needed:
 - `templates/notion-execution-page.md`: managed Notion execution page skeleton.
 - `templates/notion-result-row.json`: Notion execution result row skeleton.
 - `templates/notion-sync-record.json`: Notion write sync record skeleton.
+- `templates/notion-plane-bridge.json`: Notion and Plane cross-sync bridge skeleton.
 - `examples/`: manual input normalization and sample execution outputs.

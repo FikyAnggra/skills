@@ -1,6 +1,6 @@
 # QA Executor
 
-`qa-executor` is a portable QA execution skill package. It runs approved test cases when tools and access are safe, produces manual execution instructions when they are not, captures redacted evidence, writes `execution_result.json`, and can sync managed execution output back to Plane.so or Notion.
+`qa-executor` is a portable QA execution skill package. It runs approved test cases when tools and access are safe, produces manual execution instructions when they are not, captures redacted evidence, writes `execution_result.json`, and can sync managed execution output back to Plane.so, Notion, or both through a bridge contract.
 
 ## Contents
 
@@ -8,7 +8,7 @@
 - `.claude-plugin/plugin.json`: Claude-compatible wrapper.
 - `skills/qa-executor/SKILL.md`: canonical platform-neutral executor instructions.
 - `skills/qa-executor/schemas/`: JSON schemas for execution packages, results, reviews, issue candidates, Plane sync records, and Notion sync records.
-- `skills/qa-executor/templates/`: reusable result, report, issue, reporter handoff, automation signal, Plane, Notion, and sync record templates.
+- `skills/qa-executor/templates/`: reusable result, report, issue, reporter handoff, automation signal, Plane, Notion, bridge, and sync record templates.
 - `skills/qa-executor/examples/`: manual, Plane, and Notion input examples plus sample execution outputs.
 
 ## Usage
@@ -24,6 +24,8 @@ For Plane Managed Sync, resolve status mapping and write policy before execution
 Use Notion input when a user provides a Notion page URL, database URL, data source id, page id, or MCP payload. Notion content is executable only when it contains an executor handoff, structured execution package, or minimum test case fields. Raw requirements should be routed to `qa-planner` instead of executed.
 
 For Notion Managed Sync, resolve write policy before writes. Policy controls source database row updates, managed execution page sync, result database rows, comments, issue candidate pages/rows, and confirmation requirements. Notion output is a synced view, not the source of truth.
+
+Use Notion + Plane bridge when Plane tracks the QA work item and Notion stores test cases or execution output. The bridge cross-links Plane and Notion rendered outputs while keeping `execution_result.json` canonical.
 
 Expected outputs are:
 - `execution_result.json` as source of truth.
@@ -57,6 +59,10 @@ Managed Plane output uses idempotency keys and a comment marker to avoid duplica
 Notion is a synced workflow surface, not the canonical state. `execution_result.json` remains the source of truth.
 
 Managed Notion output uses idempotency keys and a managed marker to avoid duplicate pages, rows, and comments. Source database updates, result database sync, comments, and issue candidate publishing are controlled by write policy. Secrets, tokens, cookies, credentials, authorization values, session ids, and PII must be redacted before any Notion write.
+
+## Notion + Plane Bridge
+
+When one execution uses both Plane and Notion, `notion_plane_bridge` records the Plane work item ref, Notion test case source ref, Notion execution page ref, sync direction, cross-links, and bridge idempotency key. The bridge can add the Notion execution page link to Plane output and the Plane work item link to the Notion execution page. Partial bridge sync does not invalidate the execution result.
 
 ## Downstream Handoff
 

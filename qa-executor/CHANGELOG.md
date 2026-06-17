@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.0 - 2026-06-17
+
+- Added Notion + Plane bridge contract for executions that use both tools.
+- Added `notion_plane_bridge` to execution package and result schemas.
+- Added bridge cross-link and idempotency behavior between Plane work items and Notion execution pages.
+- Added `notion-plane-bridge.json` template and bridge example.
+- Migration note: bridge sync status can be partial while `execution_result.json` remains valid and canonical.
+
 ## 0.3.0 - 2026-06-17
 
 - Added Notion page, database, data source, and MCP payload input support for `qa-executor`.

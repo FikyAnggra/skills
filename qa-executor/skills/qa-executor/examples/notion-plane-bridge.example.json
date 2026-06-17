@@ -1,0 +1,111 @@
+{
+  "execution_id": "EXEC-20260617-003",
+  "source_agent": "qa-executor",
+  "package_id": "EXEC-PKG-ENG-42-NOTION-AUTH-20260617",
+  "run_policy": {
+    "mode": "targeted",
+    "selected_tc_ids": ["TC0001", "TC0002"],
+    "parallel_allowed": false,
+    "notes": "Plane ENG-42 tracks execution; Notion database provides test cases."
+  },
+  "environment": {
+    "name": "Staging",
+    "base_url": "https://staging.example.com",
+    "build": "2026.06.17.1"
+  },
+  "started_at": "2026-06-17T12:00:00+07:00",
+  "finished_at": "2026-06-17T12:15:00+07:00",
+  "summary": {
+    "total": 2,
+    "selected": 2,
+    "passed": 1,
+    "failed": 1,
+    "blocked": 0,
+    "untested": 0,
+    "retest": 0,
+    "pass_rate": 50,
+    "completion_rate": 100
+  },
+  "results": [],
+  "plane_sync": {
+    "source_work_item": "ENG-42",
+    "managed_comment_id": "plane-comment-managed",
+    "wiki_page_id": null,
+    "worklog_id": "plane-worklog-id",
+    "status_before": "In Progress",
+    "status_after": "QA Failed",
+    "status_transition_reason": "At least one selected test failed.",
+    "linked_refs": [
+      {
+        "ref_type": "execution_result",
+        "ref": "execution_result.json",
+        "target_id": "ENG-42",
+        "sync_status": "synced"
+      },
+      {
+        "ref_type": "other",
+        "ref": "https://notion.so/workspace/QA-Execution-EXEC-20260617-003",
+        "target_id": "ENG-42",
+        "sync_status": "synced"
+      }
+    ],
+    "sync_status": "synced",
+    "sync_errors": [],
+    "idempotency_key": "qa-executor:EXEC-20260617-003:ENG-42"
+  },
+  "notion_sync": {
+    "source_page_id": null,
+    "source_database_id": "notion-db-auth-tests",
+    "source_data_source_id": "notion-ds-auth-tests",
+    "source_url": "https://notion.so/workspace/Auth-Test-Cases-db123",
+    "execution_page_id": "notion-execution-page-id",
+    "execution_database_id": null,
+    "execution_data_source_id": null,
+    "managed_comment_ids": [],
+    "updated_source_row_ids": ["notion-row-tc0001", "notion-row-tc0002"],
+    "result_row_ids": [],
+    "issue_candidate_page_ids": [],
+    "linked_refs": [
+      {
+        "ref_type": "notion_page",
+        "ref": "https://notion.so/workspace/QA-Execution-EXEC-20260617-003",
+        "target_id": "notion-execution-page-id",
+        "sync_status": "synced"
+      },
+      {
+        "ref_type": "other",
+        "ref": "https://app.plane.so/acme/projects/eng/issues/42",
+        "target_id": "notion-execution-page-id",
+        "sync_status": "synced"
+      }
+    ],
+    "sync_status": "synced",
+    "sync_errors": [],
+    "idempotency_key": "qa-executor:EXEC-20260617-003:notion"
+  },
+  "notion_plane_bridge": {
+    "plane_work_item_ref": "ENG-42",
+    "notion_test_case_source_ref": "https://notion.so/workspace/Auth-Test-Cases-db123",
+    "notion_execution_page_ref": "https://notion.so/workspace/QA-Execution-EXEC-20260617-003",
+    "sync_direction": "bidirectional_rendered_views",
+    "source_of_truth": "execution_result.json",
+    "cross_links": [
+      {
+        "link_type": "plane_to_notion",
+        "source_ref": "ENG-42",
+        "target_ref": "https://notion.so/workspace/QA-Execution-EXEC-20260617-003",
+        "sync_status": "synced"
+      },
+      {
+        "link_type": "notion_to_plane",
+        "source_ref": "https://notion.so/workspace/QA-Execution-EXEC-20260617-003",
+        "target_ref": "ENG-42",
+        "sync_status": "synced"
+      }
+    ],
+    "idempotency_key": "qa-executor:EXEC-20260617-003:plane:ENG-42:notion:notion-db-auth-tests",
+    "sync_status": "synced",
+    "sync_errors": []
+  },
+  "custom_fields": {}
+}

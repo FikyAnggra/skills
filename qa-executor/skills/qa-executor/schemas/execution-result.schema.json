@@ -56,6 +56,7 @@
     "qa_automation_signal": { "$ref": "#/$defs/automation_signal" },
     "plane_sync": { "$ref": "#/$defs/plane_sync" },
     "notion_sync": { "$ref": "#/$defs/notion_sync" },
+    "notion_plane_bridge": { "$ref": "#/$defs/notion_plane_bridge" },
     "custom_fields": {
       "type": "object",
       "additionalProperties": true
@@ -446,6 +447,50 @@
           "items": { "type": "string" }
         },
         "idempotency_key": { "type": "string" }
+      }
+    },
+    "notion_plane_bridge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_of_truth", "sync_status"],
+      "properties": {
+        "plane_work_item_ref": { "type": ["string", "null"] },
+        "notion_test_case_source_ref": { "type": ["string", "null"] },
+        "notion_execution_page_ref": { "type": ["string", "null"] },
+        "sync_direction": {
+          "type": "string",
+          "enum": ["notion_to_execution_to_plane", "plane_to_execution_to_notion", "bidirectional_rendered_views"]
+        },
+        "source_of_truth": { "const": "execution_result.json" },
+        "cross_links": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["link_type", "source_ref", "target_ref", "sync_status"],
+            "properties": {
+              "link_type": {
+                "type": "string",
+                "enum": ["plane_to_notion", "notion_to_plane", "execution_result", "evidence", "other"]
+              },
+              "source_ref": { "type": "string" },
+              "target_ref": { "type": "string" },
+              "sync_status": {
+                "type": "string",
+                "enum": ["not_started", "synced", "partial", "failed", "skipped"]
+              }
+            }
+          }
+        },
+        "idempotency_key": { "type": "string" },
+        "sync_status": {
+          "type": "string",
+          "enum": ["not_started", "synced", "partial", "failed", "skipped"]
+        },
+        "sync_errors": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
       }
     }
   }
