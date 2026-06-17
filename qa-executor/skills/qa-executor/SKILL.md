@@ -1,17 +1,19 @@
 ---
 name: qa-executor
-description: Portable QA execution agent for approved qa-planner handoffs, manual test cases, Plane.so work items, and Notion pages/databases. Executes or guides API/UI/DB/manual QA, captures redacted evidence, writes execution_result JSON, syncs managed Plane/Notion execution output, creates issue candidates, handles OK/NOK review, and produces qa-reporter handoffs and qa-automation signals. Use for QA execution, retest, smoke/targeted runs, evidence capture, Plane/Notion execution sync, and execution result prep. Do not use for test planning, final defect submission, final automation scripts, or final QA reports.
+description: Portable QA execution agent for approved qa-planner handoffs, manual test cases, Plane.so work items, Notion pages/databases, spreadsheets, and documents. Executes or guides API/UI/DB/manual QA, captures redacted evidence, writes execution_result JSON, incrementally updates source test case rows/items, embeds or uploads image evidence when supported, syncs managed Plane/Notion output, creates issue candidates, handles OK/NOK review, and produces qa-reporter handoffs and qa-automation signals. Use for QA execution, retest, smoke/targeted runs, evidence capture, source row updates, Plane/Notion execution sync, and execution result prep. Do not use for test planning, final defect submission, final automation scripts, or final QA reports.
 ---
 
 # QA Executor
 
-Use this skill to execute or guide execution of approved QA test cases. Treat `execution_result.json` as the source of truth, then render Markdown, spreadsheet-compatible updates, reporter handoffs, and automation signals from that state.
+Use this skill to execute or guide execution of approved QA test cases. Treat `execution_result.json` as the source of truth, then update the original test case source incrementally, render optional reports only when requested, and produce reporter handoffs or automation signals from canonical state.
 
 ## Core Rule
 
 Do execution work only. Do not create test plans, invent test cases from raw requirements, submit final issues, write final automation scripts, alter planner approval, invent credentials, invent selectors, invent endpoints, invent DB queries, or invent fixtures. If tools or safe access are unavailable, produce `manual_instruction` output with structured steps and result templates.
 
-Plane and Notion are synced workflow surfaces, not the source of truth. Keep `execution_result.json` canonical and render Plane or Notion comments, pages, database rows, status moves, worklogs, links, and wiki pages from that state.
+Plane, Notion, spreadsheets, documents, and other source artifacts are synced workflow surfaces, not the source of truth. Keep `execution_result.json` canonical and render source row/item updates, Plane/Notion comments, status moves, worklogs, links, wiki pages, and optional report pages from that state.
+
+Default to incremental source updates. Read one test case or a small ordered batch, execute it, update the same source row/item/section when writable, record the update result in `execution_result.json`, then continue. Do not create a new execution report document/page/workbook by default. Create a new report only when the user explicitly asks for report output or the package sets report output policy to enabled.
 
 ## Input Paths
 
@@ -25,6 +27,7 @@ Planner-driven input:
 Manual input:
 - Accept Excel, Google Sheets, Markdown, Notion, Word/PDF tables, JSON, or plain text test cases.
 - Minimum fields are `TC ID`, `Scenario`, `Test Step`, and `Expected Result`.
+- Preserve source locators when possible: workbook/sheet row, Google Sheets row, Notion row/page id, document table row, Markdown anchor, JSON pointer, Plane ref, or other stable source pointer.
 - Default missing priority to `P2 - Medium`, missing status to `Untested`, run mode to `targeted`, and selected test cases to all provided cases unless the user narrows scope.
 - If expected result is missing, do not mark pass/fail. Ask for clarification or produce manual/exploratory instructions with `Blocked` or `Untested` only when justified.
 
@@ -61,6 +64,11 @@ Notion package sections when Notion path is active:
 - `notion_context`: source page/database/data source ids, URLs, title, source rows/pages, comments, linked refs, output target refs, and read gaps.
 - `notion_write_policy`: source database update, execution page sync, execution database sync, comment sync, issue candidate sync, and confirmation settings.
 
+Cross-source package sections:
+- `source_update_policy`: controls incremental updates back to the original test case source.
+- `report_output_policy`: controls optional report creation. Default is disabled.
+- `evidence_upload_policy`: controls whether screenshots and other visual evidence are embedded/uploaded into writable sources.
+
 Bridge package section when Plane and Notion are both active:
 - `notion_plane_bridge`: Plane work item ref, Notion test case source ref, Notion execution page ref, discovered Notion refs, sync direction, source of truth, cross-links, idempotency key, and bridge sync status.
 
@@ -81,6 +89,51 @@ Execution modes:
 
 Default to sequential execution. Run in parallel only when cases are independent, use isolated data, do not share mutable state, and run policy allows it.
 
+## Incremental Source Updates
+
+Default execution loop:
+1. Read one test case or a small ordered batch from the source.
+2. Execute selected steps.
+3. Update `execution_result.json`.
+4. Update the same source row/item/section when the source is writable and policy allows it.
+5. Continue to the next selected test case.
+
+Do not wait until all tests finish to update source statuses unless the platform only supports batch writes or the user requests a dry run.
+
+Source update fields:
+- `Test Case Status`
+- `Actual Result`
+- `Notes`
+- `Evidence Status`
+- `Evidence`
+- `Executed At`
+- `Blocker` or `Issue Candidate Ref` when applicable
+
+Source locator rule: every normalized test case should keep a `source_locator` when discoverable. Use it to update the exact original source without creating duplicates.
+
+Supported locator types:
+- Notion database/data source row id or page id.
+- Google Sheets spreadsheet id, sheet name, row number, and column map.
+- Excel workbook path, sheet name, row number, and column map.
+- Google Docs/Word table row or heading anchor.
+- Markdown section anchor or table row index.
+- JSON pointer.
+- Plane work item/comment/wiki ref.
+
+If the source is read-only, ambiguous, or lacks a stable locator, record `source_update_gap` and keep the local `execution_result.json` update only.
+
+## Report Output Policy
+
+Do not create a new execution report page/document/workbook by default.
+
+Create a report only when the user explicitly asks with commands such as `buat report`, `create report`, `publish execution page`, `generate SIT report`, `generate UAT report`, `export Markdown report`, or when `report_output_policy.create_report = true`.
+
+When report output is disabled:
+- update source rows/items only.
+- keep Plane comments and descriptions summary-only.
+- include source links and evidence status refs.
+- do not create a Notion execution page solely because a Notion source was discovered.
+
 ## Plane Preflight
 
 Before any Plane write, resolve write policy and status mapping.
@@ -100,6 +153,7 @@ Plane write policy fields:
 - `status_sync`: move Plane state using approved mapping.
 - `worklog_sync`: create or update one execution worklog.
 - `link_sync`: sync evidence, issue candidate, reporter handoff, automation signal, or follow-up refs when tools allow.
+- `description_sync`: add or update a managed QA summary block in the Plane work item description. Default is `false`; only enable when the user explicitly requests it or the package says `description_sync: true`.
 - `wiki_sync`: create or update Plane wiki/page. Default is `false`; only enable when the user explicitly requests it or the package says `wiki_sync: true`.
 - `create_followup_items`: create Plane follow-up items for failed/blocked issue candidates. Default is `false`.
 - `requires_confirmation`: require user confirmation before Plane writes unless a trusted session policy says otherwise.
@@ -112,15 +166,15 @@ Before any Notion write, resolve write policy and output targets.
 
 Notion write policy fields:
 - `source_database_update`: update source test case rows with actual result, status, notes, evidence refs, blockers, retries, and issue candidate refs.
-- `execution_page_sync`: create or update one managed execution page. Enable when the user asks for Notion output.
+- `execution_page_sync`: create or update one managed execution page. Enable only when the user explicitly asks for report output or `report_output_policy.create_report = true`.
 - `execution_database_sync`: create or update execution result database rows.
 - `comment_sync`: add or update review/status comments.
 - `issue_candidate_sync`: create or update issue candidate pages or rows.
 - `requires_confirmation`: require user confirmation before Notion writes unless a trusted session policy says otherwise.
 
 Default Notion policy:
-- `execution_page_sync = true` only when the user requests Notion output.
-- `source_database_update = false` unless the user asks to update source test cases.
+- `source_database_update = true` when Notion is the source and writable.
+- `execution_page_sync = false` unless the user explicitly requests a new report page.
 - `execution_database_sync = false` unless the user asks for a result database.
 - `comment_sync = false` unless the user asks for comments or review handling.
 - `issue_candidate_sync = false` unless the user asks to publish issue candidates.
@@ -206,6 +260,8 @@ Final comment content:
 - redaction status
 - review status
 
+When a managed Notion execution page exists, keep Plane output summary-only. Do not duplicate the full Notion report in Plane comments, links, worklogs, or description. Plane managed comments may include execution id, package id, run mode, status transition, summary counts, failed and blocked TC ids, blocker count, redaction status, and the Notion execution page link. Omit full per-test tables, detailed steps, detailed evidence, reproduction steps, and full issue candidate details from Plane when Notion is the detailed report surface.
+
 Status transition rules:
 - execution started -> `on_start`
 - all selected passed -> `on_all_passed`
@@ -217,6 +273,14 @@ Status transition rules:
 Worklog rule: when `worklog_sync = true`, create or update one worklog per `execution_id`. Include package id, selected count, passed/failed/blocked count, run mode, and source Plane readable id in the description.
 
 Link rule: when `link_sync = true`, sync supported refs for evidence, execution result, issue candidates, reporter handoff, automation signal, and created follow-up items. If a link type is unsupported, keep it in the managed comment and record a sync gap.
+
+Description rule: when `description_sync = true`, update the Plane work item description by inserting or replacing one managed QA summary block. Preserve all user-authored description content outside the managed block. Include this marker in the managed block:
+
+```html
+<!-- qa-executor:description-summary:<execution_id>:<plane_work_item_id> -->
+```
+
+If a Notion execution page exists, the description block must be summary-only and include the Notion execution page link. Do not place full test tables, detailed evidence, issue candidate details, or reproduction steps in the Plane description.
 
 Wiki rule: create or update a Plane wiki/page only when `wiki_sync = true`. Use `templates/plane-wiki-page.md`. Never update wiki/page by default.
 
@@ -268,12 +332,12 @@ When Plane is the initial input, scan Plane description, comments, links, and at
 
 If exactly one high-confidence `test_case_source` is found, use it as `notion_test_case_source_ref`. If multiple candidate sources or only unknown refs are found, ask the user to choose. If a discovered Notion ref cannot be read, record a `notion_read_gap` and keep the Plane execution valid only when another executable source exists.
 
-Auto Notion report rule:
+Auto Notion source update rule:
 - If Plane or user-provided text contains no Notion URL, keep Notion disabled.
 - If exactly one high-confidence Notion URL is found and classified as `test_case_source`, enable the bridge and use that URL as the Notion test case source.
-- When auto-enabling Notion from a discovered `test_case_source`, set `notion_write_policy.source_database_update = true` when the source is a database/data source, set `notion_write_policy.execution_page_sync = true`, and keep `execution_database_sync`, `comment_sync`, and `issue_candidate_sync` false unless the user asks for them.
+- When auto-enabling Notion from a discovered `test_case_source`, set `notion_write_policy.source_database_update = true` when the source is a database/data source. Keep `notion_write_policy.execution_page_sync = false`, `execution_database_sync = false`, `comment_sync = false`, and `issue_candidate_sync = false` unless the user explicitly asks for a report page, result database, comments, or issue candidate publishing.
 - Always keep `notion_write_policy.requires_confirmation = true` before writing to Notion.
-- If an existing `execution_page` is discovered, update it. If no execution page is discovered, create a managed Notion execution page when `execution_page_sync = true`.
+- If an existing `execution_page` is discovered, update it only when report output is requested. If no execution page is discovered, create a managed Notion execution page only when `execution_page_sync = true`.
 - If multiple or ambiguous Notion URLs are found, ask the user to choose the test case source and report target before execution.
 - If the discovered Notion URL cannot be read and no other executable source exists, stop and ask for access or clarification.
 
@@ -283,9 +347,10 @@ Bridge source of truth:
 
 Bridge behavior after execution:
 - Update Notion test case rows or pages from `execution_result.json` when `notion_write_policy.source_database_update = true`.
-- Create or update a Notion execution page when `notion_write_policy.execution_page_sync = true`.
-- Update Plane managed comment, status, worklog, and links according to `plane_write_policy`.
+- Create or update a Notion execution page only when `notion_write_policy.execution_page_sync = true` or `report_output_policy.create_report = true`.
+- Update Plane managed comment, status, worklog, links, and description summary according to `plane_write_policy`.
 - Add the Notion execution page link to Plane output when `plane_write_policy.link_sync = true`.
+- Add or update the Notion execution page link in the Plane managed comment and managed description summary when those sync policies are enabled.
 - Add the Plane work item link to the Notion execution page when `notion_write_policy.execution_page_sync = true`.
 - Store discovered Notion links and their classifications in `notion_plane_bridge.discovered_notion_refs`.
 - Record whether Notion was auto-enabled from discovered refs in `notion_plane_bridge.auto_notion_report`.
@@ -320,9 +385,21 @@ Redact sensitive values before output:
 
 Store large artifacts as refs or paths, not duplicated blobs. Mark missing evidence as a gap instead of inventing it.
 
+Image evidence policy:
+- Prefer embedded/uploaded image evidence in the source system when the target supports file upload, image blocks, image/file properties, or inline media.
+- Keep the local artifact path as canonical evidence storage, for example `output/playwright/<work-item>/<tc-id>/screenshot.png`.
+- Do not write a local file path as if it were an embedded image in a cloud system. Local paths are fallback refs only.
+- For Notion, upload or attach screenshots as image/file evidence when the active Notion MCP/API tools support file upload, image blocks, or files properties. If the tool only accepts external URLs, use an externally accessible URL only when one exists.
+- For Google Sheets or Excel, attach or link evidence using supported image/file mechanisms when available; otherwise write an evidence status and local ref.
+- For Google Docs, Word, Markdown, and other documents, embed the image only when the document tool supports inserting local images; otherwise write an evidence status and local ref.
+- If upload/embed is unavailable, record `evidence_upload_gap` with the target, reason, local path, and intended evidence field.
+- Redact screenshots before upload/embed. If redaction cannot be verified, keep the image local and record an evidence gap.
+
 Apply the same redaction rules before every Plane write. Do not write raw secrets, raw logs, screenshots with visible PII, or unredacted payloads into Plane comments, worklogs, links, or wiki pages.
 
 Apply the same redaction rules before every Notion write. Do not write raw secrets, raw logs, screenshots with visible PII, or unredacted payloads into Notion pages, database rows, or comments.
+
+Apply the same redaction rules before writing images or media into spreadsheets, documents, Markdown, JSON-adjacent artifacts, or Plane/Notion surfaces.
 
 ## Issue Candidates
 
@@ -356,14 +433,16 @@ Canonical output:
 - `execution_result.json` using `schemas/execution-result.schema.json`.
 
 Human outputs:
-- Markdown execution report using `templates/execution-report.md`.
-- Spreadsheet-compatible updates where `Actual Result`, `Test Case Status`, and `Notes` derive from `execution_result.json`.
+- Source row/item updates where `Actual Result`, `Test Case Status`, `Notes`, `Evidence`, and `Evidence Status` derive from `execution_result.json`.
+- Markdown execution report using `templates/execution-report.md` only when report output is requested.
+- Spreadsheet-compatible exports only when requested or required by the source update path.
 
 Downstream outputs:
 - `qa_reporter_handoff` using `templates/qa-reporter-handoff.json`.
 - `qa_automation_signal` using `templates/qa-automation-signal.json` when relevant.
 - Issue candidates using `templates/issue-candidate.json`.
 - Plane managed comment using `templates/plane-execution-comment.md` when `comment_sync` is enabled.
+- Plane managed description summary using `templates/plane-description-summary.md` when `description_sync` is enabled.
 - Plane wiki/page using `templates/plane-wiki-page.md` only when `wiki_sync` is enabled.
 - Plane sync records using `templates/plane-sync-record.json` when Plane writes are attempted.
 - Notion managed execution page using `templates/notion-execution-page.md` when `execution_page_sync` is enabled.
@@ -379,8 +458,11 @@ Before presenting review-ready output, verify:
 - dependency blocks include `blocked_by`.
 - every retry is logged.
 - evidence is redacted or gaps are explicit.
+- image evidence is uploaded/embedded when supported or `evidence_upload_gap` is recorded.
+- every selected writable-source test case has a source update record or `source_update_gap`.
+- no new report page/document/workbook is created unless report output is explicitly requested.
 - issue candidates exist for `Failed` and `Blocked`.
-- rendered report and spreadsheet updates match `execution_result.json`.
+- source row/item updates and optional rendered reports match `execution_result.json`.
 - manual input with missing expected result is not marked pass/fail without clarification.
 
 Plane gates, when Plane path is active:
@@ -391,6 +473,7 @@ Plane gates, when Plane path is active:
 - managed comment was synced or sync gap was recorded.
 - status transition succeeded or was skipped with reason.
 - worklog synced or skipped with reason.
+- description summary synced or skipped with reason when `description_sync` is enabled.
 - wiki skipped unless explicitly enabled.
 - all Plane writes were redacted.
 - duplicate Plane comments, wiki pages, worklogs, links, and follow-up items were avoided.
@@ -400,9 +483,12 @@ Notion gates, when Notion path is active:
 - Notion source was read or `notion_read_gap` was recorded.
 - Notion input was executable or `source_not_executable` was recorded.
 - write policy and output targets were resolved before Notion writes.
-- managed execution page, database rows, or comments were synced or sync gaps were recorded.
+- source rows/pages were updated incrementally when writable, or sync gaps were recorded.
+- managed execution page, database rows, or comments were synced only when requested or sync gaps were recorded.
 - source database rows were updated only when `source_database_update = true`.
+- execution page was not created unless report output was requested.
 - issue candidate pages/rows were created only when `issue_candidate_sync = true`.
+- image evidence was uploaded/embedded when Notion tools supported it, otherwise `evidence_upload_gap` was recorded.
 - all Notion writes were redacted.
 - duplicate Notion pages, rows, and comments were avoided.
 - Notion managed output matches `execution_result.json`.
@@ -412,6 +498,7 @@ Bridge gates, when both Plane and Notion are active:
 - Plane work item ref and Notion source ref are recorded.
 - discovered Notion refs from Plane description/comments/links are classified or marked `unknown`.
 - Notion execution page link is added to Plane output when Plane link sync is enabled.
+- Plane comment and description summary stay summary-only when Notion execution page is the detailed report surface.
 - Plane work item link is added to Notion execution page when Notion execution page sync is enabled.
 - Bridge idempotency key is recorded.
 - Bridge status is `synced`, `partial`, `failed`, or `skipped` with errors when needed.
@@ -431,6 +518,7 @@ Read only when needed:
 - `schemas/notion-sync-record.schema.json`: Notion write idempotency and sync result schema.
 - `templates/`: reusable result, report, issue, reporter handoff, and automation signal templates.
 - `templates/plane-execution-comment.md`: managed Plane execution comment skeleton.
+- `templates/plane-description-summary.md`: managed Plane work item description summary block skeleton.
 - `templates/plane-wiki-page.md`: opt-in Plane wiki/page skeleton.
 - `templates/plane-sync-record.json`: Plane write sync record skeleton.
 - `templates/notion-execution-page.md`: managed Notion execution page skeleton.

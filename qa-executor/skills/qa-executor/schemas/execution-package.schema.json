@@ -108,6 +108,9 @@
     "notion_context": { "$ref": "#/$defs/notion_context" },
     "notion_write_policy": { "$ref": "#/$defs/notion_write_policy" },
     "notion_plane_bridge": { "$ref": "#/$defs/notion_plane_bridge" },
+    "source_update_policy": { "$ref": "#/$defs/source_update_policy" },
+    "report_output_policy": { "$ref": "#/$defs/report_output_policy" },
+    "evidence_upload_policy": { "$ref": "#/$defs/evidence_upload_policy" },
     "custom_fields": {
       "type": "object",
       "additionalProperties": true
@@ -176,6 +179,7 @@
         "status_sync": { "type": "boolean", "default": true },
         "worklog_sync": { "type": "boolean", "default": false },
         "link_sync": { "type": "boolean", "default": false },
+        "description_sync": { "type": "boolean", "default": false },
         "wiki_sync": { "type": "boolean", "default": false },
         "create_followup_items": { "type": "boolean", "default": false },
         "requires_confirmation": { "type": "boolean", "default": true },
@@ -261,6 +265,61 @@
         "notes": { "type": "string" }
       }
     },
+    "source_update_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "incremental_update": { "type": "boolean", "default": true },
+        "update_after_each_case": { "type": "boolean", "default": true },
+        "batch_only_when_required": { "type": "boolean", "default": true },
+        "requires_confirmation": { "type": "boolean", "default": true },
+        "writable_sources": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["notion", "plane", "google_sheets", "excel", "google_docs", "word", "markdown", "json", "other"]
+          }
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["Test Case Status", "Actual Result", "Notes", "Evidence", "Evidence Status", "Executed At", "Blocker", "Issue Candidate Ref"]
+          }
+        },
+        "notes": { "type": "string" }
+      }
+    },
+    "report_output_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "create_report": { "type": "boolean", "default": false },
+        "trigger": {
+          "type": "string",
+          "enum": ["explicit_user_request", "package_policy", "disabled_default"]
+        },
+        "target": {
+          "type": "string",
+          "enum": ["notion_page", "google_doc", "word_doc", "markdown", "spreadsheet", "plane_wiki", "none"]
+        },
+        "requires_confirmation": { "type": "boolean", "default": true },
+        "notes": { "type": "string" }
+      }
+    },
+    "evidence_upload_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "prefer_inline_images": { "type": "boolean", "default": true },
+        "upload_when_supported": { "type": "boolean", "default": true },
+        "allow_external_urls": { "type": "boolean", "default": true },
+        "local_path_fallback": { "type": "boolean", "default": true },
+        "requires_redaction_check": { "type": "boolean", "default": true },
+        "requires_confirmation": { "type": "boolean", "default": true },
+        "notes": { "type": "string" }
+      }
+    },
     "notion_plane_bridge": {
       "type": "object",
       "additionalProperties": false,
@@ -274,6 +333,7 @@
           "items": { "$ref": "#/$defs/discovered_notion_ref" }
         },
         "auto_notion_report": { "$ref": "#/$defs/auto_notion_report" },
+        "plane_output_scope": { "$ref": "#/$defs/plane_output_scope" },
         "sync_direction": {
           "type": "string",
           "enum": ["notion_to_execution_to_plane", "plane_to_execution_to_notion", "bidirectional_rendered_views"]
@@ -351,6 +411,23 @@
         "reason": { "type": "string" }
       }
     },
+    "plane_output_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "comment_mode": {
+          "type": "string",
+          "enum": ["summary_only", "full_when_no_notion_report"]
+        },
+        "description_sync": { "type": "boolean" },
+        "notion_execution_page_ref": { "type": ["string", "null"] },
+        "duplication_policy": {
+          "type": "string",
+          "enum": ["do_not_duplicate_notion_report", "allow_full_plane_report"]
+        },
+        "reason": { "type": "string" }
+      }
+    },
     "test_case": {
       "type": "object",
       "additionalProperties": false,
@@ -402,7 +479,37 @@
         "custom_fields": {
           "type": "object",
           "additionalProperties": true
-        }
+        },
+        "source_locator": { "$ref": "#/$defs/source_locator" }
+      }
+    },
+    "source_locator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_type"],
+      "properties": {
+        "source_type": {
+          "type": "string",
+          "enum": ["notion", "plane", "google_sheets", "excel", "google_docs", "word", "markdown", "json", "plain_text", "other"]
+        },
+        "source_ref": { "type": "string" },
+        "page_id": { "type": "string" },
+        "database_id": { "type": "string" },
+        "data_source_id": { "type": "string" },
+        "row_id": { "type": "string" },
+        "spreadsheet_id": { "type": "string" },
+        "workbook_path": { "type": "string" },
+        "document_id": { "type": "string" },
+        "sheet_name": { "type": "string" },
+        "row_number": { "type": "integer", "minimum": 1 },
+        "table_index": { "type": "integer", "minimum": 0 },
+        "row_index": { "type": "integer", "minimum": 0 },
+        "heading_anchor": { "type": "string" },
+        "markdown_anchor": { "type": "string" },
+        "json_pointer": { "type": "string" },
+        "plane_ref": { "type": "string" },
+        "column_map": { "type": "object", "additionalProperties": { "type": "string" } },
+        "locator_confidence": { "type": "string", "enum": ["high", "medium", "low"] }
       }
     }
   }

@@ -23,7 +23,7 @@
     "readable_identifier": { "type": "string", "minLength": 1 },
     "target_type": {
       "type": "string",
-      "enum": ["comment", "status", "worklog", "link", "wiki", "followup_item"]
+      "enum": ["comment", "status", "worklog", "link", "description", "wiki", "followup_item"]
     },
     "target_id": { "type": ["string", "null"] },
     "action": {

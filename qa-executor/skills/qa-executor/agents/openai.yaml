@@ -1,4 +1,4 @@
 interface:
   display_name: "QA Executor"
-  short_description: "Run QA cases, sync evidence, and auto-prepare Notion reports from discovered links."
-  default_prompt: "Use $qa-executor to execute approved QA cases, auto-discover Notion test sources from Plane/text when present, sync managed Plane and Notion output after confirmation, and produce execution_result.json."
+  short_description: "Run QA cases and update source rows with evidence."
+  default_prompt: "Use $qa-executor to execute approved QA cases, update the original source row/item after each case, embed or upload image evidence when supported, keep Plane output summary-only, create report documents only when explicitly requested, and produce execution_result.json."

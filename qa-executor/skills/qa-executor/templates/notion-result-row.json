@@ -7,12 +7,21 @@
   "Status": "Passed",
   "Expected Result": "User lands on dashboard.",
   "Actual Result": "User landed on dashboard.",
-  "Evidence Refs": "evidence/notion/TC0001-dashboard.png",
+  "Evidence Status": "embedded_image_synced",
+  "Evidence": [
+    {
+      "type": "image",
+      "local_path": "output/playwright/DKI-140/TC0001-dashboard.png",
+      "remote_ref": "notion-file-or-image-ref",
+      "sync_status": "synced"
+    }
+  ],
+  "Evidence Refs": "output/playwright/DKI-140/TC0001-dashboard.png",
   "Blocker Type": "",
   "Blocker Reason": "",
   "Retry Summary": "No retry.",
   "Issue Candidate": "",
   "Review Status": "pending",
   "Executed At": "2026-06-17T10:00:00+07:00",
-  "Notes": "Rendered from execution_result.json."
+  "Notes": "Incremental source row update rendered from execution_result.json."
 }

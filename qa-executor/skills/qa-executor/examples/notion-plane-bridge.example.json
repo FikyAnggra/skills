@@ -111,9 +111,16 @@
       "enabled": true,
       "trigger": "notion_url_discovered",
       "source_database_update": true,
-      "execution_page_sync": true,
+      "execution_page_sync": false,
       "requires_confirmation": true,
-      "reason": "Plane description contained one high-confidence Notion test case database, so qa-executor prepared Notion row updates and an execution page after confirmation."
+      "reason": "Plane description contained one high-confidence Notion test case database, so qa-executor prepared incremental Notion row updates after confirmation. No report page is created unless requested."
+    },
+    "plane_output_scope": {
+      "comment_mode": "summary_only",
+      "description_sync": true,
+      "notion_execution_page_ref": null,
+      "duplication_policy": "do_not_duplicate_notion_report",
+      "reason": "The Notion source rows store per-case results by default, so Plane receives only summary counts, failed or blocked IDs, and relevant Notion links."
     },
     "sync_direction": "bidirectional_rendered_views",
     "source_of_truth": "execution_result.json",

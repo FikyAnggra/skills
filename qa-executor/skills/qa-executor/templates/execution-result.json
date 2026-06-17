@@ -54,6 +54,18 @@
           "trace_refs": [],
           "observation": "Dashboard heading visible after login."
         },
+        "uploaded_assets": [
+          {
+            "asset_type": "image",
+            "local_path": "output/playwright/DKI-140/TC0001-dashboard.png",
+            "target": "notion",
+            "remote_ref": "notion-file-or-image-ref",
+            "field": "Evidence",
+            "redaction_status": "passed",
+            "sync_status": "synced"
+          }
+        ],
+        "evidence_upload_gaps": [],
         "evidence_gaps": []
       },
       "issue_candidate": null,
@@ -63,5 +75,43 @@
   ],
   "issue_candidates": [],
   "execution_review_history": [],
+  "source_updates": [
+    {
+      "tc_id": "TC0001",
+      "source_locator": {
+        "source_type": "notion",
+        "row_id": "notion-row-id",
+        "data_source_id": "notion-data-source-id",
+        "locator_confidence": "high"
+      },
+      "fields": {
+        "Test Case Status": "Passed",
+        "Actual Result": "User landed on dashboard.",
+        "Notes": "No issue observed.",
+        "Evidence Status": "embedded_image_synced"
+      },
+      "evidence_assets": [
+        {
+          "asset_type": "image",
+          "local_path": "output/playwright/DKI-140/TC0001-dashboard.png",
+          "target": "notion",
+          "remote_ref": "notion-file-or-image-ref",
+          "field": "Evidence",
+          "redaction_status": "passed",
+          "sync_status": "synced"
+        }
+      ],
+      "sync_status": "synced",
+      "sync_errors": []
+    }
+  ],
+  "report_outputs": [
+    {
+      "target": "none",
+      "created": false,
+      "ref": null,
+      "reason": "Report output not requested."
+    }
+  ],
   "custom_fields": {}
 }

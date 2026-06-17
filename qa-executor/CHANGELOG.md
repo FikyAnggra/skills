@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.8.0 - 2026-06-17
+
+- Changed default execution behavior to incremental source updates across Notion, Plane, spreadsheets, documents, Markdown, JSON, and other supported sources.
+- Added source locator guidance so qa-executor can update the same original row/item/section after each test case.
+- Added report output policy: new report pages/documents/workbooks are opt-in and created only when explicitly requested.
+- Added evidence upload policy for embedding/uploading screenshot images into writable targets when supported, with `evidence_upload_gap` fallback when local images cannot be uploaded.
+- Updated Notion + Plane bridge defaults so discovered Notion test sources update rows by default and do not create execution pages unless requested.
+
+## 0.7.0 - 2026-06-17
+
+- Added `description_sync` to Plane write policy for managed QA summary blocks in Plane descriptions.
+- Changed Plane managed comment template to summary-only when a Notion execution page is the detailed report surface.
+- Added `plane_output_scope` to Notion + Plane bridge schemas and examples to prevent duplicating Notion reports in Plane.
+- Added `templates/plane-description-summary.md` for idempotent Plane description updates with a Notion report link.
+- Migration note: when Notion execution page sync is enabled, keep full execution details in Notion and write only summary plus links to Plane.
+
 ## 0.6.0 - 2026-06-17
 
 - Added Auto Notion Report Rule for Notion URLs discovered in Plane or user-provided text.

@@ -17,9 +17,16 @@
     "enabled": true,
     "trigger": "notion_url_discovered",
     "source_database_update": true,
-    "execution_page_sync": true,
+    "execution_page_sync": false,
     "requires_confirmation": true,
-    "reason": "One high-confidence Notion test case source was discovered from Plane."
+    "reason": "One high-confidence Notion test case source was discovered from Plane; update source rows incrementally and create no report page unless requested."
+  },
+  "plane_output_scope": {
+    "comment_mode": "summary_only",
+    "description_sync": true,
+    "notion_execution_page_ref": null,
+    "duplication_policy": "do_not_duplicate_notion_report",
+    "reason": "Default execution updates source test case rows. Plane should carry workflow summary and source/report links only."
   },
   "sync_direction": "bidirectional_rendered_views",
   "source_of_truth": "execution_result.json",
