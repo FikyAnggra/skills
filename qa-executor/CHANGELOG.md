@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.0 - 2026-06-17
+
+- Added Notion page, database, data source, and MCP payload input support for `qa-executor`.
+- Added Notion write policy behavior for source database updates, managed execution pages, result database rows, comments, and issue candidate sync.
+- Added `notion_context`, `notion_write_policy`, and `notion_sync` schema sections.
+- Added `notion-sync-record.schema.json` for idempotent Notion writes.
+- Added Notion managed execution page, result row, and sync record templates.
+- Added Notion execution package, result, and page examples.
+- Migration note: keep Notion output as a synced view of `execution_result.json`; do not treat Notion as canonical execution state.
+
 ## 0.2.0 - 2026-06-17
 
 - Added Plane.so work item/card input support for `qa-executor`.

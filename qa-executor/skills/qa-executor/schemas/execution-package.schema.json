@@ -9,7 +9,7 @@
     "package_id": { "type": "string", "minLength": 1 },
     "source_agent": {
       "type": "string",
-      "enum": ["qa-planner", "human", "qa-executor", "plane", "external"]
+      "enum": ["qa-planner", "human", "qa-executor", "plane", "notion", "external"]
     },
     "source_refs": {
       "type": "array",
@@ -20,7 +20,7 @@
         "properties": {
           "ref_type": {
             "type": "string",
-            "enum": ["planning_state", "qa_executor_handoff", "manual_test_cases", "plane_work_item", "plane_comment", "plane_wiki", "plane_attachment", "plane_mcp_payload", "spreadsheet", "document", "json", "plain_text", "other"]
+            "enum": ["planning_state", "qa_executor_handoff", "manual_test_cases", "plane_work_item", "plane_comment", "plane_wiki", "plane_attachment", "plane_mcp_payload", "notion_page", "notion_database", "notion_data_source", "notion_comment", "notion_mcp_payload", "spreadsheet", "document", "json", "plain_text", "other"]
           },
           "ref": { "type": "string", "minLength": 1 },
           "summary": { "type": "string" }
@@ -105,6 +105,8 @@
     "plane_context": { "$ref": "#/$defs/plane_context" },
     "plane_write_policy": { "$ref": "#/$defs/plane_write_policy" },
     "plane_status_mapping": { "$ref": "#/$defs/plane_status_mapping" },
+    "notion_context": { "$ref": "#/$defs/notion_context" },
+    "notion_write_policy": { "$ref": "#/$defs/notion_write_policy" },
     "custom_fields": {
       "type": "object",
       "additionalProperties": true
@@ -189,6 +191,73 @@
         "on_blocked": { "type": "string" },
         "on_partial": { "type": "string" },
         "on_cancelled": { "type": "string" }
+      }
+    },
+    "notion_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "workspace_id": { "type": "string" },
+        "source_page_id": { "type": "string" },
+        "source_database_id": { "type": "string" },
+        "source_data_source_id": { "type": "string" },
+        "source_url": { "type": "string" },
+        "title": { "type": "string" },
+        "source_pages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "source_rows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "source_comments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "linked_refs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "output_targets": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "execution_page_id": { "type": ["string", "null"] },
+            "execution_database_id": { "type": ["string", "null"] },
+            "execution_data_source_id": { "type": ["string", "null"] },
+            "issue_candidate_database_id": { "type": ["string", "null"] }
+          }
+        },
+        "read_gaps": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "notion_write_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source_database_update": { "type": "boolean", "default": false },
+        "execution_page_sync": { "type": "boolean", "default": false },
+        "execution_database_sync": { "type": "boolean", "default": false },
+        "comment_sync": { "type": "boolean", "default": false },
+        "issue_candidate_sync": { "type": "boolean", "default": false },
+        "requires_confirmation": { "type": "boolean", "default": true },
+        "notes": { "type": "string" }
       }
     },
     "test_case": {

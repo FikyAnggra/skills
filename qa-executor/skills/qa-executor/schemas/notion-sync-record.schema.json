@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.qa/qa-executor/notion-sync-record.schema.json",
+  "title": "QA Executor Notion Sync Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "sync_record_id",
+    "execution_id",
+    "target_type",
+    "action",
+    "idempotency_key",
+    "sync_status",
+    "last_synced_at",
+    "errors"
+  ],
+  "properties": {
+    "sync_record_id": { "type": "string", "minLength": 1 },
+    "execution_id": { "type": "string", "minLength": 1 },
+    "source_page_id": { "type": ["string", "null"] },
+    "source_database_id": { "type": ["string", "null"] },
+    "source_data_source_id": { "type": ["string", "null"] },
+    "target_type": {
+      "type": "string",
+      "enum": ["execution_page", "source_row", "result_row", "comment", "issue_candidate_page", "issue_candidate_row"]
+    },
+    "target_id": { "type": ["string", "null"] },
+    "action": {
+      "type": "string",
+      "enum": ["create", "update", "skip", "comment", "link"]
+    },
+    "idempotency_key": { "type": "string", "minLength": 1 },
+    "content_hash": { "type": ["string", "null"] },
+    "sync_status": {
+      "type": "string",
+      "enum": ["not_started", "synced", "partial", "failed", "skipped"]
+    },
+    "last_synced_at": { "type": ["string", "null"], "format": "date-time" },
+    "errors": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "custom_fields": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  }
+}

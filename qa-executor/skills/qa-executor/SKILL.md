@@ -1,6 +1,6 @@
 ---
 name: qa-executor
-description: Portable QA execution agent for running approved qa-planner handoff contracts, executing manual test cases, using Plane.so work items/cards as execution input, producing manual execution instructions when tools are unavailable, capturing redacted API/UI/DB evidence, creating execution_result JSON, syncing managed Plane comments/status/worklogs/links with required preflight status mapping, creating issue candidates, OK/NOK execution review updates, qa-reporter handoffs, and qa-automation signals. Use when asked to execute QA test cases, retest failures, run smoke or targeted QA checks, normalize manual or Plane execution inputs, capture evidence, update Plane execution sync output, or prepare executor results for reporting. Do not use for creating test plans, submitting final defect tickets, writing final automation scripts, or producing final QA reports.
+description: Portable QA execution agent for approved qa-planner handoffs, manual test cases, Plane.so work items, and Notion pages/databases. Executes or guides API/UI/DB/manual QA, captures redacted evidence, writes execution_result JSON, syncs managed Plane/Notion execution output, creates issue candidates, handles OK/NOK review, and produces qa-reporter handoffs and qa-automation signals. Use for QA execution, retest, smoke/targeted runs, evidence capture, Plane/Notion execution sync, and execution result prep. Do not use for test planning, final defect submission, final automation scripts, or final QA reports.
 ---
 
 # QA Executor
@@ -11,11 +11,11 @@ Use this skill to execute or guide execution of approved QA test cases. Treat `e
 
 Do execution work only. Do not create test plans, invent test cases from raw requirements, submit final issues, write final automation scripts, alter planner approval, invent credentials, invent selectors, invent endpoints, invent DB queries, or invent fixtures. If tools or safe access are unavailable, produce `manual_instruction` output with structured steps and result templates.
 
-Plane is a synced workflow surface, not the source of truth. Keep `execution_result.json` canonical and render Plane comments, status moves, worklogs, links, and wiki pages from that state.
+Plane and Notion are synced workflow surfaces, not the source of truth. Keep `execution_result.json` canonical and render Plane or Notion comments, pages, database rows, status moves, worklogs, links, and wiki pages from that state.
 
 ## Input Paths
 
-Accept three input paths.
+Accept four input paths.
 
 Planner-driven input:
 - Load `qa_executor` handoff data from `qa-planner`.
@@ -36,6 +36,14 @@ Plane input:
 - If a Plane work item contains only requirements, acceptance criteria, or feature text, record `source_not_executable` and ask whether to route it to `qa-planner`. Do not invent test cases.
 - Parse Plane comments or user text commands such as `run smoke`, `run TC0001, TC0004`, `retest failed`, `publish wiki`, and `sync reporter handoff` as requested policy signals. These commands do not bypass Plane write preflight.
 
+Notion input:
+- Accept Notion page URLs, database URLs, data source ids, page ids, or MCP payloads.
+- Treat Notion page content, database rows, data source records, comments/discussions, linked pages, attached refs, and connected-source search results as source context when tools allow.
+- Extract executable test cases only when Notion content contains a planner executor handoff, structured execution package, or minimum manual fields: `TC ID`, `Scenario`, `Test Step`, and `Expected Result`.
+- Map Notion database columns to execution fields when names match or are obvious: `TC ID`, `Scenario`, `Test Step`, `Expected Result`, `Priority`, `Test Case Status`, `Actual Result`, and `Notes`.
+- If a Notion page/database contains only requirements, acceptance criteria, or feature text, record `source_not_executable` and ask whether to route it to `qa-planner`. Do not invent test cases.
+- Parse Notion comments or user text commands such as `run smoke`, `run TC0001, TC0004`, `retest failed`, `publish execution page`, `update test result database`, `sync reporter handoff`, `mark review OK`, and `NOK: <feedback>` as requested policy signals. These commands do not bypass Notion write preflight.
+
 ## Execution Package
 
 Normalize planner-driven or manual input into an execution package before running. Use `schemas/execution-package.schema.json` when validation tooling exists.
@@ -47,6 +55,10 @@ Plane package sections when Plane path is active:
 - `plane_context`: workspace/project/work item ids, readable id, URL, state, assignees, labels, cycle/module refs, relations, comments, links, and attachment refs.
 - `plane_write_policy`: comment, status, worklog, link, wiki, follow-up item, and confirmation settings.
 - `plane_status_mapping`: target states for start, all passed, any failed, blocked, partial, and cancelled outcomes.
+
+Notion package sections when Notion path is active:
+- `notion_context`: source page/database/data source ids, URLs, title, source rows/pages, comments, linked refs, output target refs, and read gaps.
+- `notion_write_policy`: source database update, execution page sync, execution database sync, comment sync, issue candidate sync, and confirmation settings.
 
 Run policy modes:
 - `initial_run`: approved test cases with `Untested` status.
@@ -89,6 +101,28 @@ Plane write policy fields:
 - `requires_confirmation`: require user confirmation before Plane writes unless a trusted session policy says otherwise.
 
 If write policy is not resolved, produce execution outputs locally and mark Plane sync as `skipped` or `not_started`.
+
+## Notion Preflight
+
+Before any Notion write, resolve write policy and output targets.
+
+Notion write policy fields:
+- `source_database_update`: update source test case rows with actual result, status, notes, evidence refs, blockers, retries, and issue candidate refs.
+- `execution_page_sync`: create or update one managed execution page. Enable when the user asks for Notion output.
+- `execution_database_sync`: create or update execution result database rows.
+- `comment_sync`: add or update review/status comments.
+- `issue_candidate_sync`: create or update issue candidate pages or rows.
+- `requires_confirmation`: require user confirmation before Notion writes unless a trusted session policy says otherwise.
+
+Default Notion policy:
+- `execution_page_sync = true` only when the user requests Notion output.
+- `source_database_update = false` unless the user asks to update source test cases.
+- `execution_database_sync = false` unless the user asks for a result database.
+- `comment_sync = false` unless the user asks for comments or review handling.
+- `issue_candidate_sync = false` unless the user asks to publish issue candidates.
+- `requires_confirmation = true` unless a trusted session policy says otherwise.
+
+If write policy or target page/database/data source is not resolved, produce local execution outputs and mark Notion sync as `skipped` or `not_started`.
 
 ## Status Rules
 
@@ -186,6 +220,37 @@ Follow-up rule: failed and blocked cases produce issue candidates by default. Cr
 
 Idempotency rule: use `templates/plane-sync-record.json` and `schemas/plane-sync-record.schema.json` to store one record per Plane write action. Use idempotency keys and content hashes to update existing comments, wiki pages, worklogs, links, or follow-ups instead of creating duplicates.
 
+## Notion Managed Sync
+
+Use managed Notion pages, database rows, or comments only when write policy allows them. Include this marker in managed execution pages or comments:
+
+```html
+<!-- qa-executor:notion-execution:<execution_id>:<notion_target_id> -->
+```
+
+Execution page content:
+- execution id and package id
+- source Notion page/database refs
+- summary counts
+- per-test status table
+- blockers and retries
+- evidence refs
+- issue candidate refs
+- reporter handoff ref
+- automation signal ref
+- redaction status
+- review status
+
+Source database update rule: when `source_database_update = true`, update existing test case rows only. Do not create duplicate source rows unless the user explicitly asks.
+
+Execution database rule: when `execution_database_sync = true`, create or update result rows keyed by `execution_id + tc_id`. Use `templates/notion-result-row.json` as the row shape.
+
+Comment rule: when `comment_sync = true`, add or update concise comments for execution progress, final result, or OK/NOK review decisions.
+
+Issue candidate rule: when `issue_candidate_sync = true`, create or update issue candidate pages or rows for failed and blocked results. These remain draft candidates, not final submitted defects.
+
+Idempotency rule: use `templates/notion-sync-record.json` and `schemas/notion-sync-record.schema.json` to store one record per Notion write action. Use idempotency keys, managed markers, and content hashes to update existing pages, rows, and comments instead of creating duplicates.
+
 ## Retry Policy
 
 Retry only for technical flake: temporary timeout, transient network failure, UI wait or race condition, or temporary service unavailable.
@@ -204,6 +269,8 @@ Store large artifacts as refs or paths, not duplicated blobs. Mark missing evide
 
 Apply the same redaction rules before every Plane write. Do not write raw secrets, raw logs, screenshots with visible PII, or unredacted payloads into Plane comments, worklogs, links, or wiki pages.
 
+Apply the same redaction rules before every Notion write. Do not write raw secrets, raw logs, screenshots with visible PII, or unredacted payloads into Notion pages, database rows, or comments.
+
 ## Issue Candidates
 
 Create an issue candidate for each `Failed` or `Blocked` result. Use `schemas/issue-candidate.schema.json` when validation tooling exists.
@@ -220,6 +287,7 @@ For `OK`:
 - send `qa_reporter_handoff`.
 - send `qa_automation_signal` when failures, flaky technical issues, selector/API/data gaps, or automation update candidates exist.
 - keep Plane managed output in sync when Plane write policy allows it.
+- keep Notion managed output in sync when Notion write policy allows it.
 
 For `NOK`:
 - record feedback in `execution_review_history` using `schemas/execution-review.schema.json` when structured review is needed.
@@ -227,6 +295,7 @@ For `NOK`:
 - rerun a case only when feedback requires new evidence and environment is safe.
 - do not change final status without new evidence or explicit reviewer decision.
 - update Plane managed comment/status only when feedback changes execution result or sync output and write policy allows it.
+- update Notion managed page/rows/comments only when feedback changes execution result or sync output and write policy allows it.
 
 ## Outputs
 
@@ -244,6 +313,9 @@ Downstream outputs:
 - Plane managed comment using `templates/plane-execution-comment.md` when `comment_sync` is enabled.
 - Plane wiki/page using `templates/plane-wiki-page.md` only when `wiki_sync` is enabled.
 - Plane sync records using `templates/plane-sync-record.json` when Plane writes are attempted.
+- Notion managed execution page using `templates/notion-execution-page.md` when `execution_page_sync` is enabled.
+- Notion result rows using `templates/notion-result-row.json` when `execution_database_sync` or `source_database_update` is enabled.
+- Notion sync records using `templates/notion-sync-record.json` when Notion writes are attempted.
 
 ## Quality Gates
 
@@ -271,6 +343,17 @@ Plane gates, when Plane path is active:
 - duplicate Plane comments, wiki pages, worklogs, links, and follow-up items were avoided.
 - Plane managed output matches `execution_result.json`.
 
+Notion gates, when Notion path is active:
+- Notion source was read or `notion_read_gap` was recorded.
+- Notion input was executable or `source_not_executable` was recorded.
+- write policy and output targets were resolved before Notion writes.
+- managed execution page, database rows, or comments were synced or sync gaps were recorded.
+- source database rows were updated only when `source_database_update = true`.
+- issue candidate pages/rows were created only when `issue_candidate_sync = true`.
+- all Notion writes were redacted.
+- duplicate Notion pages, rows, and comments were avoided.
+- Notion managed output matches `execution_result.json`.
+
 ## Platform Fallback
 
 Use platform-native API, browser, DB, document, spreadsheet, and JSON tools when available. If tools are unavailable or unsafe, produce manual instructions and structured templates. Core behavior must remain usable in Codex, Claude, and other agent platforms.
@@ -283,8 +366,12 @@ Read only when needed:
 - `schemas/execution-review.schema.json`: OK/NOK review feedback schema.
 - `schemas/issue-candidate.schema.json`: failed or blocked candidate issue schema.
 - `schemas/plane-sync-record.schema.json`: Plane write idempotency and sync result schema.
+- `schemas/notion-sync-record.schema.json`: Notion write idempotency and sync result schema.
 - `templates/`: reusable result, report, issue, reporter handoff, and automation signal templates.
 - `templates/plane-execution-comment.md`: managed Plane execution comment skeleton.
 - `templates/plane-wiki-page.md`: opt-in Plane wiki/page skeleton.
 - `templates/plane-sync-record.json`: Plane write sync record skeleton.
+- `templates/notion-execution-page.md`: managed Notion execution page skeleton.
+- `templates/notion-result-row.json`: Notion execution result row skeleton.
+- `templates/notion-sync-record.json`: Notion write sync record skeleton.
 - `examples/`: manual input normalization and sample execution outputs.

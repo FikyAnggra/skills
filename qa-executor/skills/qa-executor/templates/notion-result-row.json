@@ -1,0 +1,18 @@
+{
+  "Execution ID": "EXEC-20260617-001",
+  "Package ID": "EXEC-PKG-NOTION-AUTH-20260617",
+  "TC ID": "TC0001",
+  "Scenario": "Valid active user logs in",
+  "Execution Mode": "ui",
+  "Status": "Passed",
+  "Expected Result": "User lands on dashboard.",
+  "Actual Result": "User landed on dashboard.",
+  "Evidence Refs": "evidence/notion/TC0001-dashboard.png",
+  "Blocker Type": "",
+  "Blocker Reason": "",
+  "Retry Summary": "No retry.",
+  "Issue Candidate": "",
+  "Review Status": "pending",
+  "Executed At": "2026-06-17T10:00:00+07:00",
+  "Notes": "Rendered from execution_result.json."
+}

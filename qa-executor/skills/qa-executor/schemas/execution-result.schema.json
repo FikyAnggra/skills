@@ -55,6 +55,7 @@
     "qa_reporter_handoff": { "$ref": "#/$defs/reporter_handoff" },
     "qa_automation_signal": { "$ref": "#/$defs/automation_signal" },
     "plane_sync": { "$ref": "#/$defs/plane_sync" },
+    "notion_sync": { "$ref": "#/$defs/notion_sync" },
     "custom_fields": {
       "type": "object",
       "additionalProperties": true
@@ -387,6 +388,64 @@
         },
         "idempotency_key": { "type": "string" },
         "status_transition_gap": { "type": "string" }
+      }
+    },
+    "notion_sync": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source_page_id": { "type": ["string", "null"] },
+        "source_database_id": { "type": ["string", "null"] },
+        "source_data_source_id": { "type": ["string", "null"] },
+        "source_url": { "type": ["string", "null"] },
+        "execution_page_id": { "type": ["string", "null"] },
+        "execution_database_id": { "type": ["string", "null"] },
+        "execution_data_source_id": { "type": ["string", "null"] },
+        "managed_comment_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "updated_source_row_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "result_row_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "issue_candidate_page_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "linked_refs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["ref_type", "ref"],
+            "properties": {
+              "ref_type": {
+                "type": "string",
+                "enum": ["evidence", "execution_result", "issue_candidate", "reporter_handoff", "automation_signal", "notion_page", "notion_database", "other"]
+              },
+              "ref": { "type": "string", "minLength": 1 },
+              "target_id": { "type": "string" },
+              "sync_status": {
+                "type": "string",
+                "enum": ["not_started", "synced", "partial", "failed", "skipped"]
+              }
+            }
+          }
+        },
+        "sync_status": {
+          "type": "string",
+          "enum": ["not_started", "synced", "partial", "failed", "skipped"]
+        },
+        "sync_errors": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "idempotency_key": { "type": "string" }
       }
     }
   }

@@ -1,0 +1,117 @@
+{
+  "package_id": "EXEC-PKG-NOTION-AUTH-20260617",
+  "source_agent": "notion",
+  "source_refs": [
+    {
+      "ref_type": "notion_database",
+      "ref": "https://notion.so/workspace/Auth-Test-Cases-db123",
+      "summary": "Notion database containing approved auth regression test cases."
+    }
+  ],
+  "approval_state": {
+    "status": "approved_by_user",
+    "approved_by": "QA Lead",
+    "approved_at": "2026-06-17T09:00:00+07:00",
+    "notes": "User asked qa-executor to run selected Notion test cases."
+  },
+  "run_policy": {
+    "mode": "targeted",
+    "selected_tc_ids": ["TC0001", "TC0002"],
+    "priority_filter": [],
+    "tag_filter": ["auth"],
+    "parallel_allowed": false,
+    "notes": "Targeted Notion execution."
+  },
+  "environment": {
+    "name": "Staging",
+    "base_url": "https://staging.example.com",
+    "build": "2026.06.17.1",
+    "data_refs": ["approved-secret-source/auth-users"],
+    "constraints": ["Redact credentials before Notion sync."]
+  },
+  "execution_scope": {
+    "selected_count": 2,
+    "excluded_tc_ids": [],
+    "selection_reason": "User selected TC0001 and TC0002 from Notion database."
+  },
+  "test_cases": [
+    {
+      "tc_id": "TC0001",
+      "scenario": "Valid active user logs in",
+      "summary": "Verify active user can log in through UI.",
+      "priority": "P0 - Critical",
+      "pre_conditions": ["Staging web is reachable.", "Active user exists."],
+      "steps": [
+        {
+          "step_number": 1,
+          "instruction": "Open login page, enter active user email and password, submit.",
+          "expected_result": "User lands on dashboard."
+        }
+      ],
+      "test_data": ["active_user@example.com", "password from approved secret source"],
+      "expected_result": "User lands on dashboard.",
+      "test_case_status": "Untested",
+      "execution_mode": "ui",
+      "dependencies": [],
+      "tags": ["auth", "smoke"],
+      "custom_fields": {
+        "notion_row_id": "notion-row-tc0001"
+      }
+    },
+    {
+      "tc_id": "TC0002",
+      "scenario": "Invalid password is rejected",
+      "summary": "Verify invalid credentials do not authenticate user.",
+      "priority": "P1 - High",
+      "pre_conditions": ["Staging web is reachable.", "Active user exists."],
+      "steps": [
+        {
+          "step_number": 1,
+          "instruction": "Open login page, enter active user email and invalid password, submit.",
+          "expected_result": "Generic invalid credential message is shown."
+        }
+      ],
+      "test_data": ["active_user@example.com", "invalid password"],
+      "expected_result": "Generic invalid credential message is shown.",
+      "test_case_status": "Untested",
+      "execution_mode": "hybrid",
+      "dependencies": [],
+      "tags": ["auth", "negative"],
+      "custom_fields": {
+        "notion_row_id": "notion-row-tc0002"
+      }
+    }
+  ],
+  "notion_context": {
+    "workspace_id": "notion-workspace-id",
+    "source_page_id": null,
+    "source_database_id": "notion-db-auth-tests",
+    "source_data_source_id": "notion-ds-auth-tests",
+    "source_url": "https://notion.so/workspace/Auth-Test-Cases-db123",
+    "title": "Auth Test Cases",
+    "source_pages": [],
+    "source_rows": [
+      { "row_id": "notion-row-tc0001", "tc_id": "TC0001" },
+      { "row_id": "notion-row-tc0002", "tc_id": "TC0002" }
+    ],
+    "source_comments": [],
+    "linked_refs": [],
+    "output_targets": {
+      "execution_page_id": null,
+      "execution_database_id": null,
+      "execution_data_source_id": null,
+      "issue_candidate_database_id": null
+    },
+    "read_gaps": []
+  },
+  "notion_write_policy": {
+    "source_database_update": true,
+    "execution_page_sync": true,
+    "execution_database_sync": false,
+    "comment_sync": false,
+    "issue_candidate_sync": false,
+    "requires_confirmation": true,
+    "notes": "Update source rows and create a managed execution page; do not publish issue candidates."
+  },
+  "custom_fields": {}
+}

@@ -1,0 +1,16 @@
+{
+  "sync_record_id": "NOTION-SYNC-EXEC-20260617-001-execution-page",
+  "execution_id": "EXEC-20260617-001",
+  "source_page_id": "notion-source-page-id",
+  "source_database_id": null,
+  "source_data_source_id": null,
+  "target_type": "execution_page",
+  "target_id": null,
+  "action": "create",
+  "idempotency_key": "qa-executor:EXEC-20260617-001:notion:execution-page",
+  "content_hash": null,
+  "sync_status": "not_started",
+  "last_synced_at": null,
+  "errors": [],
+  "custom_fields": {}
+}
