@@ -31,6 +31,7 @@ Manual input:
 Plane input:
 - Accept Plane readable ids such as `ENG-42`, Plane URLs, UUIDs, or MCP payloads.
 - Treat Plane work item/card descriptions, comments, linked refs, wiki/page refs, attachments, cycle/module context, relations, and worklogs as source context when tools allow.
+- Scan Plane descriptions, comments, links, and attachment refs for Notion URLs. Store discovered refs in `notion_plane_bridge.discovered_notion_refs` when the bridge is active.
 - Read project states before status movement. Do not assume state names exist.
 - Extract executable test cases only when Plane content contains a planner executor handoff, structured execution package, or minimum manual fields: `TC ID`, `Scenario`, `Test Step`, and `Expected Result`.
 - If a Plane work item contains only requirements, acceptance criteria, or feature text, record `source_not_executable` and ask whether to route it to `qa-planner`. Do not invent test cases.
@@ -61,7 +62,7 @@ Notion package sections when Notion path is active:
 - `notion_write_policy`: source database update, execution page sync, execution database sync, comment sync, issue candidate sync, and confirmation settings.
 
 Bridge package section when Plane and Notion are both active:
-- `notion_plane_bridge`: Plane work item ref, Notion test case source ref, Notion execution page ref, sync direction, source of truth, cross-links, idempotency key, and bridge sync status.
+- `notion_plane_bridge`: Plane work item ref, Notion test case source ref, Notion execution page ref, discovered Notion refs, sync direction, source of truth, cross-links, idempotency key, and bridge sync status.
 
 Run policy modes:
 - `initial_run`: approved test cases with `Untested` status.
@@ -258,6 +259,24 @@ Idempotency rule: use `templates/notion-sync-record.json` and `schemas/notion-sy
 
 Activate the bridge when the same execution uses both Plane and Notion inputs or outputs.
 
+When Plane is the initial input, scan Plane description, comments, links, and attachment refs for Notion URLs. Classify each discovered Notion ref:
+- `test_case_source`: Notion page/database/data source contains executable test case fields.
+- `execution_page`: page contains the managed marker `qa-executor:notion-execution` or execution result sections.
+- `result_database`: database/data source appears to store execution result rows.
+- `issue_candidate_database`: database/data source appears to store issue candidate rows.
+- `unknown`: role cannot be determined from title/schema/content.
+
+If exactly one high-confidence `test_case_source` is found, use it as `notion_test_case_source_ref`. If multiple candidate sources or only unknown refs are found, ask the user to choose. If a discovered Notion ref cannot be read, record a `notion_read_gap` and keep the Plane execution valid only when another executable source exists.
+
+Auto Notion report rule:
+- If Plane or user-provided text contains no Notion URL, keep Notion disabled.
+- If exactly one high-confidence Notion URL is found and classified as `test_case_source`, enable the bridge and use that URL as the Notion test case source.
+- When auto-enabling Notion from a discovered `test_case_source`, set `notion_write_policy.source_database_update = true` when the source is a database/data source, set `notion_write_policy.execution_page_sync = true`, and keep `execution_database_sync`, `comment_sync`, and `issue_candidate_sync` false unless the user asks for them.
+- Always keep `notion_write_policy.requires_confirmation = true` before writing to Notion.
+- If an existing `execution_page` is discovered, update it. If no execution page is discovered, create a managed Notion execution page when `execution_page_sync = true`.
+- If multiple or ambiguous Notion URLs are found, ask the user to choose the test case source and report target before execution.
+- If the discovered Notion URL cannot be read and no other executable source exists, stop and ask for access or clarification.
+
 Bridge source of truth:
 - Always use `execution_result.json` as canonical state.
 - Treat Notion and Plane as synced views.
@@ -268,6 +287,8 @@ Bridge behavior after execution:
 - Update Plane managed comment, status, worklog, and links according to `plane_write_policy`.
 - Add the Notion execution page link to Plane output when `plane_write_policy.link_sync = true`.
 - Add the Plane work item link to the Notion execution page when `notion_write_policy.execution_page_sync = true`.
+- Store discovered Notion links and their classifications in `notion_plane_bridge.discovered_notion_refs`.
+- Record whether Notion was auto-enabled from discovered refs in `notion_plane_bridge.auto_notion_report`.
 
 Bridge idempotency key:
 
@@ -389,6 +410,7 @@ Notion gates, when Notion path is active:
 Bridge gates, when both Plane and Notion are active:
 - `notion_plane_bridge.source_of_truth` is `execution_result.json`.
 - Plane work item ref and Notion source ref are recorded.
+- discovered Notion refs from Plane description/comments/links are classified or marked `unknown`.
 - Notion execution page link is added to Plane output when Plane link sync is enabled.
 - Plane work item link is added to Notion execution page when Notion execution page sync is enabled.
 - Bridge idempotency key is recorded.

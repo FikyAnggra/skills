@@ -269,6 +269,11 @@
         "plane_work_item_ref": { "type": ["string", "null"] },
         "notion_test_case_source_ref": { "type": ["string", "null"] },
         "notion_execution_page_ref": { "type": ["string", "null"] },
+        "discovered_notion_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/discovered_notion_ref" }
+        },
+        "auto_notion_report": { "$ref": "#/$defs/auto_notion_report" },
         "sync_direction": {
           "type": "string",
           "enum": ["notion_to_execution_to_plane", "plane_to_execution_to_notion", "bidirectional_rendered_views"]
@@ -303,6 +308,47 @@
           "type": "array",
           "items": { "type": "string" }
         }
+      }
+    },
+    "discovered_notion_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "url", "classification", "confidence", "reason"],
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": ["plane_description", "plane_comment", "plane_link", "plane_attachment", "user_input", "other"]
+        },
+        "url": { "type": "string", "minLength": 1 },
+        "classification": {
+          "type": "string",
+          "enum": ["test_case_source", "execution_page", "result_database", "issue_candidate_database", "unknown"]
+        },
+        "confidence": {
+          "type": "string",
+          "enum": ["high", "medium", "low"]
+        },
+        "reason": { "type": "string" },
+        "notion_id": { "type": ["string", "null"] },
+        "read_status": {
+          "type": "string",
+          "enum": ["not_started", "read", "failed", "skipped"]
+        }
+      }
+    },
+    "auto_notion_report": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "trigger": {
+          "type": "string",
+          "enum": ["notion_url_discovered", "explicit_user_request", "disabled_no_notion_url", "disabled_ambiguous", "disabled_unreadable"]
+        },
+        "source_database_update": { "type": "boolean" },
+        "execution_page_sync": { "type": "boolean" },
+        "requires_confirmation": { "type": "boolean" },
+        "reason": { "type": "string" }
       }
     },
     "test_case": {

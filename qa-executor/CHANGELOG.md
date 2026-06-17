@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.0 - 2026-06-17
+
+- Added Plane-to-Notion discovery for Notion URLs found in Plane descriptions, comments, links, and attachment refs.
+- Added `discovered_notion_refs` to `notion_plane_bridge` schema sections.
+- Added Notion ref classifications: `test_case_source`, `execution_page`, `result_database`, `issue_candidate_database`, and `unknown`.
+- Updated bridge template and example with discovered Notion refs and read status.
+- Migration note: ambiguous or unreadable discovered Notion links should be recorded as gaps and clarified before execution.
+
 ## 0.4.0 - 2026-06-17
 
 - Added Notion + Plane bridge contract for executions that use both tools.

@@ -2,6 +2,17 @@
   "plane_work_item_ref": "ENG-42",
   "notion_test_case_source_ref": "https://notion.so/workspace/Auth-Test-Cases-db123",
   "notion_execution_page_ref": "https://notion.so/workspace/QA-Execution-EXEC-20260617-001",
+  "discovered_notion_refs": [
+    {
+      "source": "plane_description",
+      "url": "https://notion.so/workspace/Auth-Test-Cases-db123",
+      "classification": "test_case_source",
+      "confidence": "high",
+      "reason": "Database contains TC ID, Scenario, Test Step, and Expected Result fields.",
+      "notion_id": "notion-db-auth-tests",
+      "read_status": "read"
+    }
+  ],
   "sync_direction": "bidirectional_rendered_views",
   "source_of_truth": "execution_result.json",
   "cross_links": [

@@ -25,7 +25,7 @@ Use Notion input when a user provides a Notion page URL, database URL, data sour
 
 For Notion Managed Sync, resolve write policy before writes. Policy controls source database row updates, managed execution page sync, result database rows, comments, issue candidate pages/rows, and confirmation requirements. Notion output is a synced view, not the source of truth.
 
-Use Notion + Plane bridge when Plane tracks the QA work item and Notion stores test cases or execution output. The bridge cross-links Plane and Notion rendered outputs while keeping `execution_result.json` canonical.
+Use Notion + Plane bridge when Plane tracks the QA work item and Notion stores test cases or execution output. The bridge can discover Notion links from Plane descriptions/comments/links, classify them, and cross-link Plane and Notion rendered outputs while keeping `execution_result.json` canonical.
 
 Expected outputs are:
 - `execution_result.json` as source of truth.
@@ -62,7 +62,7 @@ Managed Notion output uses idempotency keys and a managed marker to avoid duplic
 
 ## Notion + Plane Bridge
 
-When one execution uses both Plane and Notion, `notion_plane_bridge` records the Plane work item ref, Notion test case source ref, Notion execution page ref, sync direction, cross-links, and bridge idempotency key. The bridge can add the Notion execution page link to Plane output and the Plane work item link to the Notion execution page. Partial bridge sync does not invalidate the execution result.
+When one execution uses both Plane and Notion, `notion_plane_bridge` records the Plane work item ref, discovered Notion refs, Notion test case source ref, Notion execution page ref, sync direction, cross-links, and bridge idempotency key. Discovered Notion refs are classified as `test_case_source`, `execution_page`, `result_database`, `issue_candidate_database`, or `unknown`. The bridge can add the Notion execution page link to Plane output and the Plane work item link to the Notion execution page. Partial bridge sync does not invalidate the execution result.
 
 ## Downstream Handoff
 

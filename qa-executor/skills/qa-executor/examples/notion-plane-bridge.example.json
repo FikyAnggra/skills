@@ -87,6 +87,26 @@
     "plane_work_item_ref": "ENG-42",
     "notion_test_case_source_ref": "https://notion.so/workspace/Auth-Test-Cases-db123",
     "notion_execution_page_ref": "https://notion.so/workspace/QA-Execution-EXEC-20260617-003",
+    "discovered_notion_refs": [
+      {
+        "source": "plane_description",
+        "url": "https://notion.so/workspace/Auth-Test-Cases-db123",
+        "classification": "test_case_source",
+        "confidence": "high",
+        "reason": "Database schema includes TC ID, Scenario, Test Step, Expected Result, Test Case Status, Actual Result, and Notes.",
+        "notion_id": "notion-db-auth-tests",
+        "read_status": "read"
+      },
+      {
+        "source": "plane_comment",
+        "url": "https://notion.so/workspace/QA-Execution-EXEC-20260617-003",
+        "classification": "execution_page",
+        "confidence": "high",
+        "reason": "Page contains qa-executor:notion-execution managed marker.",
+        "notion_id": "notion-execution-page-id",
+        "read_status": "read"
+      }
+    ],
     "sync_direction": "bidirectional_rendered_views",
     "source_of_truth": "execution_result.json",
     "cross_links": [
