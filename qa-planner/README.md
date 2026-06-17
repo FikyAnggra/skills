@@ -41,6 +41,330 @@ Expected outputs include:
 - Notion test plan page, Notion test case database, Notion views, and captured Notion links when Notion tools are available
 - review history and changelog entries
 
+## Usage Prompts
+
+### Basic QA Planning
+
+```text
+Gunakan skill qa-planner.
+
+Buat QA planning package dari requirement berikut:
+<isi requirement / PRD / user story / acceptance criteria>
+
+Output yang dibutuhkan:
+- planning_state.json
+- test plan
+- test cases
+- coverage map
+- risk analysis
+- open questions jika ada informasi yang kurang jelas
+
+Jangan gunakan asumsi. Jika ada informasi blocking yang kurang atau konflik, tanyakan dulu.
+```
+
+### Test Cases Only
+
+```text
+Gunakan skill qa-planner.
+
+Buat test cases dari requirement berikut:
+<isi requirement>
+
+Gunakan field:
+- TC ID
+- Scenario
+- Summary
+- Test Type
+- Priority
+- Pre Conditions
+- Test Steps
+- Test Data
+- Expected Result
+- Actual Result
+- Test Case Status
+- Automation Status
+- Notes
+
+Actual Result harus kosong.
+Test Case Status default: Untested.
+Jangan gunakan asumsi untuk expected result.
+```
+
+### Test Plan Only
+
+```text
+Gunakan skill qa-planner.
+
+Buat test plan dari requirement berikut:
+<isi requirement>
+
+Ikuti struktur:
+- Metadata
+- Objective
+- Source Inputs
+- Scope
+- Assumptions and Open Questions
+- Risk Analysis
+- Test Strategy
+- Environment
+- Entry Criteria
+- Exit Criteria
+- Dependencies
+- Coverage Summary
+- Handoff Summary
+
+Jika ada informasi blocking yang kurang, tanyakan dulu.
+```
+
+### Plane Work Item
+
+```text
+Gunakan skill qa-planner.
+
+Ambil requirement dari Plane work item:
+<ENG-42 atau URL Plane>
+
+Baca juga:
+- description
+- comments
+- activities
+- relations
+- attachments jika readable
+- module/cycle context jika tersedia
+
+Buat:
+- planning_state.json
+- test plan
+- test cases
+- coverage map
+- handoff contract
+
+Tulis hasil planning kembali ke Plane work item sumber.
+Jika status perlu dipindahkan, tanyakan dulu sebelum running.
+```
+
+### Plane Batch Module Or Cycle
+
+```text
+Gunakan skill qa-planner.
+
+Buat QA planning untuk Plane module/cycle berikut:
+<module id / cycle id / URL Plane>
+
+Baca semua work items di scope tersebut.
+Perhatikan relation blocking/blocked_by.
+Jika ada item yang blocked, masukkan dependency ke entry criteria.
+
+Output:
+- planning_state.json
+- test plan
+- test cases per work item/module
+- coverage map
+- risk analysis
+- handoff contract
+- summary comment ke Plane
+```
+
+### Notion Test Plan And Test Case Database
+
+```text
+Gunakan skill qa-planner.
+
+Buat QA planning dari requirement berikut:
+<isi requirement>
+
+Output ke Notion:
+- test plan sebagai Notion page
+- test cases sebagai Notion database
+
+Parent Notion page:
+<URL atau page id Notion>
+
+Kolom database test cases harus urut:
+1. TC ID
+2. Scenario
+3. Summary
+4. Test Type
+5. Priority
+6. Pre Conditions
+7. Test Steps
+8. Test Data
+9. Expected Result
+10. Actual Result
+11. Test Case Status
+12. Automation Status
+13. Notes
+
+Simpan/copy link Notion page dan database di output akhir.
+```
+
+### Plane And Notion
+
+```text
+Gunakan skill qa-planner.
+
+Ambil requirement dari Plane work item:
+<ENG-42 atau URL Plane>
+
+Buat QA planning package dan publish ke Notion:
+- test plan sebagai Notion page
+- test cases sebagai Notion database
+
+Parent Notion page:
+<URL atau page id Notion>
+
+Setelah Notion page/database dibuat:
+- copy link Notion page dan database
+- attach/update link tersebut ke Plane work item sumber
+- tambahkan summary comment di Plane
+
+Jika status Plane perlu dipindahkan, tanyakan dulu sebelum running.
+Jangan gunakan asumsi jika requirement kurang jelas.
+```
+
+### Update Existing Notion QA Plan
+
+```text
+Gunakan skill qa-planner.
+
+Update QA planning berdasarkan feedback berikut:
+<OK / NOK / partial feedback>
+
+Existing Notion test plan page:
+<URL Notion page>
+
+Existing Notion test case database:
+<URL Notion database>
+
+Source requirement:
+<URL / teks requirement / Plane item>
+
+Update page dan database yang sama.
+Jangan buat duplikat.
+Catat perubahan di changelog.
+```
+
+### Review Feedback
+
+```text
+Gunakan skill qa-planner.
+
+Review feedback:
+<NOK: bagian test cases kurang negative scenario>
+atau
+<scope OK, test cases perlu revisi>
+atau
+<OK>
+
+Existing planning package:
+<planning_state.json / Notion link / Plane link / teks existing output>
+
+Jika feedback partial, revisi hanya bagian yang terdampak.
+Preserve bagian yang sudah approved.
+```
+
+### Handoff To QA Executor
+
+```text
+Gunakan skill qa-planner.
+
+Dari QA planning package berikut:
+<planning_state.json / test cases / Notion database / Plane item>
+
+Buat handoff contract untuk qa-executor.
+
+Isi contract:
+- selected test cases
+- run policy
+- environment
+- test data
+- constraints
+- gaps
+- coverage refs
+- source links
+
+Jangan ubah status execution karena belum ada hasil test.
+```
+
+### Handoff To QA Automation
+
+```text
+Gunakan skill qa-planner.
+
+Dari test cases berikut:
+<test cases / planning_state.json / Notion database>
+
+Buat handoff contract untuk qa-automation.
+
+Klasifikasikan:
+- To Be Automate
+- Already Automate
+- Manual Only
+
+Jelaskan alasan automation_status untuk borderline cases.
+Jangan tulis automation script final.
+```
+
+### Handoff To QA Reporter
+
+```text
+Gunakan skill qa-planner.
+
+Dari QA planning package berikut:
+<planning_state.json / Notion page / Plane item>
+
+Buat handoff contract untuk qa-reporter.
+
+Sertakan:
+- planning summary
+- coverage refs
+- risk refs
+- scope
+- exclusions
+- open questions
+- approval status
+
+Jangan buat final execution report.
+```
+
+### Full Prompt
+
+```text
+Gunakan skill qa-planner.
+
+Source requirement:
+<teks / PRD / Plane item / Notion page>
+
+Buat QA planning package:
+- planning_state.json
+- test plan
+- test cases
+- coverage map
+- risk analysis
+- open questions
+- handoff contracts untuk qa-executor, qa-automation, qa-reporter
+
+Publish output:
+- Notion test plan page
+- Notion test case database
+- copy link Notion page/database
+
+Parent Notion page:
+<URL>
+
+Jika source dari Plane:
+- baca comments, activities, relations, attachments
+- attach/update link Notion ke Plane
+- jangan pindah status kecuali saya setujui
+
+Rules:
+- jangan gunakan asumsi untuk requirement yang kurang jelas
+- jika ada konflik antar source, tanyakan dulu
+- Actual Result kosong
+- Test Case Status default Untested
+- ikuti urutan kolom database Notion yang sudah ditentukan
+```
+
 ## Notion MCP Output
 
 When Notion output is requested, `qa-planner` creates the test plan as a Notion page and test cases as a Notion database. The test plan page follows `templates/test-plan.md` with clean headings, compact tables, and bullet lists. Each test case becomes a database row/page with ordered display properties: `TC ID`, `Scenario`, `Summary`, `Test Type`, `Priority`, `Pre Conditions`, `Test Steps`, `Test Data`, `Expected Result`, `Actual Result`, `Test Case Status`, `Automation Status`, and `Notes`.
