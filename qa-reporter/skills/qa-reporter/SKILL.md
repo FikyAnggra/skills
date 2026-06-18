@@ -1,4 +1,4 @@
-﻿---
+---
 name: qa-reporter
 description: Portable QA reporting agent for converting qa-planner data, qa-executor results, manual execution results, or exploratory issue findings into governed report_state JSON, test reports, issue packages, bug reports, SIT/UAT documents, coverage-risk summaries, OK/NOK review updates, and Go/Conditional Go/No-Go/Not Assessed sign-off recommendations. Use when asked to create or revise QA reports, normalize failed/blocked issues for review, prepare issue submission packages, generate SIT or UAT evidence summaries, summarize coverage/risk, or process human report review feedback. Do not use for creating test cases, running tests, writing automation scripts, or submitting final issues without explicit user approval and approved package/config.
 ---
@@ -42,6 +42,7 @@ Use this workflow when the reporting source is a Plane work item, a Notion page/
 Accept Plane readable identifiers such as `ENG-42` as report source refs.
 
 Workflow:
+
 1. Parse the readable identifier into project identifier and work item number.
 2. Fetch the Plane work item with the available Plane MCP retrieval tool. Local adapters may expose `get_issue_using_readable_identifier`; newer adapters may expose `retrieve_work_item_by_identifier`.
 3. Read title, description, priority, state, labels, assignees, module, cycle, comments, links, relations, parent, and child/sub work items when available.
@@ -61,11 +62,13 @@ When qa-reporter reads a Plane work item as requirement/report source, add a Pla
 When qa-reporter reads Notion links from that Plane work item, also update the Plane work item description with an idempotent `QA Reporter Links` section. Preserve existing description content. If the section already exists, update only that section. Include Notion URLs and roles such as planner test cases, planner report, executor execution report, reporter testing report, SIT, UAT, or coverage/risk summary.
 
 Do not write secrets, tokens, raw evidence, or PII into Plane comments or descriptions. If Plane update/comment tools are unavailable, record the skipped sync in `publication_history` with target `plane` and status `failed` or `not_requested`.
+
 ### Notion Link Resolver
 
 When Notion URLs are found or provided, resolve them before generating report artifacts.
 
 Workflow:
+
 1. Fetch each Notion page, database, or data source with Notion MCP fetch tools.
 2. If the URL is a database, fetch first to identify the correct data source and schema. Use the data source id for database row creation or querying.
 3. Classify each Notion source role: `planner_test_cases`, `planner_report`, `executor_execution_report`, `executor_test_case_updates`, `reporter_publish_target`, `release_page`, or `unknown`.
@@ -80,6 +83,7 @@ Before updating any Notion database row, fetch the database/data source schema a
 ### Cross-System Traceability
 
 Keep every cross-system link explicit:
+
 - Plane source work item -> Notion planner report/test case database
 - Plane source work item -> Notion executor report/execution database
 - Reporter output -> Notion testing report, SIT, UAT, and coverage/risk pages
@@ -87,6 +91,7 @@ Keep every cross-system link explicit:
 - Plane summary comment -> published Notion reporter page links
 
 Do not store secrets from Plane or Notion. Store IDs, URLs, page titles, database/data source ids, and role labels only.
+
 ## Report State
 
 Create or update `report_state.json` before rendering outputs. Use `schemas/report-state.schema.json` when validation tooling exists.
@@ -205,6 +210,7 @@ Human override must record reviewer, reason, timestamp, previous recommendation,
 When an artifact requires approval and the active workflow uses Notion or Plane, create or update the review surface in Notion or Plane before asking for approval. Do not ask reviewers to approve only from local Markdown/JSON when Notion or Plane is the configured collaboration surface.
 
 Review surface rules:
+
 - If `target = notion`, publish or update the Notion report/review page first, then ask the reviewer to review that Notion page or database row.
 - If `target = plane`, create or update the Plane summary comment, source work item description links, or review work item first, then ask the reviewer to review in Plane.
 - If both Notion and Plane are used, publish Notion artifacts first, then comment/update Plane with Notion review links.
@@ -212,12 +218,14 @@ Review surface rules:
 - If Notion/Plane tool access is unavailable, do not silently fall back to local approval. Report the blocker and ask whether local review is acceptable.
 
 Approval workflow:
+
 1. Render the latest artifact from `report_state`.
 2. Publish/update the configured Notion page or Plane review surface.
 3. Record external review links in `publication_history`.
 4. Ask the user/reviewer to approve or reject using the external surface.
 5. Read comments/status from Notion or Plane when requested and normalize feedback to `reporter-review.schema.json`.
 6. Apply OK/NOK feedback to `report_state`, re-render impacted artifacts, and update the external review surface again.
+
 ## Review Loop
 
 Human review status is either `OK` or `NOK`. Use `schemas/reporter-review.schema.json` when validation tooling exists.
@@ -250,6 +258,7 @@ Use Notion as an optional source, publishing, review, and status-sync surface fo
 Use Notion MCP to read planner and executor artifacts when the user provides Notion URLs or when Plane work item text/comments/links contain Notion URLs.
 
 Read-only source workflow:
+
 1. Fetch the Notion entity by URL or id.
 2. For databases, fetch the database first and identify the correct data source id and schema.
 3. Classify the source role and store it in `report_state.source_refs`.
@@ -261,6 +270,7 @@ Read-only source workflow:
 Publish only when the user asks or when a report package explicitly targets Notion.
 
 Publishing workflow:
+
 1. Resolve target parent page or target data source.
 2. Fetch target database/data source schema before creating or updating rows.
 3. Render Markdown from `report_state` using templates.
@@ -273,6 +283,7 @@ Publishing workflow:
 When syncing Plane-linked bug status to Notion, do not treat Plane fix completion as QA pass. Use dynamic user-approved mappings for both Plane states and Notion statuses.
 
 Safe default behavior:
+
 - Plane fix-complete intent plus no retest evidence -> update Notion to a user-mapped `ready_for_retest` status.
 - Retest passed with evidence -> update Notion to a user-mapped passed/closed status.
 - Retest failed with evidence -> update Notion to a user-mapped retest-failed status and prepare Plane comment/update for approval.
@@ -282,11 +293,13 @@ Before any Notion status update, fetch the data source schema and confirm proper
 ### Plane Comment Summary with Notion Links
 
 After publishing reporter artifacts to Notion, qa-reporter may comment back on the source Plane work item when the user asks. The comment should include a compact summary, recommendation, issue counts, risk/coverage notes, and Notion report links. Do not include secrets or raw evidence content in the comment.
+
 ## Plane MCP Adapter
 
 Use Plane as an optional issue tracker adapter only after the normal reporter governance gate passes. Plane integration is not the default reporting path; default output remains a review-ready issue package.
 
 Plane submission is allowed only when all conditions are true:
+
 - user explicitly asks to submit to Plane
 - issue package status is `approved`
 - issue package `target_tracker = plane`
@@ -300,6 +313,7 @@ Never store Plane API keys, PATs, OAuth tokens, cookies, or workspace secrets in
 ### Plane Field Mapping
 
 Map reporter issue data to Plane work item fields:
+
 - `title` -> `name`
 - issue body -> `description_html`
 - `severity`/`priority` -> Plane `priority`: `Critical` or `P0` maps to `urgent`, `High` or `P1` maps to `high`, `Medium` or `P2` maps to `medium`, `Low` or `P3` maps to `low`, unknown maps to `none`
@@ -316,6 +330,7 @@ Use `custom_fields.plane` for Plane-specific IDs and routing data instead of add
 Do not assume Plane state names, state groups, or default workflow order. Plane projects can use custom workflows. Before creating, syncing, or reconciling Plane work items, fetch or receive states for the target project, show every available state to the user, recommend an intent mapping, and ask the user to approve or edit it.
 
 State discovery workflow:
+
 1. Resolve the target Plane project. Prefer exact `project_id`; otherwise match `project_identifier` or project name from user input.
 2. Fetch/list project states with the available Plane MCP state tool. In local adapters this may be `list_states(project_id)`.
 3. Display each state with id, name, group/category, sequence/order, default marker, and description when available.
@@ -325,6 +340,7 @@ State discovery workflow:
 7. Re-run discovery when the target project changes, state list changes, mapping is missing, or mapping approval is not `approved`.
 
 Recommend these intents:
+
 - `issue_created_state`: prefer backlog group, default state, or lowest sequence state.
 - `fix_in_progress_states`: prefer started states.
 - `fix_done_states`: prefer completed states; if a completed state mentions QA, retest, validation, or verification, recommend it before a generic completed state.
@@ -332,6 +348,7 @@ Recommend these intents:
 - `reopened_state`: prefer a started state unless the user chooses another state.
 
 Recommendation output must be explicit:
+
 - list all Plane states found
 - mark recommendation basis as `metadata`, `name_order`, or `manual`
 - show recommended state ids and names for each qa-reporter intent
@@ -339,9 +356,11 @@ Recommendation output must be explicit:
 - ask one clear approval question before using the mapping
 
 Never hardcode or silently infer state names such as `Done`, `Triage`, `In Progress`, `Backlog`, `Selected`, or `Canceled`. Example names in docs are examples only, not default behavior.
+
 ### Plane Work Item Creation Strategy
 
 Choose Plane creation target from source context:
+
 - If the issue was derived from a requirement/source Plane work item, create a sub work item under that source work item so the bug/issue is visible from the parent requirement work item.
 - If there is no source Plane work item, create a normal Plane work item in the target project.
 - If the user explicitly asks to comment on an existing work item, use `comment_existing` instead of creating a new item.
@@ -349,11 +368,13 @@ Choose Plane creation target from source context:
 Set `submission_mode = sub_work_item` for source-work-item-derived bugs. Store parent/source work item IDs under `custom_fields.plane.source_work_item`.
 
 Every created work item or sub work item must visibly identify itself as a bug/issue:
+
 - Prefer Plane work item type `Bug` when available.
 - Resolve Plane label `bug` before creating the work item or sub work item. If a matching label exists, use it. If it does not exist and label creation is available, create the `bug` label and use it.
 - Apply additional labels such as `issue`, `qa-reported`, or `severity-high` when available.
 - If type/labels are unavailable or label creation fails, prefix the title with `[Bug]` or `[Issue]`.
 - Record label lookup/create/use result and the final bug marker in the issue package.
+
 ### Plane Submission Workflow
 
 1. Resolve target project with Plane project tools. Prefer exact `project_id`; otherwise match `project_identifier` or project name from user input.
@@ -371,7 +392,9 @@ Every created work item or sub work item must visibly identify itself as a bug/i
 If Plane MCP tooling is unavailable, auth fails, permissions are insufficient, IDs cannot be resolved, duplicate status is unclear, or read-back verification fails, do not retry blindly and do not mark submitted. Keep `submission_status = submission_failed`, record the error, and preserve the approved issue package for manual submission.
 
 Read `references/plane-mcp.md` when Plane setup, auth mode, identifier behavior, tool mapping, or troubleshooting details are needed.
+
 ## Outputs
+
 Produce these artifacts when requested or useful:
 
 - `report_state.json`: canonical source of truth using `templates/report-state.json`
@@ -419,11 +442,3 @@ Read only when needed:
 - `references/notion-mcp.md`: Notion MCP source reading, publishing, status sync, and review rules
 - `templates/`: reusable report, issue, SIT/UAT, coverage/risk, and state skeletons
 - `examples/`: sample manual result, exploratory issue, report state, and rendered outputs
-
-
-
-
-
-
-
-
