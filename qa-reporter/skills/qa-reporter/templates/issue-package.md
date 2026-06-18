@@ -60,6 +60,7 @@ Issue kind: `{{issue_kind}}`
 
 Type applied: `{{bug_marker.type_applied}}` (`{{bug_marker.type_name}}`)
 Labels applied: `{{bug_marker.labels_applied}}`
+Label resolution: `{{bug_marker.label_resolution_status}}` - {{bug_marker.label_resolution_note}}
 Title prefix applied: `{{bug_marker.title_prefix_applied}}` `{{bug_marker.title_prefix}}`
 Final title: `{{bug_marker.final_title}}`
 Reason: {{bug_marker.marker_reason}}
@@ -127,6 +128,7 @@ Query: `{{duplicate_check.query}}`
 - {{.}}
 {{/report_gaps}}
 {{/issue_package.issues}}
+
 
 
 

@@ -1,6 +1,6 @@
 ﻿{
     "name":  "qa-reporter",
-    "version":  "0.5.0",
+    "version":  "0.6.0",
     "description":  "Portable QA reporting plugin for Claude-compatible agents with optional Plane MCP issue submission guidance. It uses skills/qa-reporter/SKILL.md as the canonical instruction source and preserves the Codex plugin wrapper.",
     "author":  {
                    "name":  "Local developer"
@@ -31,7 +31,11 @@
                          "plane_source_comment_sync",
                          "plane_description_link_sync",
                          "plane_sub_work_item_bug_creation",
-                         "bug_marker_fallback"
+                         "bug_marker_fallback",
+                         "external_notion_plane_review",
+                         "plane_bug_label_resolution",
+                         "dki_sit_template",
+                         "dki_uat_template"
                      ],
     "compatibility":  {
                           "codex":  {

@@ -55,6 +55,7 @@ User landed on dashboard.
 
 Type applied: `true` (`Bug`)
 Labels applied: `bug`, `qa-reported`, `severity-high`
+Label resolution: `existing_label_used` - Plane label bug exists in target project and is applied to the sub work item.
 Title prefix applied: `false`
 Final title: `Login accepts invalid password after prior session`
 Reason: Plane Bug type and bug labels are available, so no title prefix is needed.
@@ -108,6 +109,7 @@ High severity because a major authentication flow accepts invalid credentials wi
 ### Submission Status
 
 Not submitted. Plane sub work item creation requires explicit user request after package approval, duplicate check, redaction pass, Plane project resolution, source parent resolution, approved state mapping, bug marker selection, and read-back verification.
+
 
 
 

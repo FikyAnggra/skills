@@ -52,6 +52,19 @@ Publishing workflow:
 5. Record page id, url, artifact type, status, timestamp, and source refs in `publication_history`.
 6. If publishing fails, keep report artifacts local and record a publication gap.
 
+## External Review Surface
+
+When approval is required and Notion is configured, publish or update the Notion review page/database row before asking for approval. Ask reviewers to review the Notion artifact, not only local files.
+
+Workflow:
+1. Create or update the Notion artifact from `report_state`.
+2. Set review/status properties when a database schema supports them.
+3. Store the Notion page/database row url in `publication_history`.
+4. Request OK/NOK review against that Notion page.
+5. Fetch comments/discussions when the user asks to process feedback.
+6. Normalize feedback to `reporter-review.schema.json` and update `report_state` first.
+
+If Notion publishing is blocked, ask whether local review is acceptable before proceeding.
 ## Review Comments
 
 Notion comments can drive qa-reporter OK/NOK review.
@@ -106,3 +119,4 @@ Useful properties when available:
 - Plane URL
 - evidence refs
 - last sync timestamp
+

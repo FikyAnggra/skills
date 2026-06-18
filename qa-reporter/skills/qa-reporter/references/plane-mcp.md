@@ -72,9 +72,21 @@ When Notion links are read from a Plane work item, update the source work item d
 
 If an issue package is derived from a Plane requirement/source work item, create a sub work item under that source work item. This keeps bug/issue visibility attached to the requirement work item. If there is no source Plane work item, create a normal work item in the target project. Use `comment_existing` only when the user chooses to update an existing item instead of creating a new one.
 
+## Bug Label Resolution
+
+Before creating a Plane bug work item or sub work item, resolve the `bug` label in the target project.
+
+Workflow:
+1. List labels for the target project.
+2. If a label named `bug` exists, use that label id.
+3. If no `bug` label exists and label creation is available, create a `bug` label and use the created label id.
+4. If label creation fails or labels are unsupported, continue only if the work item is still visibly marked by Bug type or `[Bug]`/`[Issue]` title prefix.
+5. Record the result in `bug_marker.label_resolution_status` and `bug_marker.labels_applied`.
+
+Local adapters may expose this as `list_labels(project_id)` and `create_label(project_id, label_data)`. Use exact available tool names in the current runtime.
 ## Bug/Issue Marking
 
-Every created Plane work item or sub work item must be visibly marked as a bug/issue. Prefer work item type `Bug` when available. Apply labels such as `bug`, `issue`, or `qa-reported` when available. If no type or label can mark the item, prefix the title with `[Bug]` or `[Issue]`. Record the chosen marker in `bug_marker`.
+Every created Plane work item or sub work item must be visibly marked as a bug/issue. Prefer work item type `Bug` when available. Resolve or create label `bug`, then apply it. Apply additional labels such as `issue` or `qa-reported` when available. If no type or label can mark the item, prefix the title with `[Bug]` or `[Issue]`. Record the chosen marker in `bug_marker`.
 ## Priority Mapping
 
 Map QA values to Plane priority:
@@ -128,5 +140,6 @@ Common Plane MCP failures:
 - resource not found: verify UUID/readable identifier and deletion status
 - validation error: check required fields and allowed values
 - network error: verify Plane base URL and connectivity
+
 
 

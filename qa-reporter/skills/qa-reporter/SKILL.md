@@ -200,6 +200,24 @@ Default recommendation rules:
 
 Human override must record reviewer, reason, timestamp, previous recommendation, and final recommendation. Use `schemas/signoff-recommendation.schema.json` when validation tooling exists.
 
+## External Review Surface
+
+When an artifact requires approval and the active workflow uses Notion or Plane, create or update the review surface in Notion or Plane before asking for approval. Do not ask reviewers to approve only from local Markdown/JSON when Notion or Plane is the configured collaboration surface.
+
+Review surface rules:
+- If `target = notion`, publish or update the Notion report/review page first, then ask the reviewer to review that Notion page or database row.
+- If `target = plane`, create or update the Plane summary comment, source work item description links, or review work item first, then ask the reviewer to review in Plane.
+- If both Notion and Plane are used, publish Notion artifacts first, then comment/update Plane with Notion review links.
+- Record review page/comment/work item refs in `publication_history` and `review_history.target_ref`.
+- If Notion/Plane tool access is unavailable, do not silently fall back to local approval. Report the blocker and ask whether local review is acceptable.
+
+Approval workflow:
+1. Render the latest artifact from `report_state`.
+2. Publish/update the configured Notion page or Plane review surface.
+3. Record external review links in `publication_history`.
+4. Ask the user/reviewer to approve or reject using the external surface.
+5. Read comments/status from Notion or Plane when requested and normalize feedback to `reporter-review.schema.json`.
+6. Apply OK/NOK feedback to `report_state`, re-render impacted artifacts, and update the external review surface again.
 ## Review Loop
 
 Human review status is either `OK` or `NOK`. Use `schemas/reporter-review.schema.json` when validation tooling exists.
@@ -286,7 +304,7 @@ Map reporter issue data to Plane work item fields:
 - issue body -> `description_html`
 - `severity`/`priority` -> Plane `priority`: `Critical` or `P0` maps to `urgent`, `High` or `P1` maps to `high`, `Medium` or `P2` maps to `medium`, `Low` or `P3` maps to `low`, unknown maps to `none`
 - `suggested_owner` -> resolve to Plane assignee UUID only when an exact workspace/project member match exists
-- QA tags -> Plane labels such as `qa-reported`, `bug`, `severity-high`, `source-manual`, `source-exploratory`, or `needs-retest`
+- QA tags -> Plane labels such as `qa-reported`, `bug`, `severity-high`, `source-manual`, `source-exploratory`, or `needs-retest`; for bug/issue work items, resolve or create label `bug` before creation and apply it when the Plane tool allows labels
 - issue type -> Plane work item type, prefer `Bug` when a matching active type exists
 - `evidence_refs` -> description links and, when URLs are valid, Plane work item links
 - affected test cases, report id, package id, recommendation, and report gaps -> description HTML or comment
@@ -332,9 +350,10 @@ Set `submission_mode = sub_work_item` for source-work-item-derived bugs. Store p
 
 Every created work item or sub work item must visibly identify itself as a bug/issue:
 - Prefer Plane work item type `Bug` when available.
-- Apply labels such as `bug`, `issue`, or `qa-reported` when available.
-- If type/labels are unavailable, prefix the title with `[Bug]` or `[Issue]`.
-- Record which bug marker was applied in the issue package.
+- Resolve Plane label `bug` before creating the work item or sub work item. If a matching label exists, use it. If it does not exist and label creation is available, create the `bug` label and use it.
+- Apply additional labels such as `issue`, `qa-reported`, or `severity-high` when available.
+- If type/labels are unavailable or label creation fails, prefix the title with `[Bug]` or `[Issue]`.
+- Record label lookup/create/use result and the final bug marker in the issue package.
 ### Plane Submission Workflow
 
 1. Resolve target project with Plane project tools. Prefer exact `project_id`; otherwise match `project_identifier` or project name from user input.
@@ -400,6 +419,7 @@ Read only when needed:
 - `references/notion-mcp.md`: Notion MCP source reading, publishing, status sync, and review rules
 - `templates/`: reusable report, issue, SIT/UAT, coverage/risk, and state skeletons
 - `examples/`: sample manual result, exploratory issue, report state, and rendered outputs
+
 
 
 

@@ -292,7 +292,9 @@
                                                                 "title_prefix_applied":  false,
                                                                 "title_prefix":  "",
                                                                 "final_title":  "Login accepts invalid password after prior session",
-                                                                "marker_reason":  "Plane Bug type and bug labels are available, so no title prefix is needed."
+                                                                "marker_reason":  "Plane Bug type and bug labels are available, so no title prefix is needed.",
+                                                                "label_resolution_status":  "existing_label_used",
+                                                                "label_resolution_note":  "Plane label bug exists in target project and is applied to the sub work item."
                                                             }
                                          }
                                      ],

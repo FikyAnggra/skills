@@ -768,7 +768,20 @@
                                                                              },
                                                              "marker_reason":  {
                                                                                    "type":  "string"
-                                                                               }
+                                                                               },
+                                                             "label_resolution_status":  {
+                                                                                             "type":  "string",
+                                                                                             "enum":  [
+                                                                                                          "not_checked",
+                                                                                                          "existing_label_used",
+                                                                                                          "label_created",
+                                                                                                          "label_unavailable",
+                                                                                                          "failed"
+                                                                                                      ]
+                                                                                         },
+                                                             "label_resolution_note":  {
+                                                                                           "type":  "string"
+                                                                                       }
                                                          }
                                       }
                    }

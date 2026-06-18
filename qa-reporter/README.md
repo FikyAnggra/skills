@@ -25,6 +25,10 @@ Default outputs are `report_state.json`, `test-report.md`, `issue-package.md`, `
 
 Recommendations are `Go`, `Conditional Go`, `No-Go`, or `Not Assessed`. The recommendation must show its rule and reason. Human override is allowed when reviewer, reason, timestamp, previous recommendation, and final recommendation are recorded.
 
+
+## External Approval Review
+
+When approval is required and Notion or Plane is used, QA Reporter publishes or updates the Notion/Plane review surface first, then asks reviewers to approve from that external surface. Local-only approval is used only if the user explicitly accepts fallback after Notion/Plane publishing is blocked.
 ## Review and Submission Gate
 
 Reports use multi-level `OK`/`NOK` review. `NOK` feedback updates `report_state.json` and re-renders impacted artifacts. `OK` approves the package.
@@ -56,6 +60,7 @@ Supported linked-source flow:
 ## Downstream Workflow
 
 `qa-planner` creates planning state and reporter handoff data. `qa-executor` produces execution results, evidence refs, issue candidates, and reporter handoff data. `qa-reporter` creates the governed reporting package and optional approved issue submission package.
+
 
 
 

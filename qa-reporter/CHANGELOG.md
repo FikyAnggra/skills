@@ -1,5 +1,13 @@
 ﻿# Changelog
 
+## 0.6.0 - 2026-06-18
+
+- Added external approval surface rule: when Notion or Plane is configured, publish/update Notion or Plane review surface before requesting approval.
+- Added Notion and Plane external-review references for OK/NOK review instead of local-only approval.
+- Added Plane bug label resolution workflow: use existing `bug` label, create it when missing and supported, then apply it to bug work items/sub work items.
+- Added bug label resolution fields to issue submission schema and templates.
+- Updated SIT template to follow `docs/Template SIT DKI.md` structure with qa-reporter template variables.
+- Updated UAT template to follow `docs/Template UAT DKI.md` structure with qa-reporter template variables.
 ## 0.5.0 - 2026-06-18
 
 - Added Plane source work item comment summary behavior when reading Plane requirements or Notion links from Plane.
@@ -42,6 +50,8 @@
 - Added examples for manual execution, exploratory issues, canonical report state, rendered test report, and rendered issue package.
 - Compatibility target: portable agent package with Codex plugin metadata and Claude-compatible wrapper metadata.
 - Future migration note: keep schema changes versioned and preserve `custom_fields` for platform-specific extensions.
+
+
 
 
 
