@@ -22,6 +22,8 @@ Submission status: `{{submission_status}}`
 Redaction status: `{{redaction_status}}`
 Target tracker: `{{target_tracker}}`
 Submission mode: `{{submission_mode}}`
+Creation strategy: `{{work_item_creation_strategy}}`
+Issue kind: `{{issue_kind}}`
 
 ### Summary
 
@@ -53,6 +55,14 @@ Submission mode: `{{submission_mode}}`
 - {{.}}
 {{/evidence_refs}}
 
+
+### Bug/Issue Marker
+
+Type applied: `{{bug_marker.type_applied}}` (`{{bug_marker.type_name}}`)
+Labels applied: `{{bug_marker.labels_applied}}`
+Title prefix applied: `{{bug_marker.title_prefix_applied}}` `{{bug_marker.title_prefix}}`
+Final title: `{{bug_marker.final_title}}`
+Reason: {{bug_marker.marker_reason}}
 ### Plane Routing
 
 Workspace slug: `{{custom_fields.plane.workspace_slug}}`
@@ -84,6 +94,20 @@ Recommended mapping:
 - reopened_state: `{{custom_fields.plane.state_mapping.reopened_state.name}}` (`{{custom_fields.plane.state_mapping.reopened_state.id}}`) - {{custom_fields.plane.state_mapping.reopened_state.recommendation_reason}}
 
 State mapping must be approved by the user before qa-reporter uses any Plane state id.
+
+### Source Plane Work Item
+
+Source role: `{{custom_fields.plane.source_work_item.source_role}}`
+Parent work item: `{{custom_fields.plane.source_work_item.parent_readable_identifier}}` / `{{custom_fields.plane.source_work_item.parent_work_item_id}}`
+Source URL: `{{custom_fields.plane.source_work_item.url}}`
+Comment sync: `{{custom_fields.plane.source_work_item.comment_sync_status}}`
+Description sync: `{{custom_fields.plane.source_work_item.description_sync_status}}`
+Comment URL: `{{custom_fields.plane.source_work_item.comment_url}}`
+
+Notion links from source:
+{{#custom_fields.plane.source_work_item.notion_links}}
+- {{.}}
+{{/custom_fields.plane.source_work_item.notion_links}}
 ### Duplicate Check
 
 Status: `{{duplicate_check.status}}`
@@ -103,5 +127,6 @@ Query: `{{duplicate_check.query}}`
 - {{.}}
 {{/report_gaps}}
 {{/issue_package.issues}}
+
 
 

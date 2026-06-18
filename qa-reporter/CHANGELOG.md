@@ -1,5 +1,13 @@
 ﻿# Changelog
 
+## 0.5.0 - 2026-06-18
+
+- Added Plane source work item comment summary behavior when reading Plane requirements or Notion links from Plane.
+- Added idempotent Plane description update behavior for Notion links discovered from source work items.
+- Added source-based bug creation strategy: create sub work item when issue comes from a Plane requirement/source work item, otherwise create a normal work item.
+- Added `sub_work_item` submission mode, work item creation strategy, issue kind, and bug marker schema fields.
+- Added bug/issue marker rules: prefer Bug type, apply bug/issue labels when available, fallback to `[Bug]` or `[Issue]` title prefix.
+- Updated Plane reference, issue template, Plane summary comment template, and examples.
 ## 0.4.0 - 2026-06-17
 
 - Added Plane work item source intake for readable IDs such as `ENG-42`.
@@ -34,6 +42,7 @@
 - Added examples for manual execution, exploratory issues, canonical report state, rendered test report, and rendered issue package.
 - Compatibility target: portable agent package with Codex plugin metadata and Claude-compatible wrapper metadata.
 - Future migration note: keep schema changes versioned and preserve `custom_fields` for platform-specific extensions.
+
 
 
 

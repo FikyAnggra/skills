@@ -250,11 +250,27 @@
                                                                                                                               "recommendation_reason":  "Recommended from started group; requires user approval."
                                                                                                                           },
                                                                                                        "reviewer_note":  "Pending user approval. Do not use this mapping until approval_status is approved."
-                                                                                                   }
+                                                                                                   },
+                                                                                 "source_work_item":  {
+                                                                                                          "work_item_id":  "00000000-0000-4000-8000-000000000042",
+                                                                                                          "readable_identifier":  "AUTH-42",
+                                                                                                          "title":  "Login requirement and QA anchor",
+                                                                                                          "url":  "https://app.plane.so/customer-portal/projects/auth/issues/AUTH-42",
+                                                                                                          "parent_work_item_id":  "00000000-0000-4000-8000-000000000042",
+                                                                                                          "parent_readable_identifier":  "AUTH-42",
+                                                                                                          "notion_links":  [
+                                                                                                                               "https://notion.so/workspace/login-test-cases-example",
+                                                                                                                               "https://notion.so/workspace/login-execution-report-example"
+                                                                                                                           ],
+                                                                                                          "source_role":  "requirement",
+                                                                                                          "description_sync_status":  "updated",
+                                                                                                          "comment_sync_status":  "created",
+                                                                                                          "comment_url":  "https://app.plane.so/customer-portal/projects/auth/issues/AUTH-42#comment-summary"
+                                                                                                      }
                                                                              }
                                                                },
                                              "target_tracker":  "plane",
-                                             "submission_mode":  "work_item",
+                                             "submission_mode":  "sub_work_item",
                                              "duplicate_check":  {
                                                                      "status":  "passed",
                                                                      "checked_at":  "2026-06-11T15:05:00+07:00",
@@ -262,7 +278,22 @@
                                                                      "matched_items":  [
 
                                                                                        ]
-                                                                 }
+                                                                 },
+                                             "issue_kind":  "bug",
+                                             "work_item_creation_strategy":  "sub_work_item",
+                                             "bug_marker":  {
+                                                                "type_applied":  true,
+                                                                "type_name":  "Bug",
+                                                                "labels_applied":  [
+                                                                                       "bug",
+                                                                                       "qa-reported",
+                                                                                       "severity-high"
+                                                                                   ],
+                                                                "title_prefix_applied":  false,
+                                                                "title_prefix":  "",
+                                                                "final_title":  "Login accepts invalid password after prior session",
+                                                                "marker_reason":  "Plane Bug type and bug labels are available, so no title prefix is needed."
+                                                            }
                                          }
                                      ],
                           "report_gaps":  [

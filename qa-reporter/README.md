@@ -34,6 +34,10 @@ Issue submission is never automatic. Submission requires explicit user request, 
 ## Plane MCP Adapter
 
 QA Reporter includes an optional Plane adapter for approved issue packages. It can prepare Plane work item payloads, resolve project routing data, run duplicate checks, create a work item or intake item when tools are available, comment on an existing work item, attach evidence links, and record read-back verification in `submission_history`. Plane-specific IDs live under `custom_fields.plane` so the core package stays portable.
+
+### Plane Source Sync and Bug Creation Rules
+
+When QA Reporter reads Notion links from a Plane source work item, it records a Plane comment summary and updates the work item description with a QA Reporter links section, unless read-only mode is requested. When a requirement/source Plane work item produces a bug, QA Reporter creates a sub work item under that source work item after approval. If no source Plane work item exists, it creates a normal work item. Created work items must be visibly marked as bugs by type, label, or title prefix fallback.
 ### Dynamic Plane State Mapping
 
 QA Reporter does not hardcode Plane states. Before creating or syncing Plane work items, it must fetch/list states for the target project, show every available state to the user, recommend a mapping to QA intents, and ask the user to approve or edit the mapping. Approved mapping is stored under `custom_fields.plane.state_mapping` per project.
@@ -52,6 +56,7 @@ Supported linked-source flow:
 ## Downstream Workflow
 
 `qa-planner` creates planning state and reporter handoff data. `qa-executor` produces execution results, evidence refs, issue candidates, and reporter handoff data. `qa-reporter` creates the governed reporting package and optional approved issue submission package.
+
 
 
 

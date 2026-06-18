@@ -62,6 +62,19 @@ Recommend qa-reporter intent mapping from available states:
 If state group metadata is unavailable, make weak recommendations from state names and sequence/order, label the basis as `name_order`, and ask the user to confirm. Never use weak recommendations without approval.
 
 Persist approved mapping under `custom_fields.plane.state_mapping` with `approval_status = approved`, `approved_by`, `verified_at`, `recommendation_basis`, and selected state ids/names. If approval is missing, keep `approval_status = pending` and do not use the mapping for create/update/sync.
+## Source Work Item Sync
+
+When a Plane work item is used as qa-reporter source context, add a compact comment summary to that work item unless the user requested read-only mode. Include source summary, extracted Notion links, classified Notion roles, report gaps, and next reporting action.
+
+When Notion links are read from a Plane work item, update the source work item description with an idempotent `QA Reporter Links` section. Preserve existing description content. If the section already exists, update only that section. Include Notion links and roles. Do not include secrets, raw evidence, tokens, or PII.
+
+## Work Item vs Sub Work Item Creation
+
+If an issue package is derived from a Plane requirement/source work item, create a sub work item under that source work item. This keeps bug/issue visibility attached to the requirement work item. If there is no source Plane work item, create a normal work item in the target project. Use `comment_existing` only when the user chooses to update an existing item instead of creating a new one.
+
+## Bug/Issue Marking
+
+Every created Plane work item or sub work item must be visibly marked as a bug/issue. Prefer work item type `Bug` when available. Apply labels such as `bug`, `issue`, or `qa-reported` when available. If no type or label can mark the item, prefix the title with `[Bug]` or `[Issue]`. Record the chosen marker in `bug_marker`.
 ## Priority Mapping
 
 Map QA values to Plane priority:
@@ -115,4 +128,5 @@ Common Plane MCP failures:
 - resource not found: verify UUID/readable identifier and deletion status
 - validation error: check required fields and allowed values
 - network error: verify Plane base URL and connectivity
+
 

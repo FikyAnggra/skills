@@ -118,7 +118,8 @@
                                                             "dry_run",
                                                             "intake",
                                                             "work_item",
-                                                            "comment_existing"
+                                                            "comment_existing",
+                                                            "sub_work_item"
                                                         ]
                                            },
                        "duplicate_check":  {
@@ -650,7 +651,40 @@
                                                                                                                                                                   "items":  {
                                                                                                                                                                                 "type":  "string"
                                                                                                                                                                             }
-                                                                                                                                                              }
+                                                                                                                                                              },
+                                                                                                                                             "source_role":  {
+                                                                                                                                                                 "type":  "string",
+                                                                                                                                                                 "enum":  [
+                                                                                                                                                                              "requirement",
+                                                                                                                                                                              "planner_report_anchor",
+                                                                                                                                                                              "executor_report_anchor",
+                                                                                                                                                                              "release_anchor",
+                                                                                                                                                                              "unknown"
+                                                                                                                                                                          ]
+                                                                                                                                                             },
+                                                                                                                                             "description_sync_status":  {
+                                                                                                                                                                             "type":  "string",
+                                                                                                                                                                             "enum":  [
+                                                                                                                                                                                          "not_requested",
+                                                                                                                                                                                          "pending",
+                                                                                                                                                                                          "updated",
+                                                                                                                                                                                          "failed",
+                                                                                                                                                                                          "skipped_read_only"
+                                                                                                                                                                                      ]
+                                                                                                                                                                         },
+                                                                                                                                             "comment_sync_status":  {
+                                                                                                                                                                         "type":  "string",
+                                                                                                                                                                         "enum":  [
+                                                                                                                                                                                      "not_requested",
+                                                                                                                                                                                      "pending",
+                                                                                                                                                                                      "created",
+                                                                                                                                                                                      "failed",
+                                                                                                                                                                                      "skipped_read_only"
+                                                                                                                                                                                  ]
+                                                                                                                                                                     },
+                                                                                                                                             "comment_url":  {
+                                                                                                                                                                 "type":  "string"
+                                                                                                                                                             }
                                                                                                                                          }
                                                                                                                       }
                                                                                              }
@@ -680,6 +714,62 @@
                                                                                               }
                                                                            }
                                                             }
-                                         }
+                                         },
+                       "issue_kind":  {
+                                          "type":  "string",
+                                          "enum":  [
+                                                       "bug",
+                                                       "issue",
+                                                       "defect",
+                                                       "task",
+                                                       "unknown"
+                                                   ]
+                                      },
+                       "work_item_creation_strategy":  {
+                                                           "type":  "string",
+                                                           "enum":  [
+                                                                        "work_item",
+                                                                        "sub_work_item",
+                                                                        "comment_existing",
+                                                                        "intake",
+                                                                        "not_applicable"
+                                                                    ]
+                                                       },
+                       "bug_marker":  {
+                                          "type":  "object",
+                                          "additionalProperties":  false,
+                                          "properties":  {
+                                                             "type_applied":  {
+                                                                                  "type":  "boolean"
+                                                                              },
+                                                             "type_name":  {
+                                                                               "type":  "string"
+                                                                           },
+                                                             "labels_applied":  {
+                                                                                    "type":  "array",
+                                                                                    "items":  {
+                                                                                                  "type":  "string"
+                                                                                              }
+                                                                                },
+                                                             "title_prefix_applied":  {
+                                                                                          "type":  "boolean"
+                                                                                      },
+                                                             "title_prefix":  {
+                                                                                  "type":  "string",
+                                                                                  "enum":  [
+                                                                                               "[Bug]",
+                                                                                               "[Issue]",
+                                                                                               "[Defect]",
+                                                                                               ""
+                                                                                           ]
+                                                                              },
+                                                             "final_title":  {
+                                                                                 "type":  "string"
+                                                                             },
+                                                             "marker_reason":  {
+                                                                                   "type":  "string"
+                                                                               }
+                                                         }
+                                      }
                    }
 }

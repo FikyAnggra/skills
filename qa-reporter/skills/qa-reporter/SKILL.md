@@ -48,10 +48,19 @@ Workflow:
 4. Extract Notion URLs from Plane description, comments, and links.
 5. Store the Plane source under `report_state.source_refs` with role such as `source_requirement`, `planner_report_anchor`, `executor_report_anchor`, or `release_anchor`.
 6. Store Plane-specific IDs and extracted Notion URLs under `report_state.custom_fields.plane.source_work_item`.
-7. Do not update the Plane work item during source intake unless the user explicitly asks.
+7. Add a compact Plane comment summary that records the work item was read as a qa-reporter source, including requirement summary, source role, extracted Notion links, and any report gaps.
+8. When Notion links are found and fetched, update the Plane work item description with an idempotent QA Reporter links section containing those Notion links and their classified roles.
+9. If the user explicitly asks for read-only intake, skip comment and description updates and record that external sync was skipped.
 
 If the user asks to create test cases from a Plane requirement, route that work to `qa-planner`. `qa-reporter` may summarize requirement context and traceability for reports only.
 
+### Plane Source Comment and Description Sync
+
+When qa-reporter reads a Plane work item as requirement/report source, add a Plane comment summary unless the user requested read-only mode. The comment should include source work item id, short requirement/report summary, Notion links found, classified Notion source roles, report gaps, and next reporting action.
+
+When qa-reporter reads Notion links from that Plane work item, also update the Plane work item description with an idempotent `QA Reporter Links` section. Preserve existing description content. If the section already exists, update only that section. Include Notion URLs and roles such as planner test cases, planner report, executor execution report, reporter testing report, SIT, UAT, or coverage/risk summary.
+
+Do not write secrets, tokens, raw evidence, or PII into Plane comments or descriptions. If Plane update/comment tools are unavailable, record the skipped sync in `publication_history` with target `plane` and status `failed` or `not_requested`.
 ### Notion Link Resolver
 
 When Notion URLs are found or provided, resolve them before generating report artifacts.
@@ -62,7 +71,9 @@ Workflow:
 3. Classify each Notion source role: `planner_test_cases`, `planner_report`, `executor_execution_report`, `executor_test_case_updates`, `reporter_publish_target`, `release_page`, or `unknown`.
 4. Extract report context, execution summaries, test case status data, evidence refs, and issue candidates only when visible in the source.
 5. Store Notion refs under `report_state.source_refs` and `report_state.custom_fields.notion.source_pages` or `source_databases`.
-6. If required Notion content is missing, mark `report_gap` instead of inventing data.
+6. Add or update a Plane comment summary on the source work item with fetched Notion link roles, accessible titles, and any inaccessible-link gaps.
+7. Add or update the Plane work item description with an idempotent QA Reporter Notion Links section so the source work item keeps the planner/executor/report links visible.
+8. If required Notion content is missing, mark `report_gap` instead of inventing data.
 
 Before updating any Notion database row, fetch the database/data source schema and use exact property names. If property mapping is missing or ambiguous, ask the user for mapping before update.
 
@@ -261,7 +272,7 @@ Plane submission is allowed only when all conditions are true:
 - user explicitly asks to submit to Plane
 - issue package status is `approved`
 - issue package `target_tracker = plane`
-- issue package `submission_mode` is `work_item`, `intake`, or `comment_existing`
+- issue package `submission_mode` is `work_item`, `sub_work_item`, `intake`, or `comment_existing`
 - `redaction_status = passed`
 - required Plane target data is resolved: workspace slug when needed, project UUID, and work item UUID for comment/update modes
 - duplicate check is completed or explicitly waived by the reviewer
@@ -310,6 +321,20 @@ Recommendation output must be explicit:
 - ask one clear approval question before using the mapping
 
 Never hardcode or silently infer state names such as `Done`, `Triage`, `In Progress`, `Backlog`, `Selected`, or `Canceled`. Example names in docs are examples only, not default behavior.
+### Plane Work Item Creation Strategy
+
+Choose Plane creation target from source context:
+- If the issue was derived from a requirement/source Plane work item, create a sub work item under that source work item so the bug/issue is visible from the parent requirement work item.
+- If there is no source Plane work item, create a normal Plane work item in the target project.
+- If the user explicitly asks to comment on an existing work item, use `comment_existing` instead of creating a new item.
+
+Set `submission_mode = sub_work_item` for source-work-item-derived bugs. Store parent/source work item IDs under `custom_fields.plane.source_work_item`.
+
+Every created work item or sub work item must visibly identify itself as a bug/issue:
+- Prefer Plane work item type `Bug` when available.
+- Apply labels such as `bug`, `issue`, or `qa-reported` when available.
+- If type/labels are unavailable, prefix the title with `[Bug]` or `[Issue]`.
+- Record which bug marker was applied in the issue package.
 ### Plane Submission Workflow
 
 1. Resolve target project with Plane project tools. Prefer exact `project_id`; otherwise match `project_identifier` or project name from user input.
@@ -317,7 +342,7 @@ Never hardcode or silently infer state names such as `Done`, `Triage`, `In Progr
 3. Resolve optional labels, type, cycle, module, assignees, and duplicate candidates.
 4. Run duplicate check with Plane work item search using issue title, affected test case ids, and key error text. If likely duplicate exists, stop and ask whether to comment on the existing work item or create a new one.
 5. Render `description_html` from the approved issue package. Keep expected result, actual result, reproduction steps, evidence refs, severity reason, redaction status, and report gaps visible.
-6. For `submission_mode = intake`, create an intake work item when the connected Plane MCP server exposes intake tools. For `work_item`, create a project work item. For `comment_existing`, add a comment to the resolved work item.
+6. For `submission_mode = sub_work_item`, create a sub work item under `custom_fields.plane.source_work_item.work_item_id`. For `work_item`, create a project work item. For `intake`, create an intake work item when supported. For `comment_existing`, add a comment to the resolved work item.
 7. Add evidence links, cycle/module membership, relation, and worklog only when those IDs are explicitly resolved and user intent covers them.
 8. Read back the created or updated work item by UUID or readable identifier. Only mark `submission_status = submitted` after read-back confirms the expected title/body/target.
 9. Record Plane submission result in `submission_result` and `submission_history` with tool `plane`, external work item UUID, readable identifier, URL when known, timestamp, and submitter.
@@ -375,6 +400,7 @@ Read only when needed:
 - `references/notion-mcp.md`: Notion MCP source reading, publishing, status sync, and review rules
 - `templates/`: reusable report, issue, SIT/UAT, coverage/risk, and state skeletons
 - `examples/`: sample manual result, exploratory issue, report state, and rendered outputs
+
 
 
 

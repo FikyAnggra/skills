@@ -1,5 +1,7 @@
 ﻿QA reporter summary for `{{report_id}}`
 
+Source work item: `{{custom_fields.plane.source_work_item.readable_identifier}}` {{custom_fields.plane.source_work_item.url}}
+
 Recommendation: {{signoff_recommendation.recommendation}}
 Reason: {{signoff_recommendation.reason}}
 
@@ -16,3 +18,8 @@ Report gaps:
 {{#summary.report_gaps}}
 - {{.}}
 {{/summary.report_gaps}}
+
+Notion source links:
+{{#custom_fields.plane.source_work_item.notion_links}}
+- {{.}}
+{{/custom_fields.plane.source_work_item.notion_links}}

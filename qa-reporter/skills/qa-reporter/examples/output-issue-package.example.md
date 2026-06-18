@@ -20,7 +20,9 @@ Suggested owner: `dev`
 Submission status: `not_submitted`
 Redaction status: `passed`
 Target tracker: `plane`
-Submission mode: `work_item`
+Submission mode: `sub_work_item`
+Creation strategy: `sub_work_item`
+Issue kind: `bug`
 
 ### Summary
 
@@ -49,6 +51,14 @@ User landed on dashboard.
 
 - `evidence/invalid-password-dashboard.png`
 
+### Bug/Issue Marker
+
+Type applied: `true` (`Bug`)
+Labels applied: `bug`, `qa-reported`, `severity-high`
+Title prefix applied: `false`
+Final title: `Login accepts invalid password after prior session`
+Reason: Plane Bug type and bug labels are available, so no title prefix is needed.
+
 ### Plane Routing
 
 Workspace slug: `customer-portal`
@@ -56,6 +66,19 @@ Project: `AUTH` / `00000000-0000-4000-8000-000000000001`
 State: pending user-approved mapping
 Type: `Bug`
 Labels: `qa-reported`, `bug`, `severity-high`, `source-manual`, `needs-retest`
+### Source Plane Work Item
+
+Source role: `requirement`
+Parent work item: `AUTH-42` / `00000000-0000-4000-8000-000000000042`
+Source URL: `https://app.plane.so/customer-portal/projects/auth/issues/AUTH-42`
+Comment sync: `created`
+Description sync: `updated`
+Comment URL: `https://app.plane.so/customer-portal/projects/auth/issues/AUTH-42#comment-summary`
+
+Notion links from source:
+- https://notion.so/workspace/login-test-cases-example
+- https://notion.so/workspace/login-execution-report-example
+
 Duplicate check: `passed`
 ### Plane State Mapping Recommendation
 
@@ -84,6 +107,7 @@ High severity because a major authentication flow accepts invalid credentials wi
 
 ### Submission Status
 
-Not submitted. Plane work item creation requires explicit user request after package approval, duplicate check, redaction pass, Plane project resolution, and read-back verification.
+Not submitted. Plane sub work item creation requires explicit user request after package approval, duplicate check, redaction pass, Plane project resolution, source parent resolution, approved state mapping, bug marker selection, and read-back verification.
+
 
 
