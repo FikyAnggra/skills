@@ -1,4 +1,4 @@
-﻿# QA Reporter
+# QA Reporter
 
 QA Reporter is a portable agent skill package for turning QA planner data, executor results, manual testing notes, or exploratory issue findings into governed reporting packages.
 
@@ -25,10 +25,10 @@ Default outputs are `report_state.json`, `test-report.md`, `issue-package.md`, `
 
 Recommendations are `Go`, `Conditional Go`, `No-Go`, or `Not Assessed`. The recommendation must show its rule and reason. Human override is allowed when reviewer, reason, timestamp, previous recommendation, and final recommendation are recorded.
 
-
 ## External Approval Review
 
 When approval is required and Notion or Plane is used, QA Reporter publishes or updates the Notion/Plane review surface first, then asks reviewers to approve from that external surface. Local-only approval is used only if the user explicitly accepts fallback after Notion/Plane publishing is blocked.
+
 ## Review and Submission Gate
 
 Reports use multi-level `OK`/`NOK` review. `NOK` feedback updates `report_state.json` and re-renders impacted artifacts. `OK` approves the package.
@@ -42,10 +42,10 @@ QA Reporter includes an optional Plane adapter for approved issue packages. It c
 ### Plane Source Sync and Bug Creation Rules
 
 When QA Reporter reads Notion links from a Plane source work item, it records a Plane comment summary and updates the work item description with a QA Reporter links section, unless read-only mode is requested. When a requirement/source Plane work item produces a bug, QA Reporter creates a sub work item under that source work item after approval. If no source Plane work item exists, it creates a normal work item. Created work items must be visibly marked as bugs by type, label, or title prefix fallback.
+
 ### Dynamic Plane State Mapping
 
 QA Reporter does not hardcode Plane states. Before creating or syncing Plane work items, it must fetch/list states for the target project, show every available state to the user, recommend a mapping to QA intents, and ask the user to approve or edit the mapping. Approved mapping is stored under `custom_fields.plane.state_mapping` per project.
-
 
 ## Plane Work Item and Notion Flow
 
@@ -54,14 +54,11 @@ QA Reporter can use a Plane work item such as `ENG-42` as a reporting anchor. It
 This is reporting and traceability only. Test case design still belongs to `qa-planner`, and test execution still belongs to `qa-executor`.
 
 Supported linked-source flow:
+
 - `qa-planner` creates test cases/report in Notion and links them in Plane.
 - `qa-executor` updates Notion test cases/report and links evidence in Plane.
 - `qa-reporter` reads Plane and Notion sources, creates final testing/SIT/UAT reports in Notion, creates bug work items/sub work items in Plane after state mapping approval, and comments summary links back to Plane.
+
 ## Downstream Workflow
 
 `qa-planner` creates planning state and reporter handoff data. `qa-executor` produces execution results, evidence refs, issue candidates, and reporter handoff data. `qa-reporter` creates the governed reporting package and optional approved issue submission package.
-
-
-
-
-
