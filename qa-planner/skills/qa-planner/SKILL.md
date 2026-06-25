@@ -98,16 +98,24 @@ Inline fallback skeleton when schema files are unavailable:
 
 Choose one path first.
 
+Before doing the requested planning task, run a requirement gap check:
+1. Read the user's request and available source inputs.
+2. List required-but-missing information needed to complete the requested task safely, such as scope, acceptance criteria, expected results, target environment, user roles, platform/API version, fixture data, credentials, endpoints, priority rules, output destination, Plane/Notion write target, or downstream handoff target.
+3. Classify each missing item as `blocking` or `non_blocking` using the ambiguity rules above.
+4. Ask the user for blocking missing information before planning impacted scope.
+5. Record non-blocking missing information in `open_questions` and continue only for scope that can be planned safely.
+
 Standard path:
 1. Intake source inputs and identify source refs.
-2. Normalize inputs into requirements, feature map, assumptions, and open questions.
-3. Classify ambiguity as blocking or non-blocking using the rules above; ask only for blocking ambiguity and record non-blocking ambiguity in `open_questions`.
-4. Analyze ambiguity, gaps, conflicts, edge cases, state transitions, validation gaps, risks, and dependencies.
-5. Build test strategy and test plan content.
-6. Design test cases using the approved Template Test Case field model.
-7. Build coverage map.
-8. Render artifacts using the output decision rules.
-9. Apply review feedback until the package is approved or remaining gaps are explicit.
+2. Perform the requirement gap check and show the user the missing/needed information list before continuing.
+3. Normalize inputs into requirements, feature map, assumptions, and open questions.
+4. Classify ambiguity as blocking or non-blocking using the rules above; ask only for blocking ambiguity and record non-blocking ambiguity in `open_questions`.
+5. Analyze ambiguity, gaps, conflicts, edge cases, state transitions, validation gaps, risks, and dependencies.
+6. Build test strategy and test plan content.
+7. Design test cases using the approved Template Test Case field model.
+8. Build coverage map.
+9. Render artifacts using the output decision rules.
+10. Apply review feedback until the package is approved or remaining gaps are explicit.
 
 Plane path:
 1. Read `references/plane-hybrid.md`.
