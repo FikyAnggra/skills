@@ -1,6 +1,6 @@
 # QA Executor
 
-`qa-executor` is a portable QA execution skill package. It runs approved test cases when tools and access are safe, produces manual execution instructions when they are not, captures redacted evidence, writes `execution_result.json`, incrementally updates the original test case source when writable, and can sync managed execution output back to Plane.so, Notion, documents, spreadsheets, or bridge contracts.
+`qa-executor` is a portable QA execution skill package. It runs approved test cases when tools and access are safe, enforces the guarded Plane.so QA state workflow, produces manual execution instructions when needed, captures redacted evidence, writes `execution_result.json`, incrementally updates the original test case source when writable, and can sync managed execution output back to Plane.so, Notion, documents, spreadsheets, or bridge contracts.
 
 ## Contents
 
@@ -19,7 +19,7 @@ Use manual input when a human provides test cases from Excel, Google Sheets, Mar
 
 Use Plane input when a user provides a Plane readable id such as `ENG-42`, a Plane URL, UUID, or MCP payload. Plane content is executable only when it contains an executor handoff, structured execution package, or minimum test case fields. Raw requirements should be routed to `qa-planner` instead of executed.
 
-For Plane Managed Sync, resolve status mapping and write policy before execution. Mapping covers start, all passed, any failed, blocked, partial, and cancelled outcomes. Write policy controls managed comments, status movement, worklogs, links, wiki/page sync, follow-up creation, and confirmation requirements.
+For Plane Managed Sync, resolve the work item, project states, write policy, and guarded state workflow before execution. qa-executor may start directly only from `Ready to Test`. If the work item is in another state, it must ask for user approval before testing and moving to `In Testing`. Write policy controls managed comments, status movement, worklogs, links, wiki/page sync, follow-up creation, and confirmation requirements.
 
 Use Notion input when a user provides a Notion page URL, database URL, data source id, page id, or MCP payload. Notion content is executable only when it contains an executor handoff, structured execution package, or minimum test case fields. Raw requirements should be routed to `qa-planner` instead of executed.
 
@@ -61,6 +61,15 @@ Execution output goes through human `OK` or `NOK` review. `OK` accepts the packa
 Plane is a synced workflow surface, not the canonical state. `execution_result.json` remains the source of truth.
 
 Managed Plane output uses idempotency keys and markers to avoid duplicate comments, description summaries, worklogs, wiki pages, links, and follow-up items. Wiki/page sync, description sync, and follow-up work item creation are off by default unless the write policy enables them. Secrets, tokens, cookies, credentials, authorization values, session ids, and PII must be redacted before any Plane write.
+
+Guarded Plane workflow:
+- `Ready to Test` -> `In Testing` when execution starts.
+- `In Testing` -> `Need Review Test Execute` when all selected test cases have final status.
+- `Need Review Test Execute` -> `In Testing` on NOK review.
+- `Need Review Test Execute` -> `Need Issue Report` on OK review with any failed, blocked, bug, issue, or problem.
+- `Need Review Test Execute` -> `Ready to Report` on OK review with no issue.
+
+If the initial state is not `Ready to Test`, qa-executor must ask for approval before execution and record the approval override in `execution_result.json` and the managed Plane comment.
 
 ## Notion Managed Sync
 

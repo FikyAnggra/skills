@@ -10,6 +10,16 @@
 - Review status: `<review_status>`
 - Detailed report: `<notion_plane_bridge.notion_execution_page_ref or execution_report_ref>`
 
+## Plane Workflow
+
+- Current state before execution: `<plane_state_workflow.current_state_before_execution>`
+- Start gate: `Ready to Test`
+- Execution state: `In Testing`
+- Review state: `Need Review Test Execute`
+- Final workflow state: `<plane_state_workflow.final_review_state>`
+- Approval override: `<plane_state_workflow.approval_override.approved>`
+- Approval note: `<plane_state_workflow.approval_override.approval_text>`
+
 ## Counts
 
 | Selected | Passed | Failed | Blocked | Untested | Retest |

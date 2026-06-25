@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.9.0 - 2026-06-25
+
+- Added guarded Plane.so execution workflow for Plane inputs, readable issue ids, URLs, UUIDs, and Plane work item requests.
+- Added direct-start gate: qa-executor may start automatically only from `Ready to Test`; other states require user approval override before moving to `In Testing`.
+- Added canonical Plane transitions: `Ready to Test` -> `In Testing` -> `Need Review Test Execute`, then review outcome to `In Testing`, `Need Issue Report`, or `Ready to Report`.
+- Added approval override capture for confirmations such as `ok`, `approve`, `lanjut`, `ya`, `boleh`, and `proceed`.
+- Added `plane_state_workflow` schema sections and managed comment output for state audit trail.
+
 ## 0.8.0 - 2026-06-17
 
 - Changed default execution behavior to incremental source updates across Notion, Plane, spreadsheets, documents, Markdown, JSON, and other supported sources.

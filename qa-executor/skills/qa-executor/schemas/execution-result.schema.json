@@ -55,6 +55,7 @@
     "qa_reporter_handoff": { "$ref": "#/$defs/reporter_handoff" },
     "qa_automation_signal": { "$ref": "#/$defs/automation_signal" },
     "plane_sync": { "$ref": "#/$defs/plane_sync" },
+    "plane_state_workflow": { "$ref": "#/$defs/plane_state_workflow" },
     "notion_sync": { "$ref": "#/$defs/notion_sync" },
     "notion_plane_bridge": { "$ref": "#/$defs/notion_plane_bridge" },
     "source_updates": {
@@ -485,6 +486,61 @@
         },
         "idempotency_key": { "type": "string" },
         "status_transition_gap": { "type": "string" }
+      }
+    },
+    "plane_state_workflow": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "current_state_before_execution": { "type": ["string", "null"] },
+        "started_from_ready_to_test": { "type": "boolean" },
+        "approval_override": { "$ref": "#/$defs/plane_approval_override" },
+        "transitions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/plane_state_transition" }
+        },
+        "final_review_state": {
+          "type": ["string", "null"],
+          "enum": ["Need Review Test Execute", "Need Issue Report", "Ready to Report", "In Testing", null]
+        },
+        "state_gaps": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "plane_approval_override": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "required": { "type": "boolean" },
+        "approved": { "type": "boolean" },
+        "approval_text": { "type": "string" },
+        "approved_by": { "type": "string" },
+        "approved_at": { "type": ["string", "null"] },
+        "previous_state": { "type": "string" },
+        "target_state": { "type": "string" },
+        "reason": { "type": "string" }
+      }
+    },
+    "plane_state_transition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["from_state", "to_state", "trigger", "sync_status"],
+      "properties": {
+        "from_state": { "type": ["string", "null"] },
+        "to_state": { "type": "string" },
+        "trigger": {
+          "type": "string",
+          "enum": ["start_execution", "execution_finished", "review_ok_with_issue", "review_ok_no_issue", "review_nok", "approval_override", "cancelled", "other"]
+        },
+        "transitioned_at": { "type": ["string", "null"] },
+        "sync_status": {
+          "type": "string",
+          "enum": ["not_started", "synced", "partial", "failed", "skipped"]
+        },
+        "reason": { "type": "string" }
       }
     },
     "notion_sync": {

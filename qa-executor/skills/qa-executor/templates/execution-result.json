@@ -75,6 +75,41 @@
   ],
   "issue_candidates": [],
   "execution_review_history": [],
+  "plane_state_workflow": {
+    "enabled": true,
+    "current_state_before_execution": "Ready to Test",
+    "started_from_ready_to_test": true,
+    "approval_override": {
+      "required": false,
+      "approved": false,
+      "approval_text": "",
+      "approved_by": "",
+      "approved_at": null,
+      "previous_state": "Ready to Test",
+      "target_state": "In Testing",
+      "reason": "Work item started from Ready to Test."
+    },
+    "transitions": [
+      {
+        "from_state": "Ready to Test",
+        "to_state": "In Testing",
+        "trigger": "start_execution",
+        "transitioned_at": "2026-06-11T10:00:00+07:00",
+        "sync_status": "synced",
+        "reason": "qa-executor started execution."
+      },
+      {
+        "from_state": "In Testing",
+        "to_state": "Need Review Test Execute",
+        "trigger": "execution_finished",
+        "transitioned_at": "2026-06-11T10:02:00+07:00",
+        "sync_status": "synced",
+        "reason": "All selected test cases reached final status."
+      }
+    ],
+    "final_review_state": "Need Review Test Execute",
+    "state_gaps": []
+  },
   "source_updates": [
     {
       "tc_id": "TC0001",

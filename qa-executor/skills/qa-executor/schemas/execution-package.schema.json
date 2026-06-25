@@ -37,7 +37,7 @@
           "enum": ["approved_by_planner", "approved_by_user", "draft_validation", "not_approved"]
         },
         "approved_by": { "type": "string" },
-        "approved_at": { "type": "string" },
+        "approved_at": { "type": ["string", "null"] },
         "notes": { "type": "string" }
       }
     },
@@ -105,6 +105,7 @@
     "plane_context": { "$ref": "#/$defs/plane_context" },
     "plane_write_policy": { "$ref": "#/$defs/plane_write_policy" },
     "plane_status_mapping": { "$ref": "#/$defs/plane_status_mapping" },
+    "plane_state_workflow": { "$ref": "#/$defs/plane_state_workflow" },
     "notion_context": { "$ref": "#/$defs/notion_context" },
     "notion_write_policy": { "$ref": "#/$defs/notion_write_policy" },
     "notion_plane_bridge": { "$ref": "#/$defs/notion_plane_bridge" },
@@ -196,6 +197,39 @@
         "on_blocked": { "type": "string" },
         "on_partial": { "type": "string" },
         "on_cancelled": { "type": "string" }
+      }
+    },
+    "plane_state_workflow": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean", "default": true },
+        "current_state": { "type": "string" },
+        "ready_state": { "type": "string", "default": "Ready to Test" },
+        "in_testing_state": { "type": "string", "default": "In Testing" },
+        "review_state": { "type": "string", "default": "Need Review Test Execute" },
+        "issue_report_state": { "type": "string", "default": "Need Issue Report" },
+        "ready_report_state": { "type": "string", "default": "Ready to Report" },
+        "requires_ready_state": { "type": "boolean", "default": true },
+        "approval_override": { "$ref": "#/$defs/plane_approval_override" },
+        "state_read_gaps": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "plane_approval_override": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "required": { "type": "boolean" },
+        "approved": { "type": "boolean" },
+        "approval_text": { "type": "string" },
+        "approved_by": { "type": "string" },
+        "approved_at": { "type": ["string", "null"] },
+        "previous_state": { "type": "string" },
+        "target_state": { "type": "string" },
+        "reason": { "type": "string" }
       }
     },
     "notion_context": {
