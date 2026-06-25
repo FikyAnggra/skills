@@ -44,9 +44,12 @@ Condition:
 
 Actions:
 1. Fetch the work item and source context.
-2. Move the work item to `Generating Issue Report`.
-3. Create issue report from work item description, comments, links, attachments/evidence, QA Executor result, failed/blocked test cases, and discovered issues.
-4. Normalize each issue:
+2. Resolve the `Generating Issue Report` target state.
+3. Move the work item to `Generating Issue Report`.
+4. Read back the Plane work item and verify current state is `Generating Issue Report`.
+5. If the state move fails or cannot be verified, stop. Do not create report artifacts while the work item is still in `Need Issue Report`.
+6. Create issue report from work item description, comments, links, attachments/evidence, QA Executor result, failed/blocked test cases, and discovered issues.
+7. Normalize each issue:
    - title
    - severity
    - priority
@@ -58,7 +61,7 @@ Actions:
    - environment
    - impact
    - report gaps
-5. Render:
+8. Render:
    - `report_state`
    - issue report
    - issue submission package
@@ -66,8 +69,11 @@ Actions:
    - severity/priority recommendation
    - evidence summary
    - report gaps
-6. Move work item to `Need Review Issue Report`.
-7. Add Plane comment summary that the issue report is ready for review.
+9. Resolve the `Need Review Issue Report` target state.
+10. Move work item to `Need Review Issue Report`.
+11. Read back the Plane work item and verify current state is `Need Review Issue Report`.
+12. If the state move fails or cannot be verified, keep the report artifacts in draft/review-pending state, record the transition failure in `plane_state_routing.state_transition_history`, and report the blocker.
+13. Add Plane comment summary that the issue report is ready for review only after the state is verified as `Need Review Issue Report`.
 
 ## State: Generating Issue Report
 
@@ -79,6 +85,7 @@ Actions:
 2. Apply human NOK feedback when present.
 3. Do not change source execution result unless evidence or reviewer decision supports it.
 4. Move state to `Need Review Issue Report` after completion.
+5. Read back the Plane work item and verify current state is `Need Review Issue Report` before presenting the issue report as complete.
 
 ## State: Need Review Issue Report
 
@@ -190,6 +197,14 @@ Required target states:
 - `Release Approval`
 
 If a required target state is unavailable by exact name, fetch/list Plane states and ask the user to map the missing target. Do not guess from partial names unless the user approves the mapping.
+
+## Transition Verification
+
+For Plane state transitions, update order matters:
+- For `Need Issue Report`, move to `Generating Issue Report` before any issue report generation.
+- After generating the issue report, move to `Need Review Issue Report` before saying the report is ready for review.
+
+Every state move must be read back from Plane. If read-back does not show the expected target state, stop the workflow, keep artifacts as draft/review-pending, record the failed transition in `plane_state_routing.state_transition_history`, and report the blocker.
 
 ## Comments
 

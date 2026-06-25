@@ -72,8 +72,8 @@ Automatic generation is allowed only from:
 - `Ready to Report`
 
 Supported workflow states:
-- `Need Issue Report`: move to `Generating Issue Report`, generate issue report, then move to `Need Review Issue Report`.
-- `Generating Issue Report`: continue or revise issue report, then move to `Need Review Issue Report`.
+- `Need Issue Report`: move to `Generating Issue Report` before generating the issue report; verify the state by read-back; generate issue report; then move to `Need Review Issue Report` and verify again before commenting ready for review.
+- `Generating Issue Report`: continue or revise issue report, then move to `Need Review Issue Report` and verify the state by read-back.
 - `Need Review Issue Report`: for `NOK`, move to `Generating Issue Report`; for `OK`, create approved bug/issue work items in `Backlog Issue`.
 - `Ready to Report`: move to `Generating Report`, generate testing report, then move to `Need Review Report`.
 - `Generating Report`: continue or revise testing report, then move to `Need Review Report`.

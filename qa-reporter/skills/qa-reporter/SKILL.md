@@ -65,14 +65,14 @@ Read `references/plane-state-routing.md` for exact state behavior.
 Use exact state-name workflow only after fetching the Plane work item state. Do not infer these states from labels, status text in comments, or Notion page status.
 
 State behavior:
-- `Need Issue Report`: move to `Generating Issue Report`, create issue report and issue submission package from execution context, then move to `Need Review Issue Report` and comment summary in Plane.
-- `Generating Issue Report`: continue or revise issue report, apply NOK feedback when present, then move to `Need Review Issue Report`.
+- `Need Issue Report`: before creating any report artifact, move to `Generating Issue Report` and verify the state change by reading the work item back. If the move fails or cannot be verified, stop and report the blocker. After the issue report and issue submission package are complete, move to `Need Review Issue Report`, verify the state change, then comment summary in Plane.
+- `Generating Issue Report`: continue or revise issue report, apply NOK feedback when present, then move to `Need Review Issue Report` and verify the state change before presenting the work as complete.
 - `Need Review Issue Report`: for `NOK`, record feedback, move to `Generating Issue Report`, revise, then return to `Need Review Issue Report`; for `OK`, approve report, create Plane bug/issue work items in `Backlog Issue` after state discovery if needed, link them back, and comment summary.
 - `Ready to Report`: move to `Generating Report`, create testing report, metrics, coverage/risk summary, SIT/UAT summary when needed, sign-off recommendation, then move to `Need Review Report` and comment summary in Plane.
 - `Generating Report`: continue or revise testing report, apply NOK feedback when present, then move to `Need Review Report`.
 - `Need Review Report`: for `NOK`, record feedback, move to `Generating Report`, revise, then return to `Need Review Report`; for `OK`, approve report, move to `Release Approval`, and comment approved summary with report/evidence links.
 
-If required target states such as `Generating Issue Report`, `Need Review Issue Report`, `Generating Report`, `Need Review Report`, `Release Approval`, or `Backlog Issue` are missing, run Plane state discovery and ask the user to map states before moving the work item.
+If required target states such as `Generating Issue Report`, `Need Review Issue Report`, `Generating Report`, `Need Review Report`, `Release Approval`, or `Backlog Issue` are missing, run Plane state discovery and ask the user to map states before moving the work item. Do not generate reports for `Need Issue Report` until `Generating Issue Report` exists and the work item has been moved there.
 
 ### Plane Work Item Source Intake
 

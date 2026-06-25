@@ -1,5 +1,10 @@
 ﻿# Changelog
 
+## 0.7.1 - 2026-06-25
+
+- Tightened Plane `Need Issue Report` transition order: move and verify `Generating Issue Report` before creating issue report artifacts.
+- Tightened issue-report completion order: move and verify `Need Review Issue Report` before announcing the report is ready for review.
+- Added transition failure behavior: stop, keep artifacts draft/review-pending, record blocker in `plane_state_routing`, and report the failed move.
 ## 0.7.0 - 2026-06-25
 
 - Added Plane-context trigger behavior for Plane, Plane.so, Plane cards/work items, readable ids such as `DKI-179`, Plane URLs, and Plane UUIDs.
@@ -59,6 +64,7 @@
 - Added examples for manual execution, exploratory issues, canonical report state, rendered test report, and rendered issue package.
 - Compatibility target: portable agent package with Codex plugin metadata and Claude-compatible wrapper metadata.
 - Future migration note: keep schema changes versioned and preserve `custom_fields` for platform-specific extensions.
+
 
 
 
