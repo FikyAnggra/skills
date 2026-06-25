@@ -561,7 +561,7 @@
                                 "confirmation_prompt":  "",
                                 "moved_to_state":  "Generating Issue Report",
                                 "target_review_state":  "Need Review Issue Report",
-                                "approved_next_state":  "Backlog Issue",
+                                "approved_next_state":  "Backlog Test",
                                 "state_transition_history":  [
                                                                  {
                                                                      "from_state":  "Need Issue Report",
@@ -579,7 +579,8 @@
                                                                  }
                                                              ],
                                 "custom_fields":  {
-
+                                                      "approved_issue_item_state":  "Backlog Issue",
+                                                      "approved_source_state":  "Backlog Test"
                                                   }
                             }
 }

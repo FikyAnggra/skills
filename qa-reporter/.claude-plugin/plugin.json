@@ -1,6 +1,6 @@
 {
     "name":  "qa-reporter",
-    "version":  "0.7.1",
+    "version":  "0.7.2",
     "description":  "Portable QA reporting plugin for Claude-compatible agents with optional Plane MCP issue submission guidance. It uses skills/qa-reporter/SKILL.md as the canonical instruction source and preserves the Codex plugin wrapper.",
     "author":  {
                    "name":  "Local developer"
@@ -41,7 +41,9 @@
                          "issue_report_state_workflow",
                          "testing_report_state_workflow",
                          "verified_plane_state_transitions",
-                         "issue_report_transition_guard"
+                         "issue_report_transition_guard",
+                         "approved_issue_sub_work_item_creation",
+                         "backlog_test_source_transition"
                      ],
     "compatibility":  {
                           "codex":  {

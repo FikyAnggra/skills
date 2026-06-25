@@ -74,12 +74,12 @@ Automatic generation is allowed only from:
 Supported workflow states:
 - `Need Issue Report`: move to `Generating Issue Report` before generating the issue report; verify the state by read-back; generate issue report; then move to `Need Review Issue Report` and verify again before commenting ready for review.
 - `Generating Issue Report`: continue or revise issue report, then move to `Need Review Issue Report` and verify the state by read-back.
-- `Need Review Issue Report`: for `NOK`, move to `Generating Issue Report`; for `OK`, create approved bug/issue work items in `Backlog Issue`.
+- `Need Review Issue Report`: for `NOK`, move to `Generating Issue Report`; for `OK`/approve input, create approved bug/issue sub work items in `Backlog Issue` when the report source is a Plane work item, verify the created items by read-back, then move the source work item to `Backlog Test` and verify the state by read-back. If no Plane source work item exists, create normal bug/issue work items in `Backlog Issue` and skip the source move.
 - `Ready to Report`: move to `Generating Report`, generate testing report, then move to `Need Review Report`.
 - `Generating Report`: continue or revise testing report, then move to `Need Review Report`.
 - `Need Review Report`: for `NOK`, move to `Generating Report`; for `OK`, move to `Release Approval`.
 
-If current state is outside the workflow, ask the user before generating report or moving state. If target states such as `Generating Issue Report`, `Need Review Issue Report`, `Backlog Issue`, `Generating Report`, `Need Review Report`, or `Release Approval` are missing, run state discovery and ask the user to map states.
+If current state is outside the workflow, ask the user before generating report or moving state. If target states such as `Generating Issue Report`, `Need Review Issue Report`, `Backlog Issue`, `Backlog Test`, `Generating Report`, `Need Review Report`, or `Release Approval` are missing, run state discovery and ask the user to map states.
 
 Store route decisions in `report_state.plane_state_routing`.
 
@@ -92,6 +92,8 @@ When Notion links are read from a Plane work item, update the source work item d
 ## Work Item vs Sub Work Item Creation
 
 If an issue package is derived from a Plane requirement/source work item, create a sub work item under that source work item. This keeps bug/issue visibility attached to the requirement work item. If there is no source Plane work item, create a normal work item in the target project. Use `comment_existing` only when the user chooses to update an existing item instead of creating a new one.
+
+For `Need Review Issue Report` approval, the source Plane work item itself is the parent. Create approved bug/issue candidates as sub work items under that parent in `Backlog Issue`. After every created sub work item is read back and verified, move the parent/source work item to `Backlog Test`. If any sub work item creation or verification fails, do not move the parent/source work item.
 
 ## Bug Label Resolution
 

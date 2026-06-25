@@ -43,7 +43,7 @@ QA Reporter includes an optional Plane adapter for approved issue packages. It c
 
 When input contains Plane context such as `Plane`, `Plane.so`, a work item/card, readable id like `DKI-179`, or a Plane URL/UUID, QA Reporter reads the Plane work item first and routes by current state. Automatic reporting starts only from `Need Issue Report` or `Ready to Report`. Other states require user confirmation before report generation or state movement.
 
-Issue-report route: `Need Issue Report` -> `Generating Issue Report` -> `Need Review Issue Report`; approval `OK` creates bug/issue work items in `Backlog Issue`. QA Reporter must move the Plane work item to `Generating Issue Report` before generating the issue report, and must move it to `Need Review Issue Report` after generation before saying it is ready for review.
+Issue-report route: `Need Issue Report` -> `Generating Issue Report` -> `Need Review Issue Report`; approval `OK` creates bug/issue sub work items in `Backlog Issue` when the source is a Plane work item, then moves the source work item to `Backlog Test` after created sub work items are verified. QA Reporter must move the Plane work item to `Generating Issue Report` before generating the issue report, and must move it to `Need Review Issue Report` after generation before saying it is ready for review.
 
 Testing-report route: `Ready to Report` -> `Generating Report` -> `Need Review Report`; approval `OK` moves the source work item to `Release Approval`.
 

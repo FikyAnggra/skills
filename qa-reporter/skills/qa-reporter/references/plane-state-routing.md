@@ -101,19 +101,23 @@ NOK actions:
 
 OK actions:
 1. Mark issue report as approved.
-2. Create bug/issue Plane work items in `Backlog Issue`.
-3. If the issue came from a source Plane work item, create a sub work item when possible.
-4. Mark each new item as bug/issue:
+2. Treat user input such as `approve`, `approved`, or `OK` as approval plus authorization to create the approved Plane bug/issue items for this route.
+3. Resolve the `Backlog Issue` target state for created bug/issue items.
+4. If the issue came from this Plane source work item, create a sub work item under the source work item for each approved issue candidate. Set each sub work item state to `Backlog Issue`.
+5. If there is no source Plane work item, create normal bug/issue Plane work items in `Backlog Issue`.
+6. Mark each new item as bug/issue:
    - use type `Bug` when available
    - use or create label `bug`
    - use `qa-reported` label when available
    - fallback title prefix `[Bug]` or `[Issue]`
-5. Save bug/issue work item links back to report source.
-6. Add Plane comment summary to source work item.
+7. Read back every created work item or sub work item and verify title, parent/source relation when applicable, bug marker, and state `Backlog Issue`.
+8. Save bug/issue work item links back to report source.
+9. If the issue report source is a Plane work item, resolve `Backlog Test`, move the source work item from `Need Review Issue Report` to `Backlog Test`, and verify the state by read-back.
+10. Add Plane comment summary to source work item with created bug/sub-work-item links and source state transition result.
 
 Do not submit bug/issue work items to Plane before human review `OK`.
 
-If `Backlog Issue` is missing, run state discovery and ask the user to map the target state.
+If `Backlog Issue` or `Backlog Test` is missing, run state discovery and ask the user to map the target state. Do not create issue items until `Backlog Issue` is resolved. Do not move the source work item until `Backlog Test` is resolved and all created issue items are verified.
 
 ## State: Ready to Report
 
@@ -192,6 +196,7 @@ Required target states:
 - `Generating Issue Report`
 - `Need Review Issue Report`
 - `Backlog Issue`
+- `Backlog Test`
 - `Generating Report`
 - `Need Review Report`
 - `Release Approval`

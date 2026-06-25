@@ -1,5 +1,11 @@
 ﻿# Changelog
 
+## 0.7.2 - 2026-06-25
+
+- Updated Plane `Need Review Issue Report` approval handling: approve/OK now creates approved bug/issue sub work items in `Backlog Issue` for Plane-sourced reports.
+- Added post-approval source transition: after created bug/issue sub work items are verified, move the source work item to `Backlog Test`.
+- Added failure guard: do not move the source work item to `Backlog Test` when issue sub work item creation or read-back verification fails.
+
 ## 0.7.1 - 2026-06-25
 
 - Tightened Plane `Need Issue Report` transition order: move and verify `Generating Issue Report` before creating issue report artifacts.
