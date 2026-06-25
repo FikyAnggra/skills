@@ -15,7 +15,65 @@ Accept Plane input from:
 
 Capture available refs in `planning_state.source_inputs[].plane_refs` using `schemas/plane-source.schema.json` when possible: workspace, project, work item UUID, readable identifier, source URL, source status, comments, attachments, pages, modules, cycles, and links.
 
-Source status is metadata only. Never block intake because the source work item/card is Done, Cancelled, archived, or custom status.
+For Plane QA planning, source status controls whether qa-planner may proceed. Follow the Plane QA state workflow below before analysis, generation, or status movement.
+
+## Plane QA State Workflow
+
+Use this workflow whenever input contains Plane context such as `Plane`, `Plane.so`, Plane work item/card, readable issue id like `DKI-179`, Plane URL/UUID, or a request to read, analyze, create, or update QA artifacts from a Plane work item.
+
+Known QA states:
+- `Backlog Test Human`
+- `Todo Test`
+- `Analyze Test`
+- `Update Test`
+- `Need Review Test`
+- `Ready to Test`
+
+Resolve state names and ids with `list_states` before any transition. If a state is missing, record `plane_state_gap` and ask the user instead of guessing a replacement state.
+
+State ownership and entry rules:
+- `Backlog Test Human`: human-owned queue after developer completion in dev environment. Read only when the user explicitly requests this exact item or state. Do not auto-pull work from this state.
+- `Todo Test`: default eligible state for qa-planner intake. If the user asks qa-planner to start planning or analysis from this state, move the work item to `Analyze Test`.
+- `Analyze Test`: qa-planner analysis state. Read and decide routing only; do not create or heavily update test cases/test plans here.
+- `Update Test`: qa-planner generation/update state. Use for creating or updating requested QA artifacts.
+- `Need Review Test`: human review state after qa-planner finishes creating/updating artifacts.
+- `Ready to Test`: artifacts are ready for qa-executor. Do not change test cases/test plans in this state unless the user explicitly requests revision.
+
+Default state gate:
+- By default, process only work items in `Todo Test`.
+- If the work item is in another state, stop and ask for confirmation unless the user explicitly requested that state/item should be processed anyway.
+- `Backlog Test Human` always requires explicit user request.
+- If the user provides explicit override, continue and record the override in `planning_state.review_history` or `custom_fields.plane_state_override`.
+
+State machine:
+- `Todo Test` -> `Analyze Test` when user asks qa-planner to start analysis/planning.
+- `Analyze Test` -> `Ready to Test` when all requested artifacts already exist, are complete, current, and traceable to requirements.
+- `Analyze Test` -> `Update Test` when any requested artifact is missing, incomplete, outdated, not traceable, or has important gaps.
+- `Update Test` -> `Need Review Test` after qa-planner finishes creating/updating artifacts and syncing output to Plane.
+- `Need Review Test` -> `Update Test` when user gives feedback, revision request, or `NOK`.
+- `Need Review Test` -> `Ready to Test` when user approves or gives `OK`.
+
+`Analyze Test` behavior:
+- Read and analyze issue title, description, parent, labels, priority, attachments, comments, related context, existing test cases, existing test plan, and other QA artifacts relevant to the user request.
+- Match analysis scope to the user request. If the user asks for test cases, check existing test cases. If the user asks for test plan, check existing test plan. If both are requested, check both.
+- If all requested artifacts already exist and satisfy the work item requirements, move to `Ready to Test`.
+- If artifacts are missing, incomplete, outdated, not traceable, or contain important gaps, move to `Update Test`.
+- Do not perform large artifact creation or update while still in `Analyze Test`.
+
+`Update Test` behavior:
+- Create or update only the artifacts requested by the user: test cases, test plan, coverage map, or other QA artifacts.
+- Sync results to Plane using the active Plane output policy.
+- Record artifacts created, artifacts updated, change summary, gaps/open questions, and coverage summary.
+- After successful sync, move the work item to `Need Review Test`.
+
+`Need Review Test` behavior:
+- If user feedback is ambiguous, ask for clarification or record a blocking open question before moving state.
+- If user gives revision feedback or `NOK`, move to `Update Test`, revise impacted artifacts, sync, then return to `Need Review Test`.
+- If user gives approval or `OK`, move to `Ready to Test`.
+
+`Ready to Test` behavior:
+- Enter only when requested artifacts exist, are sufficiently complete against requirements, no blocking gap remains, and user approved or the user flow allows auto-ready after valid analysis.
+- After entering this state, qa-planner must not change test cases or test plan again unless the user explicitly requests revision.
 
 ## Plane MCP Tool Map
 
@@ -93,7 +151,9 @@ If attachment content cannot be read:
 
 ## Status-Move Clarification
 
-When Plane input is used and the user does not specify status movement, ask this before running the planning workflow:
+When Plane QA state workflow is active, use its defined transitions instead of asking a generic status-move question.
+
+For Plane work that is not using the QA state workflow and the user does not specify status movement, ask this before running the planning workflow:
 
 ```text
 Setelah QA planning selesai dan output berhasil diattach/update ke Plane, apakah work item perlu dipindahkan status? Jika ya, ke status apa?
@@ -140,11 +200,11 @@ Use `templates/plane-page.md` when the plan is long, has many test cases, is reu
 
 ## Status Movement
 
-Move status only after configured Plane sync succeeds. Sync success means required comment, attachment, wiki/page, and link actions completed.
+Move status only when the Plane QA state workflow requires it, the user explicitly requests it, or the configured Plane output policy allows it. For post-update transitions, move only after configured Plane sync succeeds. Sync success means required comment, attachment, wiki/page, and link actions completed.
 
 Resolve target state with `list_states`. Do not assume `In Review`; accept any user-provided valid target state name or id in the project.
 
-Use `update_work_item` for status movement or label/field updates only after successful sync and explicit user instruction. Skip status movement when target status is not found, sync fails, transition tooling is unavailable, or the user chose no move. If target status is not found, complete planning and output sync, record `status_transition_skipped`, and include a short reason in the Plane comment.
+Use `update_work_item` for state movement or label/field updates. Skip state movement when target state is not found, sync fails, transition tooling is unavailable, or the user explicitly chose no move for a non-workflow run. If target state is not found, complete planning and output sync when possible, record `status_transition_skipped`, and include a short reason in the Plane comment.
 
 Status movement is not QA approval. `planning_status = approved` is controlled by review.
 

@@ -81,6 +81,21 @@
         "on_target_status_not_found": { "type": "string", "enum": ["skip_status_move"], "default": "skip_status_move" }
       }
     },
+    "qa_state_workflow_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean", "default": true },
+        "default_eligible_state": { "type": "string", "default": "Todo Test" },
+        "human_owned_backlog_state": { "type": "string", "default": "Backlog Test Human" },
+        "analysis_state": { "type": "string", "default": "Analyze Test" },
+        "update_state": { "type": "string", "default": "Update Test" },
+        "review_state": { "type": "string", "default": "Need Review Test" },
+        "ready_state": { "type": "string", "default": "Ready to Test" },
+        "on_non_default_state": { "type": "string", "enum": ["ask_user_or_require_explicit_override"], "default": "ask_user_or_require_explicit_override" },
+        "resolve_states_with_list_states": { "type": "boolean", "default": true }
+      }
+    },
     "fallback_behavior": {
       "type": "string",
       "enum": ["render_local_json_markdown", "return_chat_artifacts"],

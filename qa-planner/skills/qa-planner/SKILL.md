@@ -112,10 +112,10 @@ Standard path:
 Plane path:
 1. Read `references/plane-hybrid.md`.
 2. Resolve Plane source refs and read the work item/card plus readable attachments when tools allow.
-3. Ask the mandatory status-move question before running when Plane input lacks status movement instruction.
-4. Continue with the standard path.
-5. Sync outputs back to the source Plane work item/card according to the Plane output policy.
-6. Move Plane status only after successful sync and only when the user requested a valid target status.
+3. Apply the Plane QA state workflow before analysis or generation. Default eligible source state is `Todo Test`; other states require explicit user request or confirmation.
+4. Move `Todo Test` to `Analyze Test` when starting analysis, route `Analyze Test` to `Ready to Test` or `Update Test`, route `Update Test` to `Need Review Test`, and route review feedback according to the Plane state machine.
+5. Continue with the standard path only after the state gate allows work.
+6. Sync outputs back to the source Plane work item/card according to the Plane output policy.
 
 Notion path:
 1. Read `references/notion-mcp.md`.
@@ -292,7 +292,10 @@ Content gates, always apply:
 - Rendered human artifacts match `planning_state`.
 
 Plane sync gates, apply only on Plane path:
-- Plane source status did not block intake.
+- Plane QA state workflow was applied before analysis, generation, or sync.
+- Plane source state did not block intake, or explicit user override/confirmation was recorded.
+- `Analyze Test` was used for analysis/routing only, not large artifact creation.
+- `Update Test` was used for creating/updating requested artifacts.
 - Plane MCP context was resolved when tools were available: work item payload, comments, activities, relations, states, members, properties, types, and requested cycle/module scope.
 - Readable attachment content was read or `attachment_read_gap` was recorded.
 - Plane output was added or updated on the source work item/card when write tools were available.
@@ -312,8 +315,9 @@ Notion sync gates, apply only on Notion path:
 - Sensitive data is redacted before Notion write.
 
 Status transition gates, apply only when Plane status movement is requested:
-- Status-move question was asked before running when Plane input lacked movement instruction.
-- Status movement happens only after successful Plane sync.
+- Target Plane state was resolved with `list_states`.
+- Workflow transitions follow `Todo Test -> Analyze Test`, `Analyze Test -> Ready to Test|Update Test`, `Update Test -> Need Review Test`, and `Need Review Test -> Ready to Test|Update Test`.
+- Post-update status movement happens only after successful Plane sync.
 - Target status not found skips transition without failing planning.
 
 ## Platform Fallback
@@ -323,7 +327,7 @@ Use platform-native document, spreadsheet, or JSON tools when available. If a pl
 ## Resources
 
 Read only when needed:
-- `references/plane-hybrid.md`: Plane MCP tool mapping, intake, attachment, planning enrichment, sync, wiki/page, links, idempotency, status movement, handoff tracking, and safety rules
+- `references/plane-hybrid.md`: Plane MCP tool mapping, QA state workflow, intake, attachment, planning enrichment, sync, wiki/page, links, idempotency, status movement, handoff tracking, and safety rules
 - `references/notion-mcp.md`: Notion MCP tool mapping, test plan page output, mandatory test case database output, link capture, idempotency, batching, fallback, and safety rules
 - `schemas/planning-state.schema.json`: canonical planning state schema
 - `schemas/handoff-contract.schema.json`: downstream contract schema

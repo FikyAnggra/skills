@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.9 - 2026-06-25
+
+- Added Plane QA state workflow for `Backlog Test Human`, `Todo Test`, `Analyze Test`, `Update Test`, `Need Review Test`, and `Ready to Test`.
+- Made `Todo Test` the default eligible Plane state and required explicit request/confirmation for other states.
+- Added routing rules for analysis-only, update, human review, and ready-to-test transitions.
+- Added machine-readable Plane QA state workflow policy in `plane-output-policy.schema.json`.
+
 ## 0.2.8 - 2026-06-16
 
 - Enforced exact Notion test case database display column order: TC ID, Scenario, Summary, Test Type, Priority, Pre Conditions, Test Steps, Test Data, Expected Result, Actual Result, Test Case Status, Automation Status, Notes.

@@ -26,6 +26,8 @@ Provide requirements, Plane work item/card ids or payloads, PRDs, acceptance cri
 
 Plane inputs can come from work item/card title and description, comments, activities, readable attachment content, wiki/pages, parent or child work items, relations, linked work items, modules, cycles, or direct MCP/API payloads. Plane-specific rules live in `skills/qa-planner/references/plane-hybrid.md` and are loaded only for Plane inputs. If Plane MCP tools are available, the planner resolves readable ids such as `ENG-42`, reads comments and activity history, expands requested cycle/module scope, captures relations and project metadata, and asks the user instead of assuming when required information is missing or conflicting.
 
+Plane QA planning follows a state workflow. By default, `qa-planner` processes Plane work items only from `Todo Test`, moves them to `Analyze Test` for analysis/routing, uses `Update Test` when artifacts must be created or updated, moves completed work to `Need Review Test`, and moves approved work to `Ready to Test`. `Backlog Test Human` is human-owned and is read only when explicitly requested. Any non-default source state requires explicit user request or confirmation before processing.
+
 Notion output can create or update a QA test plan page and a Notion test case database. The test case artifact must be a Notion database when `notion-create-database` and required `notion-update-data-source` support are available. Database columns use the required display order: `TC ID`, `Scenario`, `Summary`, `Test Type`, `Priority`, `Pre Conditions`, `Test Steps`, `Test Data`, `Expected Result`, `Actual Result`, `Test Case Status`, `Automation Status`, `Notes`. Notion page/database links are stored in `planning_state`, handoff contracts, and other active platform sync outputs.
 
 ## Outputs
@@ -140,7 +142,12 @@ Buat:
 - handoff contract
 
 Tulis hasil planning kembali ke Plane work item sumber.
-Jika status perlu dipindahkan, tanyakan dulu sebelum running.
+Ikuti Plane QA state workflow:
+- default mulai dari `Todo Test`
+- pindahkan ke `Analyze Test` saat mulai analisis
+- pindahkan ke `Update Test` jika artifact perlu dibuat/diperbarui
+- pindahkan ke `Need Review Test` setelah sync selesai
+- pindahkan ke `Ready to Test` setelah user memberi OK
 ```
 
 ### Plane Batch Module Or Cycle
@@ -218,7 +225,7 @@ Setelah Notion page/database dibuat:
 - attach/update link tersebut ke Plane work item sumber
 - tambahkan summary comment di Plane
 
-Jika status Plane perlu dipindahkan, tanyakan dulu sebelum running.
+Ikuti Plane QA state workflow dan jangan proses work item di luar `Todo Test` kecuali saya minta eksplisit.
 Jangan gunakan asumsi jika requirement kurang jelas.
 ```
 
@@ -355,7 +362,8 @@ Parent Notion page:
 Jika source dari Plane:
 - baca comments, activities, relations, attachments
 - attach/update link Notion ke Plane
-- jangan pindah status kecuali saya setujui
+- ikuti Plane QA state workflow
+- jangan proses work item di luar `Todo Test` kecuali saya minta eksplisit
 
 Rules:
 - jangan gunakan asumsi untuk requirement yang kurang jelas
@@ -373,19 +381,19 @@ The planner captures `test_plan_page_url` and `test_case_database_url` in `plann
 
 ## Plane Hybrid Sync
 
-Default Plane write mode is `full_sync`: add or update a concise managed comment on the source work item/card, attach generated artifacts to that source item, create a project/workspace wiki page when useful, link external or Plane pages back to the work item/card, and move status only after sync succeeds when a target status was explicitly configured.
+Default Plane write mode is `full_sync`: add or update a concise managed comment on the source work item/card, attach generated artifacts to that source item, create a project/workspace wiki page when useful, link external or Plane pages back to the work item/card, and apply the Plane QA state workflow.
 
 Plane MCP write behavior is deterministic: `create_work_item_comment` / `update_work_item_comment` handle summary comments, `create_project_page` / `create_workspace_page` publish full HTML plans, `create_work_item_link` attaches durable plan links, and `update_work_item` performs dynamic status or label updates only after resolving valid project states. Handoff tracking can create QA execution tracker items with `create_work_item` and place them into a QA cycle with `add_work_items_to_cycle` only when requested or required by an approved handoff contract.
 
-When Plane input is used and the user did not provide a status move instruction, the planner must ask before running:
+Plane QA state transitions are:
+- `Todo Test` -> `Analyze Test` when qa-planner starts analysis/planning.
+- `Analyze Test` -> `Ready to Test` when requested artifacts already exist and are complete.
+- `Analyze Test` -> `Update Test` when requested artifacts are missing, incomplete, outdated, or not traceable.
+- `Update Test` -> `Need Review Test` after qa-planner creates/updates artifacts and syncs output.
+- `Need Review Test` -> `Update Test` when user gives feedback, revision request, or `NOK`.
+- `Need Review Test` -> `Ready to Test` when user approves or gives `OK`.
 
-```text
-Setelah QA planning selesai dan output berhasil diattach/update ke Plane, apakah work item perlu dipindahkan status? Jika ya, ke status apa?
-```
-
-If the user says no, planning continues without status movement and transition status is `not_requested`.
-
-If the target status is not found, planning and Plane output still complete, status movement is skipped, and the sync record notes `status_transition_skipped`. If Plane tools are unavailable, the planner falls back to JSON and Markdown outputs and records the sync gap.
+If the target state is not found, planning and Plane output still complete when possible, state movement is skipped, and the sync record notes `status_transition_skipped`. If Plane tools are unavailable, the planner falls back to JSON and Markdown outputs and records the sync gap.
 
 ## Review Loop
 
