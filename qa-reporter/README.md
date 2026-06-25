@@ -39,6 +39,14 @@ Issue submission is never automatic. Submission requires explicit user request, 
 
 QA Reporter includes an optional Plane adapter for approved issue packages. It can prepare Plane work item payloads, resolve project routing data, run duplicate checks, create a work item or intake item when tools are available, comment on an existing work item, attach evidence links, and record read-back verification in `submission_history`. Plane-specific IDs live under `custom_fields.plane` so the core package stays portable.
 
+### Plane State Routing
+
+When input contains Plane context such as `Plane`, `Plane.so`, a work item/card, readable id like `DKI-179`, or a Plane URL/UUID, QA Reporter reads the Plane work item first and routes by current state. Automatic reporting starts only from `Need Issue Report` or `Ready to Report`. Other states require user confirmation before report generation or state movement.
+
+Issue-report route: `Need Issue Report` -> `Generating Issue Report` -> `Need Review Issue Report`; approval `OK` creates bug/issue work items in `Backlog Issue`.
+
+Testing-report route: `Ready to Report` -> `Generating Report` -> `Need Review Report`; approval `OK` moves the source work item to `Release Approval`.
+
 ### Plane Source Sync and Bug Creation Rules
 
 When QA Reporter reads Notion links from a Plane source work item, it records a Plane comment summary and updates the work item description with a QA Reporter links section, unless read-only mode is requested. When a requirement/source Plane work item produces a bug, QA Reporter creates a sub work item under that source work item after approval. If no source Plane work item exists, it creates a normal work item. Created work items must be visibly marked as bugs by type, label, or title prefix fallback.

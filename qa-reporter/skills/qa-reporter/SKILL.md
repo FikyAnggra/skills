@@ -1,6 +1,6 @@
 ---
 name: qa-reporter
-description: Portable QA reporting agent for converting qa-planner data, qa-executor results, manual execution results, or exploratory issue findings into governed report_state JSON, test reports, issue packages, bug reports, SIT/UAT documents, coverage-risk summaries, OK/NOK review updates, and Go/Conditional Go/No-Go/Not Assessed sign-off recommendations. Use when asked to create or revise QA reports, normalize failed/blocked issues for review, prepare issue submission packages, generate SIT or UAT evidence summaries, summarize coverage/risk, or process human report review feedback. Do not use for creating test cases, running tests, writing automation scripts, or submitting final issues without explicit user approval and approved package/config.
+description: Portable QA reporting agent for converting qa-planner data, qa-executor results, manual execution results, exploratory issue findings, and Plane.so work items into governed report_state JSON, test reports, issue packages, bug reports, SIT/UAT documents, coverage-risk summaries, OK/NOK review updates, and Go/Conditional Go/No-Go/Not Assessed sign-off recommendations. Use when asked to create or revise QA reports, normalize failed/blocked issues for review, prepare issue submission packages, generate SIT or UAT evidence summaries, summarize coverage/risk, process human report review feedback, or read/analyze/update reporting from Plane, Plane.so, Plane work items/cards, readable Plane issue IDs like DKI-179, Plane URLs/UUIDs, or Plane-linked Notion sources. Do not use for creating test cases, running tests, writing automation scripts, or submitting final issues without explicit user approval and approved package/config.
 ---
 
 # QA Reporter
@@ -36,6 +36,43 @@ Exploratory issue finding input:
 ## Cross-System Source Intake
 
 Use this workflow when the reporting source is a Plane work item, a Notion page/database, or a Plane work item that contains Notion links. This intake enriches reporting context and traceability only; it must not create test cases or execute tests.
+
+### Plane Context Trigger
+
+Use the Plane workflow whenever user input contains Plane context such as `Plane`, `Plane.so`, Plane work item, Plane card, readable issue id like `DKI-179`, a Plane URL/UUID, or a request to read, analyze, create, or update a report from a Plane work item.
+
+On Plane context:
+1. Fetch the Plane work item first.
+2. Read title, description, comments, links, attachments, child/sub work items, relations, Notion links, and available evidence.
+3. Determine the current Plane state.
+4. Run the Plane state router before generating or moving reports.
+5. If the current state is outside the supported QA Reporter workflow states, ask for confirmation before making reports or moving state.
+
+Automatic report generation may start only from:
+- `Need Issue Report`
+- `Ready to Report`
+
+If current state is anything else, ask:
+
+```text
+Work item saat ini berada di state `{current_state}`. Workflow QA Reporter normal hanya berjalan otomatis dari `Need Issue Report` atau `Ready to Report`. Apakah saya boleh lanjut membuat report dan memindahkan state sesuai workflow?
+```
+
+Read `references/plane-state-routing.md` for exact state behavior.
+
+### Plane State Router
+
+Use exact state-name workflow only after fetching the Plane work item state. Do not infer these states from labels, status text in comments, or Notion page status.
+
+State behavior:
+- `Need Issue Report`: move to `Generating Issue Report`, create issue report and issue submission package from execution context, then move to `Need Review Issue Report` and comment summary in Plane.
+- `Generating Issue Report`: continue or revise issue report, apply NOK feedback when present, then move to `Need Review Issue Report`.
+- `Need Review Issue Report`: for `NOK`, record feedback, move to `Generating Issue Report`, revise, then return to `Need Review Issue Report`; for `OK`, approve report, create Plane bug/issue work items in `Backlog Issue` after state discovery if needed, link them back, and comment summary.
+- `Ready to Report`: move to `Generating Report`, create testing report, metrics, coverage/risk summary, SIT/UAT summary when needed, sign-off recommendation, then move to `Need Review Report` and comment summary in Plane.
+- `Generating Report`: continue or revise testing report, apply NOK feedback when present, then move to `Need Review Report`.
+- `Need Review Report`: for `NOK`, record feedback, move to `Generating Report`, revise, then return to `Need Review Report`; for `OK`, approve report, move to `Release Approval`, and comment approved summary with report/evidence links.
+
+If required target states such as `Generating Issue Report`, `Need Review Issue Report`, `Generating Report`, `Need Review Report`, `Release Approval`, or `Backlog Issue` are missing, run Plane state discovery and ask the user to map states before moving the work item.
 
 ### Plane Work Item Source Intake
 
@@ -438,6 +475,7 @@ Read only when needed:
 - `schemas/issue-submission-package.schema.json`: governed issue package schema
 - `schemas/reporter-review.schema.json`: OK/NOK review feedback schema
 - `schemas/signoff-recommendation.schema.json`: release sign-off recommendation schema
+- `references/plane-state-routing.md`: Plane trigger and state routing workflow for Need Issue Report, Ready to Report, review, approval, and state transitions
 - `references/plane-mcp.md`: Plane MCP setup, field mapping, tool behavior, and troubleshooting notes
 - `references/notion-mcp.md`: Notion MCP source reading, publishing, status sync, and review rules
 - `templates/`: reusable report, issue, SIT/UAT, coverage/risk, and state skeletons

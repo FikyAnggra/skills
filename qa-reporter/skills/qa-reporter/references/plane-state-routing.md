@@ -1,0 +1,204 @@
+# Plane State Routing for QA Reporter
+
+Use this reference whenever input contains Plane context: Plane, Plane.so, work item Plane, card Plane, readable issue id such as `DKI-179`, Plane URL/UUID, or a request to read, analyze, create, or update a report from a Plane work item.
+
+## Intake
+
+Always read the Plane work item before deciding what to generate.
+
+Read:
+- title
+- description
+- comments
+- links
+- attachments
+- child/sub work items
+- relations
+- Notion links
+- evidence references
+- current state
+- QA Executor testing summary if present
+
+Normalize the readable issue id, URL, UUID, project id, state id/name, evidence refs, and Notion refs into `report_state.source_refs` and `custom_fields.plane.source_work_item`.
+
+## Automatic Start Gate
+
+QA Reporter may automatically start report generation only when current Plane state is:
+- `Need Issue Report`
+- `Ready to Report`
+
+For every other state, ask:
+
+```text
+Work item saat ini berada di state `{current_state}`. Workflow QA Reporter normal hanya berjalan otomatis dari `Need Issue Report` atau `Ready to Report`. Apakah saya boleh lanjut membuat report dan memindahkan state sesuai workflow?
+```
+
+Do not generate reports, move state, or create bug work items before confirmation when the state is outside the supported routing states.
+
+## State: Need Issue Report
+
+Condition:
+- QA Executor finished testing.
+- At least one bug, issue, blocker, defect, or problem exists.
+- QA Executor moved the work item to `Need Issue Report`.
+
+Actions:
+1. Fetch the work item and source context.
+2. Move the work item to `Generating Issue Report`.
+3. Create issue report from work item description, comments, links, attachments/evidence, QA Executor result, failed/blocked test cases, and discovered issues.
+4. Normalize each issue:
+   - title
+   - severity
+   - priority
+   - affected test case
+   - expected result
+   - actual result
+   - reproduction steps
+   - evidence refs
+   - environment
+   - impact
+   - report gaps
+5. Render:
+   - `report_state`
+   - issue report
+   - issue submission package
+   - issue candidates
+   - severity/priority recommendation
+   - evidence summary
+   - report gaps
+6. Move work item to `Need Review Issue Report`.
+7. Add Plane comment summary that the issue report is ready for review.
+
+## State: Generating Issue Report
+
+Condition:
+- QA Reporter is generating or revising issue report.
+
+Actions:
+1. Continue issue report generation.
+2. Apply human NOK feedback when present.
+3. Do not change source execution result unless evidence or reviewer decision supports it.
+4. Move state to `Need Review Issue Report` after completion.
+
+## State: Need Review Issue Report
+
+Condition:
+- Issue report is generated.
+- Human review is required.
+
+NOK actions:
+1. Record review feedback.
+2. Move work item to `Generating Issue Report`.
+3. Revise issue report according to feedback.
+4. Move work item back to `Need Review Issue Report`.
+
+OK actions:
+1. Mark issue report as approved.
+2. Create bug/issue Plane work items in `Backlog Issue`.
+3. If the issue came from a source Plane work item, create a sub work item when possible.
+4. Mark each new item as bug/issue:
+   - use type `Bug` when available
+   - use or create label `bug`
+   - use `qa-reported` label when available
+   - fallback title prefix `[Bug]` or `[Issue]`
+5. Save bug/issue work item links back to report source.
+6. Add Plane comment summary to source work item.
+
+Do not submit bug/issue work items to Plane before human review `OK`.
+
+If `Backlog Issue` is missing, run state discovery and ask the user to map the target state.
+
+## State: Ready to Report
+
+Condition:
+- QA Executor finished testing.
+- No bug, issue, blocker, defect, or problem exists.
+- QA Executor moved the work item to `Ready to Report`.
+
+Actions:
+1. Fetch the work item and source context.
+2. Move the work item to `Generating Report`.
+3. Create testing report from description, comments, links, attachments/evidence, QA Executor result, test case status, coverage, risk, and environment.
+4. Calculate metrics:
+   - total test case
+   - selected test case
+   - executed test case
+   - passed
+   - failed
+   - blocked
+   - untested
+   - retest
+   - pass rate
+   - execution completion rate
+   - coverage status
+5. Generate sign-off recommendation:
+   - `Go`
+   - `Conditional Go`
+   - `No-Go`
+   - `Not Assessed`
+6. Render:
+   - `report_state`
+   - testing report
+   - execution summary
+   - coverage/risk summary
+   - SIT/UAT summary when needed
+   - sign-off recommendation
+   - report gaps
+7. Move work item to `Need Review Report`.
+8. Add Plane comment summary that the testing report is ready for review.
+
+## State: Generating Report
+
+Condition:
+- QA Reporter is generating or revising testing report.
+
+Actions:
+1. Continue testing report generation.
+2. Apply human NOK feedback when present.
+3. Do not change source execution result unless evidence or reviewer decision supports it.
+4. Move state to `Need Review Report` after completion.
+
+## State: Need Review Report
+
+Condition:
+- Testing report is generated.
+- Human review is required.
+
+NOK actions:
+1. Record review feedback.
+2. Move work item to `Generating Report`.
+3. Revise testing report according to feedback.
+4. Move work item back to `Need Review Report`.
+
+OK actions:
+1. Mark testing report as approved.
+2. Move work item to `Release Approval`.
+3. Add Plane comment summary with:
+   - report approved
+   - testing summary
+   - sign-off recommendation
+   - report/evidence links
+
+## State Discovery
+
+Required target states:
+- `Generating Issue Report`
+- `Need Review Issue Report`
+- `Backlog Issue`
+- `Generating Report`
+- `Need Review Report`
+- `Release Approval`
+
+If a required target state is unavailable by exact name, fetch/list Plane states and ask the user to map the missing target. Do not guess from partial names unless the user approves the mapping.
+
+## Comments
+
+Every completed state transition should leave a compact Plane comment with:
+- source work item id
+- action performed
+- output generated
+- report/evidence links
+- review status or next action
+- report gaps
+
+Do not include secrets, tokens, raw credentials, raw PII, or unredacted evidence content.

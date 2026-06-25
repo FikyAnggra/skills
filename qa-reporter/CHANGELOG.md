@@ -1,5 +1,14 @@
 ﻿# Changelog
 
+## 0.7.0 - 2026-06-25
+
+- Added Plane-context trigger behavior for Plane, Plane.so, Plane cards/work items, readable ids such as `DKI-179`, Plane URLs, and Plane UUIDs.
+- Added Plane state router with automatic starts only from `Need Issue Report` and `Ready to Report`.
+- Added issue-report workflow states: `Need Issue Report`, `Generating Issue Report`, `Need Review Issue Report`, and `Backlog Issue`.
+- Added testing-report workflow states: `Ready to Report`, `Generating Report`, `Need Review Report`, and `Release Approval`.
+- Added guardrail confirmation prompt for Plane work items outside supported QA Reporter workflow states.
+- Added `plane_state_routing` to report state schema, template, and example.
+- Added `references/plane-state-routing.md`.
 ## 0.6.0 - 2026-06-18
 
 - Added external approval surface rule: when Notion or Plane is configured, publish/update Notion or Plane review surface before requesting approval.
@@ -50,6 +59,7 @@
 - Added examples for manual execution, exploratory issues, canonical report state, rendered test report, and rendered issue package.
 - Compatibility target: portable agent package with Codex plugin metadata and Claude-compatible wrapper metadata.
 - Future migration note: keep schema changes versioned and preserve `custom_fields` for platform-specific extensions.
+
 
 
 

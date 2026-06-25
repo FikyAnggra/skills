@@ -210,5 +210,23 @@
                     ],
     "publication_history":  [
 
-                            ]
+                            ],
+    "plane_state_routing":  {
+                                "source_work_item_id":  "",
+                                "source_readable_identifier":  "",
+                                "current_state":  "",
+                                "route":  "unknown",
+                                "allowed_auto_start":  false,
+                                "confirmation_required":  true,
+                                "confirmation_prompt":  "",
+                                "moved_to_state":  "",
+                                "target_review_state":  "",
+                                "approved_next_state":  "",
+                                "state_transition_history":  [
+
+                                                             ],
+                                "custom_fields":  {
+
+                                                  }
+                            }
 }

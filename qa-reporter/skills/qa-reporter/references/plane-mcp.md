@@ -62,6 +62,27 @@ Recommend qa-reporter intent mapping from available states:
 If state group metadata is unavailable, make weak recommendations from state names and sequence/order, label the basis as `name_order`, and ask the user to confirm. Never use weak recommendations without approval.
 
 Persist approved mapping under `custom_fields.plane.state_mapping` with `approval_status = approved`, `approved_by`, `verified_at`, `recommendation_basis`, and selected state ids/names. If approval is missing, keep `approval_status = pending` and do not use the mapping for create/update/sync.
+
+## QA Reporter State Routing
+
+When Plane input is a work item or readable issue id, fetch the work item and route by exact current state before generating output.
+
+Automatic generation is allowed only from:
+- `Need Issue Report`
+- `Ready to Report`
+
+Supported workflow states:
+- `Need Issue Report`: move to `Generating Issue Report`, generate issue report, then move to `Need Review Issue Report`.
+- `Generating Issue Report`: continue or revise issue report, then move to `Need Review Issue Report`.
+- `Need Review Issue Report`: for `NOK`, move to `Generating Issue Report`; for `OK`, create approved bug/issue work items in `Backlog Issue`.
+- `Ready to Report`: move to `Generating Report`, generate testing report, then move to `Need Review Report`.
+- `Generating Report`: continue or revise testing report, then move to `Need Review Report`.
+- `Need Review Report`: for `NOK`, move to `Generating Report`; for `OK`, move to `Release Approval`.
+
+If current state is outside the workflow, ask the user before generating report or moving state. If target states such as `Generating Issue Report`, `Need Review Issue Report`, `Backlog Issue`, `Generating Report`, `Need Review Report`, or `Release Approval` are missing, run state discovery and ask the user to map states.
+
+Store route decisions in `report_state.plane_state_routing`.
+
 ## Source Work Item Sync
 
 When a Plane work item is used as qa-reporter source context, add a compact comment summary to that work item unless the user requested read-only mode. Include source summary, extracted Notion links, classified Notion roles, report gaps, and next reporting action.

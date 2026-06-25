@@ -550,5 +550,36 @@
 
                                                       }
                                 }
-                            ]
+                            ],
+    "plane_state_routing":  {
+                                "source_work_item_id":  "00000000-0000-4000-8000-000000000042",
+                                "source_readable_identifier":  "AUTH-42",
+                                "current_state":  "Need Issue Report",
+                                "route":  "issue_report",
+                                "allowed_auto_start":  true,
+                                "confirmation_required":  false,
+                                "confirmation_prompt":  "",
+                                "moved_to_state":  "Generating Issue Report",
+                                "target_review_state":  "Need Review Issue Report",
+                                "approved_next_state":  "Backlog Issue",
+                                "state_transition_history":  [
+                                                                 {
+                                                                     "from_state":  "Need Issue Report",
+                                                                     "to_state":  "Generating Issue Report",
+                                                                     "reason":  "Start issue report generation",
+                                                                     "timestamp":  "2026-06-11T15:00:00+07:00",
+                                                                     "actor":  "qa-reporter"
+                                                                 },
+                                                                 {
+                                                                     "from_state":  "Generating Issue Report",
+                                                                     "to_state":  "Need Review Issue Report",
+                                                                     "reason":  "Issue report ready for review",
+                                                                     "timestamp":  "2026-06-11T15:15:00+07:00",
+                                                                     "actor":  "qa-reporter"
+                                                                 }
+                                                             ],
+                                "custom_fields":  {
+
+                                                  }
+                            }
 }

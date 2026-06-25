@@ -597,6 +597,78 @@
                                                                                                       }
                                                                                 }
                                                              }
+                                               },
+                       "plane_state_routing":  {
+                                                   "type":  "object",
+                                                   "additionalProperties":  false,
+                                                   "properties":  {
+                                                                      "source_work_item_id":  {
+                                                                                                  "type":  "string"
+                                                                                              },
+                                                                      "source_readable_identifier":  {
+                                                                                                         "type":  "string"
+                                                                                                     },
+                                                                      "current_state":  {
+                                                                                            "type":  "string"
+                                                                                        },
+                                                                      "route":  {
+                                                                                    "type":  "string",
+                                                                                    "enum":  [
+                                                                                                 "issue_report",
+                                                                                                 "testing_report",
+                                                                                                 "issue_review",
+                                                                                                 "testing_review",
+                                                                                                 "manual_confirmation_required",
+                                                                                                 "unknown"
+                                                                                             ]
+                                                                                },
+                                                                      "allowed_auto_start":  {
+                                                                                                 "type":  "boolean"
+                                                                                             },
+                                                                      "confirmation_required":  {
+                                                                                                    "type":  "boolean"
+                                                                                                },
+                                                                      "confirmation_prompt":  {
+                                                                                                  "type":  "string"
+                                                                                              },
+                                                                      "moved_to_state":  {
+                                                                                             "type":  "string"
+                                                                                         },
+                                                                      "target_review_state":  {
+                                                                                                  "type":  "string"
+                                                                                              },
+                                                                      "approved_next_state":  {
+                                                                                                  "type":  "string"
+                                                                                              },
+                                                                      "state_transition_history":  {
+                                                                                                       "type":  "array",
+                                                                                                       "items":  {
+                                                                                                                     "type":  "object",
+                                                                                                                     "additionalProperties":  false,
+                                                                                                                     "properties":  {
+                                                                                                                                        "from_state":  {
+                                                                                                                                                           "type":  "string"
+                                                                                                                                                       },
+                                                                                                                                        "to_state":  {
+                                                                                                                                                         "type":  "string"
+                                                                                                                                                     },
+                                                                                                                                        "reason":  {
+                                                                                                                                                       "type":  "string"
+                                                                                                                                                   },
+                                                                                                                                        "timestamp":  {
+                                                                                                                                                          "type":  "string"
+                                                                                                                                                      },
+                                                                                                                                        "actor":  {
+                                                                                                                                                      "type":  "string"
+                                                                                                                                                  }
+                                                                                                                                    }
+                                                                                                                 }
+                                                                                                   },
+                                                                      "custom_fields":  {
+                                                                                            "type":  "object",
+                                                                                            "additionalProperties":  true
+                                                                                        }
+                                                                  }
                                                }
                    },
     "$defs":  {

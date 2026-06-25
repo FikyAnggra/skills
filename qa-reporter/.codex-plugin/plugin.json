@@ -1,7 +1,7 @@
-﻿{
+{
     "name":  "qa-reporter",
-    "version":  "0.6.0",
-    "description":  "Portable QA reporting plugin with report_state JSON, QA reports, issue packages, SIT/UAT docs, coverage-risk summaries, optional Plane MCP issue workflows, and Notion source/publishing workflows.",
+    "version":  "0.7.0",
+    "description":  "Portable QA reporting plugin with report_state JSON, QA reports, Plane state routing, issue packages, SIT/UAT docs, coverage-risk summaries, optional Plane MCP workflows, and Notion source/publishing workflows.",
     "author":  {
                    "name":  "Local developer"
                },
@@ -9,7 +9,7 @@
     "interface":  {
                       "displayName":  "QA Reporter",
                       "shortDescription":  "Build QA reports and sign-off packages.",
-                      "longDescription":  "QA Reporter converts planner, executor, manual, exploratory, Plane work item, and Notion-linked inputs into governed report_state JSON, reports, issue packages, SIT/UAT DKI-format documents, sign-off recommendations, Notion/Plane external review surfaces, Plane source comments/description link sync, dynamic Plane state mapping, bug label resolution, and source-based Plane bug/sub-work-item creation.",
+                      "longDescription":  "QA Reporter converts planner, executor, manual, exploratory, Plane work item, and Notion-linked inputs into governed report_state JSON, reports, issue packages, SIT/UAT DKI-format documents, sign-off recommendations, Notion/Plane external review surfaces, exact Plane state routing for Need Issue Report and Ready to Report, Plane source comments/description link sync, dynamic Plane state mapping, bug label resolution, and source-based Plane bug/sub-work-item creation.",
                       "developerName":  "Local developer",
                       "category":  "Productivity",
                       "capabilities":  [
