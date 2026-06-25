@@ -41,9 +41,10 @@ State ownership and entry rules:
 
 Default state gate:
 - By default, process only work items in `Todo Test`.
-- If the work item is in another state, stop and ask for confirmation unless the user explicitly requested that state/item should be processed anyway.
-- `Backlog Test Human` always requires explicit user request.
-- If the user provides explicit override, continue and record the override in `planning_state.review_history` or `custom_fields.plane_state_override`.
+- If the work item is in any other state, stop after reading the current state and ask the user for confirmation before analysis, generation, or workflow transition.
+- Mentioning a specific item id such as `DKI-213`, saying "planning langsung", or explicitly naming a non-`Todo Test` state is not confirmation.
+- Proceed only after the user gives clear approval such as `OK`, `approve`, `lanjut`, or equivalent confirmation after being told the current non-`Todo Test` state.
+- Record the confirmation in `planning_state.review_history` or `custom_fields.plane_state_confirmation`.
 
 State machine:
 - `Todo Test` -> `Analyze Test` when user asks qa-planner to start analysis/planning.

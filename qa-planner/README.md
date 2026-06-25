@@ -26,9 +26,9 @@ Provide requirements, Plane work item/card ids or payloads, PRDs, acceptance cri
 
 Plane inputs can come from work item/card title and description, comments, activities, readable attachment content, wiki/pages, parent or child work items, relations, linked work items, modules, cycles, or direct MCP/API payloads. Plane-specific rules live in `skills/qa-planner/references/plane-hybrid.md` and are loaded only for Plane inputs. If Plane MCP tools are available, the planner resolves readable ids such as `ENG-42`, reads comments and activity history, expands requested cycle/module scope, captures relations and project metadata, and asks the user instead of assuming when required information is missing or conflicting.
 
-Plane QA planning follows a state workflow. By default, `qa-planner` processes Plane work items only from `Todo Test`, moves them to `Analyze Test` for analysis/routing, uses `Update Test` when artifacts must be created or updated, moves completed work to `Need Review Test`, and moves approved work to `Ready to Test`. `Backlog Test Human` is human-owned and is read only when explicitly requested. Any non-default source state requires explicit user request or confirmation before processing.
+Plane QA planning follows a state workflow. By default, `qa-planner` processes Plane work items only from `Todo Test`, moves them to `Analyze Test` for analysis/routing, uses `Update Test` when artifacts must be created or updated, moves completed work to `Need Review Test`, and moves approved work to `Ready to Test`. Any non-`Todo Test` source state requires separate user confirmation after the current state is known. Mentioning a specific item id or asking for direct planning is not confirmation.
 
-Notion output can create or update a QA test plan page and a Notion test case database. The test case artifact must be a Notion database when `notion-create-database` and required `notion-update-data-source` support are available. Database columns use the required display order: `TC ID`, `Scenario`, `Summary`, `Test Type`, `Priority`, `Pre Conditions`, `Test Steps`, `Test Data`, `Expected Result`, `Actual Result`, `Test Case Status`, `Automation Status`, `Notes`. Notion page/database links are stored in `planning_state`, handoff contracts, and other active platform sync outputs.
+Notion output can create or update a QA test plan page and a Notion test case database. The test case artifact must be a Notion database when `notion-create-database` and required `notion-update-data-source` support are available. Database columns use the required display order: `TC ID`, `Scenario`, `Summary`, `Test Type`, `Priority`, `Pre-Conditions`, `Test Step`, `Test Data`, `Expected Result`, `Actual Result`, `Test Case Status`, `Automation Status`, `Notes`. Notion page/database links are stored in `planning_state`, handoff contracts, and other active platform sync outputs.
 
 ## Outputs
 
@@ -78,8 +78,8 @@ Gunakan field:
 - Summary
 - Test Type
 - Priority
-- Pre Conditions
-- Test Steps
+- Pre-Conditions
+- Test Step
 - Test Data
 - Expected Result
 - Actual Result
@@ -193,8 +193,8 @@ Kolom database test cases harus urut:
 3. Summary
 4. Test Type
 5. Priority
-6. Pre Conditions
-7. Test Steps
+6. Pre-Conditions
+7. Test Step
 8. Test Data
 9. Expected Result
 10. Actual Result
@@ -225,7 +225,7 @@ Setelah Notion page/database dibuat:
 - attach/update link tersebut ke Plane work item sumber
 - tambahkan summary comment di Plane
 
-Ikuti Plane QA state workflow dan jangan proses work item di luar `Todo Test` kecuali saya minta eksplisit.
+Ikuti Plane QA state workflow. Jika work item bukan di `Todo Test`, berhenti setelah membaca state lalu minta konfirmasi saya sebelum lanjut.
 Jangan gunakan asumsi jika requirement kurang jelas.
 ```
 
@@ -363,7 +363,7 @@ Jika source dari Plane:
 - baca comments, activities, relations, attachments
 - attach/update link Notion ke Plane
 - ikuti Plane QA state workflow
-- jangan proses work item di luar `Todo Test` kecuali saya minta eksplisit
+- jika work item Plane bukan di `Todo Test`, berhenti setelah membaca state lalu minta konfirmasi saya sebelum lanjut
 
 Rules:
 - jangan gunakan asumsi untuk requirement yang kurang jelas
@@ -375,7 +375,7 @@ Rules:
 
 ## Notion MCP Output
 
-When Notion output is requested, `qa-planner` creates the test plan as a Notion page and test cases as a Notion database. The test plan page follows `templates/test-plan.md` with clean headings, compact tables, and bullet lists. Each test case becomes a database row/page with ordered display properties: `TC ID`, `Scenario`, `Summary`, `Test Type`, `Priority`, `Pre Conditions`, `Test Steps`, `Test Data`, `Expected Result`, `Actual Result`, `Test Case Status`, `Automation Status`, and `Notes`.
+When Notion output is requested, `qa-planner` creates the test plan as a Notion page and test cases as a Notion database. The test plan page follows `templates/test-plan.md` with clean headings, compact tables, and bullet lists. Each test case becomes a database row/page with ordered display properties: `TC ID`, `Scenario`, `Summary`, `Test Type`, `Priority`, `Pre-Conditions`, `Test Step`, `Test Data`, `Expected Result`, `Actual Result`, `Test Case Status`, `Automation Status`, and `Notes`.
 
 The planner captures `test_plan_page_url` and `test_case_database_url` in `planning_state.notion_context` and mirrors them into `artifact_outputs` and handoff contracts. If database creation or schema update is unavailable, the planner creates a fallback Notion page containing a table with the same test case columns and records a Notion database/schema gap.
 

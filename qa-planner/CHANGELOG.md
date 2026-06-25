@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.10 - 2026-06-25
+
+- Updated Notion test case database display columns to use `Pre-Conditions` and `Test Step` in the required order.
+- Changed Plane non-`Todo Test` state handling to require separate user confirmation after state lookup; direct item mentions such as `DKI-213` no longer count as approval to proceed.
+- Updated Plane output policy schema to use `ask_user_for_confirmation_after_state_read`.
+
 ## 0.2.9 - 2026-06-25
 
 - Added Plane QA state workflow for `Backlog Test Human`, `Todo Test`, `Analyze Test`, `Update Test`, `Need Review Test`, and `Ready to Test`.

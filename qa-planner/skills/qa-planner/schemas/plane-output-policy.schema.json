@@ -92,7 +92,7 @@
         "update_state": { "type": "string", "default": "Update Test" },
         "review_state": { "type": "string", "default": "Need Review Test" },
         "ready_state": { "type": "string", "default": "Ready to Test" },
-        "on_non_default_state": { "type": "string", "enum": ["ask_user_or_require_explicit_override"], "default": "ask_user_or_require_explicit_override" },
+        "on_non_default_state": { "type": "string", "enum": ["ask_user_for_confirmation_after_state_read"], "default": "ask_user_for_confirmation_after_state_read" },
         "resolve_states_with_list_states": { "type": "boolean", "default": true }
       }
     },

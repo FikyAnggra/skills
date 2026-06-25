@@ -120,7 +120,7 @@ Standard path:
 Plane path:
 1. Read `references/plane-hybrid.md`.
 2. Resolve Plane source refs and read the work item/card plus readable attachments when tools allow.
-3. Apply the Plane QA state workflow before analysis or generation. Default eligible source state is `Todo Test`; other states require explicit user request or confirmation.
+3. Apply the Plane QA state workflow before analysis or generation. Default eligible source state is `Todo Test`; any other source state requires a separate user confirmation after the current state is known. A direct item id or direct planning request is not confirmation.
 4. Move `Todo Test` to `Analyze Test` when starting analysis, route `Analyze Test` to `Ready to Test` or `Update Test`, route `Update Test` to `Need Review Test`, and route review feedback according to the Plane state machine.
 5. Continue with the standard path only after the state gate allows work.
 6. Sync outputs back to the source Plane work item/card according to the Plane output policy.
@@ -301,7 +301,7 @@ Content gates, always apply:
 
 Plane sync gates, apply only on Plane path:
 - Plane QA state workflow was applied before analysis, generation, or sync.
-- Plane source state did not block intake, or explicit user override/confirmation was recorded.
+- Plane source state was `Todo Test`, or separate user confirmation for the non-`Todo Test` state was recorded after state lookup.
 - `Analyze Test` was used for analysis/routing only, not large artifact creation.
 - `Update Test` was used for creating/updating requested artifacts.
 - Plane MCP context was resolved when tools were available: work item payload, comments, activities, relations, states, members, properties, types, and requested cycle/module scope.
@@ -316,7 +316,7 @@ Notion sync gates, apply only on Notion path:
 - Test plan was created or updated as a Notion page when write tools were available.
 - Test plan page follows the structure of `templates/test-plan.md` and avoids raw JSON dumps.
 - Test cases were created or updated as a Notion database when `notion-create-database` and required `notion-update-data-source` support were available.
-- Test case database has exact Notion display columns in this order: `TC ID`, `Scenario`, `Summary`, `Test Type`, `Priority`, `Pre Conditions`, `Test Steps`, `Test Data`, `Expected Result`, `Actual Result`, `Test Case Status`, `Automation Status`, `Notes`.
+- Test case database has exact Notion display columns in this order: `TC ID`, `Scenario`, `Summary`, `Test Type`, `Priority`, `Pre-Conditions`, `Test Step`, `Test Data`, `Expected Result`, `Actual Result`, `Test Case Status`, `Automation Status`, `Notes`.
 - If database/schema tools were unavailable, fallback Notion page contains a table with the same ordered display columns and records the database/schema gap.
 - Notion page/database links were captured in `planning_state` and handoff contracts.
 - Managed Notion artifacts avoid duplicate pages/databases for the same package id.

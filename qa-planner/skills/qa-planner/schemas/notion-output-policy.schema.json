@@ -43,7 +43,7 @@
         "required_properties": {
           "type": "array",
           "items": { "type": "string" },
-          "default": ["TC ID", "Scenario", "Summary", "Test Type", "Priority", "Pre Conditions", "Test Steps", "Test Data", "Expected Result", "Actual Result", "Test Case Status", "Automation Status", "Notes"]
+          "default": ["TC ID", "Scenario", "Summary", "Test Type", "Priority", "Pre-Conditions", "Test Step", "Test Data", "Expected Result", "Actual Result", "Test Case Status", "Automation Status", "Notes"]
         },
         "required_property_types": {
           "type": "object",
@@ -54,8 +54,8 @@
             "Summary": { "type": "string", "const": "rich_text" },
             "Test Type": { "type": "string", "const": "select" },
             "Priority": { "type": "string", "const": "select" },
-            "Pre Conditions": { "type": "string", "const": "rich_text" },
-            "Test Steps": { "type": "string", "const": "rich_text" },
+            "Pre-Conditions": { "type": "string", "const": "rich_text" },
+            "Test Step": { "type": "string", "const": "rich_text" },
             "Test Data": { "type": "string", "const": "rich_text" },
             "Expected Result": { "type": "string", "const": "rich_text" },
             "Actual Result": { "type": "string", "const": "rich_text" },
@@ -69,8 +69,8 @@
             "Summary": "rich_text",
             "Test Type": "select",
             "Priority": "select",
-            "Pre Conditions": "rich_text",
-            "Test Steps": "rich_text",
+            "Pre-Conditions": "rich_text",
+            "Test Step": "rich_text",
             "Test Data": "rich_text",
             "Expected Result": "rich_text",
             "Actual Result": "rich_text",
@@ -88,8 +88,8 @@
             "Summary": { "type": "string", "const": "summary" },
             "Test Type": { "type": "string", "const": "test_type" },
             "Priority": { "type": "string", "const": "priority" },
-            "Pre Conditions": { "type": "string", "const": "pre_conditions" },
-            "Test Steps": { "type": "string", "const": "test_steps" },
+            "Pre-Conditions": { "type": "string", "const": "pre_conditions" },
+            "Test Step": { "type": "string", "const": "test_steps" },
             "Test Data": { "type": "string", "const": "test_data" },
             "Expected Result": { "type": "string", "const": "expected_result" },
             "Actual Result": { "type": "string", "const": "actual_result" },
