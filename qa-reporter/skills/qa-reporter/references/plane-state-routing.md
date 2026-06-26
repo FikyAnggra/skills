@@ -100,20 +100,21 @@ NOK actions:
 4. Move work item back to `Need Review Issue Report`.
 
 OK actions:
-1. Mark issue report as approved.
-2. Treat user input such as `approve`, `approved`, or `OK` as approval plus authorization to create the approved Plane bug/issue items for this route.
-3. Resolve the `Backlog Issue` target state for created bug/issue items.
-4. If the issue came from this Plane source work item, create a sub work item under the source work item for each approved issue candidate. Set each sub work item state to `Backlog Issue`.
-5. If there is no source Plane work item, create normal bug/issue Plane work items in `Backlog Issue`.
-6. Mark each new item as bug/issue:
+1. Run the Approval Blocking-Info Guard before approving. If unresolved blockers such as missing env, email, OTP, test data, access, evidence, expected result, or open blocking questions exist, ask a second explicit confirmation and stop until the user confirms or supplies the missing information.
+2. Mark issue report as approved only after the guard passes.
+3. Treat user input such as `approve`, `approved`, or `OK` as approval plus authorization to create the approved Plane bug/issue items for this route only after the guard passes.
+4. Resolve the `Backlog Issue` target state for created bug/issue items.
+5. If the issue came from this Plane source work item, create a sub work item under the source work item for each approved issue candidate. Set each sub work item state to `Backlog Issue`.
+6. If there is no source Plane work item, create normal bug/issue Plane work items in `Backlog Issue`.
+7. Mark each new item as bug/issue:
    - use type `Bug` when available
    - use or create label `bug`
    - use `qa-reported` label when available
    - fallback title prefix `[Bug]` or `[Issue]`
-7. Read back every created work item or sub work item and verify title, parent/source relation when applicable, bug marker, and state `Backlog Issue`.
-8. Save bug/issue work item links back to report source.
-9. If the issue report source is a Plane work item, resolve `Backlog Test`, move the source work item from `Need Review Issue Report` to `Backlog Test`, and verify the state by read-back.
-10. Add Plane comment summary to source work item with created bug/sub-work-item links and source state transition result.
+8. Read back every created work item or sub work item and verify title, parent/source relation when applicable, bug marker, and state `Backlog Issue`.
+9. Save bug/issue work item links back to report source.
+10. If the issue report source is a Plane work item, resolve `Backlog Test`, move the source work item from `Need Review Issue Report` to `Backlog Test`, and verify the state by read-back.
+11. Add Plane comment summary to source work item with created bug/sub-work-item links and source state transition result.
 
 Do not submit bug/issue work items to Plane before human review `OK`.
 
@@ -182,9 +183,10 @@ NOK actions:
 4. Move work item back to `Need Review Report`.
 
 OK actions:
-1. Mark testing report as approved.
-2. Move work item to `Release Approval`.
-3. Add Plane comment summary with:
+1. Run the Approval Blocking-Info Guard before approving. If unresolved blockers such as missing env, email, OTP, test data, access, evidence, expected result, or open blocking questions exist, ask a second explicit confirmation and stop until the user confirms or supplies the missing information.
+2. Mark testing report as approved only after the guard passes.
+3. Move work item to `Release Approval`.
+4. Add Plane comment summary with:
    - report approved
    - testing summary
    - sign-off recommendation

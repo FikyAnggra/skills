@@ -74,14 +74,28 @@ Automatic generation is allowed only from:
 Supported workflow states:
 - `Need Issue Report`: move to `Generating Issue Report` before generating the issue report; verify the state by read-back; generate issue report; then move to `Need Review Issue Report` and verify again before commenting ready for review.
 - `Generating Issue Report`: continue or revise issue report, then move to `Need Review Issue Report` and verify the state by read-back.
-- `Need Review Issue Report`: for `NOK`, move to `Generating Issue Report`; for `OK`/approve input, create approved bug/issue sub work items in `Backlog Issue` when the report source is a Plane work item, verify the created items by read-back, then move the source work item to `Backlog Test` and verify the state by read-back. If no Plane source work item exists, create normal bug/issue work items in `Backlog Issue` and skip the source move.
+- `Need Review Issue Report`: for `NOK`, move to `Generating Issue Report`; for `OK`/approve input, first run the Approval Blocking-Info Guard. If unresolved blockers exist, ask a second explicit confirmation before approval, issue creation, or source state movement. After the guard passes, create approved bug/issue sub work items in `Backlog Issue` when the report source is a Plane work item, verify the created items by read-back, then move the source work item to `Backlog Test` and verify the state by read-back. If no Plane source work item exists, create normal bug/issue work items in `Backlog Issue` and skip the source move.
 - `Ready to Report`: move to `Generating Report`, generate testing report, then move to `Need Review Report`.
 - `Generating Report`: continue or revise testing report, then move to `Need Review Report`.
-- `Need Review Report`: for `NOK`, move to `Generating Report`; for `OK`, move to `Release Approval`.
+- `Need Review Report`: for `NOK`, move to `Generating Report`; for `OK`, first run the Approval Blocking-Info Guard. If the guard passes, move to `Release Approval`.
 
 If current state is outside the workflow, ask the user before generating report or moving state. If target states such as `Generating Issue Report`, `Need Review Issue Report`, `Backlog Issue`, `Backlog Test`, `Generating Report`, `Need Review Report`, or `Release Approval` are missing, run state discovery and ask the user to map states.
 
 Store route decisions in `report_state.plane_state_routing`.
+
+## Approval Blocking-Info Guard
+
+Before accepting `OK`, `approve`, or equivalent approval from Plane comments, Notion-linked reviews, or user chat, scan `report_state`, report gaps, issue package gaps, coverage gaps, metric gaps, blocked test cases, and source comments for unresolved data needed to execute, assess, retest, submit, or sign off a test case.
+
+Examples: missing env, email, OTP, account, credential, role, permission, test data, access, evidence, expected result, acceptance rule, open question, open blocking question, blocked reproduction step, or unresolved dependency.
+
+If any blocker exists, ask a second explicit confirmation that lists the blockers:
+
+```text
+Masih ada informasi yang memblokir approval: env, email, OTP. Apakah kamu yakin ingin approve tanpa informasi tersebut?
+```
+
+Do not create Plane work items, sub work items, submit issues, move the source work item to `Backlog Test`, or move the work item to `Release Approval` until the user either supplies the missing information or gives the second explicit confirmation.
 
 ## Source Work Item Sync
 

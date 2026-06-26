@@ -31,7 +31,9 @@ When approval is required and Notion or Plane is used, QA Reporter publishes or 
 
 ## Review and Submission Gate
 
-Reports use multi-level `OK`/`NOK` review. `NOK` feedback updates `report_state.json` and re-renders impacted artifacts. `OK` approves the package.
+Reports use multi-level `OK`/`NOK` review. `NOK` feedback updates `report_state.json` and re-renders impacted artifacts. `OK` approves the package only after approval blockers are clear or explicitly reconfirmed.
+
+If unresolved open questions or blocking info gaps remain, `OK`/approve is not accepted immediately. QA Reporter must ask one explicit second confirmation that lists the blockers, such as missing env, email, OTP, test data, access, or evidence, before approving, submitting issues, or moving Plane states.
 
 Issue submission is never automatic. Submission requires explicit user request, approved issue package, available tool/config, complete required fields, duplicate handling when relevant, and redaction status `passed`.
 
@@ -43,9 +45,9 @@ QA Reporter includes an optional Plane adapter for approved issue packages. It c
 
 When input contains Plane context such as `Plane`, `Plane.so`, a work item/card, readable id like `DKI-179`, or a Plane URL/UUID, QA Reporter reads the Plane work item first and routes by current state. Automatic reporting starts only from `Need Issue Report` or `Ready to Report`. Other states require user confirmation before report generation or state movement.
 
-Issue-report route: `Need Issue Report` -> `Generating Issue Report` -> `Need Review Issue Report`; approval `OK` creates bug/issue sub work items in `Backlog Issue` when the source is a Plane work item, then moves the source work item to `Backlog Test` after created sub work items are verified. QA Reporter must move the Plane work item to `Generating Issue Report` before generating the issue report, and must move it to `Need Review Issue Report` after generation before saying it is ready for review.
+Issue-report route: `Need Issue Report` -> `Generating Issue Report` -> `Need Review Issue Report`; approval `OK` after the approval-blocker guard creates bug/issue sub work items in `Backlog Issue` when the source is a Plane work item, then moves the source work item to `Backlog Test` after created sub work items are verified. QA Reporter must move the Plane work item to `Generating Issue Report` before generating the issue report, and must move it to `Need Review Issue Report` after generation before saying it is ready for review.
 
-Testing-report route: `Ready to Report` -> `Generating Report` -> `Need Review Report`; approval `OK` moves the source work item to `Release Approval`.
+Testing-report route: `Ready to Report` -> `Generating Report` -> `Need Review Report`; approval `OK` after the approval-blocker guard moves the source work item to `Release Approval`.
 
 ### Plane Source Sync and Bug Creation Rules
 

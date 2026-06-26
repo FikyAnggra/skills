@@ -72,9 +72,11 @@ Notion comments can drive qa-reporter OK/NOK review.
 Review workflow:
 1. Fetch page discussions/comments when requested.
 2. Normalize reviewer feedback into `reporter-review.schema.json`.
-3. Apply feedback to `report_state` first.
-4. Re-render impacted artifacts.
-5. Reply or comment only when the user asks or when review workflow requires it.
+3. Before applying `OK`, `approve`, or equivalent approval, run the Approval Blocking-Info Guard from `SKILL.md`. If unresolved blockers exist, ask a second explicit confirmation that lists missing env, email, OTP, test data, access, evidence, expected result, open question, or similar blockers.
+4. Do not approve, sync status, submit issues, or move Plane states until the user supplies the missing information or gives the second explicit confirmation.
+5. Apply feedback to `report_state` first.
+6. Re-render impacted artifacts.
+7. Reply or comment only when the user asks or when review workflow requires it.
 
 ## Status Sync
 

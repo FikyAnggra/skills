@@ -1,5 +1,11 @@
 ﻿# Changelog
 
+## 0.7.3 - 2026-06-26
+
+- Added approval blocking-info guard: if unresolved blockers such as missing env, email, OTP, test data, access, or evidence remain, approve/OK now requires one extra explicit confirmation before approval is processed.
+- Applied the guard to Plane `Need Review Issue Report`, Plane `Need Review Report`, Notion review comments, issue creation, issue submission, and Plane state movement.
+- Added review-history recording guidance for approval attempts blocked by unresolved questions or required testing information.
+
 ## 0.7.2 - 2026-06-25
 
 - Updated Plane `Need Review Issue Report` approval handling: approve/OK now creates approved bug/issue sub work items in `Backlog Issue` for Plane-sourced reports.
