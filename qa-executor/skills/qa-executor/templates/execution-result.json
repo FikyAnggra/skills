@@ -145,6 +145,8 @@
       "target": "none",
       "created": false,
       "ref": null,
+      "source_update_status": "synced",
+      "source_update_summary": "1 selected writable-source test case updated before report rendering.",
       "reason": "Report output not requested."
     }
   ],

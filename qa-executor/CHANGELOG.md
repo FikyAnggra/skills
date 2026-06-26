@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.11.0 - 2026-06-26
+
+- Enforced source test case updates even when an execution report page/document/workbook is requested.
+- Clarified that report outputs are additive and never replace original source row/item/section status updates.
+- Added package/result schema fields to record source update requirements and report-source update sync status.
+- Updated execution report and Notion execution page templates to show source update status.
+
 ## 0.10.0 - 2026-06-26
 
 - Changed Plane comment timing to completion/review-only by default.

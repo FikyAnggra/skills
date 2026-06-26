@@ -50,6 +50,12 @@ Review status: `{review_status}`
 - Evidence gaps: `{evidence.evidence_gaps}`
 - Large files are referenced by path or URL, not embedded.
 
+## Source Updates
+
+- Source update status: `{report_outputs.source_update_status}`
+- Source update summary: `{report_outputs.source_update_summary}`
+- Every selected writable-source test case should have a source update record or source update gap before this report is treated as review-ready.
+
 ## Review
 
 - Decision: `{review_status}`

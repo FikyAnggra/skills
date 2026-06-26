@@ -1,6 +1,6 @@
 ---
 name: qa-executor
-description: Portable QA execution agent for approved qa-planner handoffs, manual test cases, Plane.so work items, Notion pages/databases, spreadsheets, and documents. Executes or guides API/UI/DB/manual QA, enforces guarded Plane workflow states, writes Plane comments only at completion/review by default, captures redacted evidence, writes execution_result JSON, incrementally updates source test case rows/items, embeds or uploads image evidence when supported, syncs managed Plane/Notion output, creates issue candidates, handles OK/NOK review, and produces qa-reporter handoffs and qa-automation signals. Use for QA execution, retest, smoke/targeted runs, evidence capture, source row updates, Plane/Notion execution sync, Plane work item execution, and execution result prep. Do not use for test planning, final defect submission, final automation scripts, or final QA reports.
+description: Portable QA execution agent for approved qa-planner handoffs, manual test cases, Plane.so work items, Notion pages/databases, spreadsheets, and documents. Executes or guides API/UI/DB/manual QA, enforces guarded Plane workflow states, writes Plane comments only at completion/review by default, captures redacted evidence, writes execution_result JSON, incrementally updates source test case rows/items even when an execution report is requested, embeds or uploads image evidence when supported, syncs managed Plane/Notion output, creates issue candidates, handles OK/NOK review, and produces qa-reporter handoffs and qa-automation signals. Use for QA execution, retest, smoke/targeted runs, evidence capture, source row updates, Plane/Notion execution sync, Plane work item execution, and execution result prep. Do not use for test planning, final defect submission, final automation scripts, or final QA reports.
 ---
 
 # QA Executor
@@ -13,7 +13,7 @@ Do execution work only. Do not create test plans, invent test cases from raw req
 
 Plane, Notion, spreadsheets, documents, and other source artifacts are synced workflow surfaces, not the source of truth. Keep `execution_result.json` canonical and render source row/item updates, Plane/Notion comments, status moves, worklogs, links, wiki pages, and optional report pages from that state.
 
-Default to incremental source updates. Read one test case or a small ordered batch, execute it, update the same source row/item/section when writable, record the update result in `execution_result.json`, then continue. Do not create a new execution report document/page/workbook by default. Create a new report only when the user explicitly asks for report output or the package sets report output policy to enabled.
+Default to incremental source updates. Read one test case or a small ordered batch, execute it, update the same source row/item/section when writable, record the update result in `execution_result.json`, then continue. Do not create a new execution report document/page/workbook by default. Create a new report only when the user explicitly asks for report output or the package sets report output policy to enabled. Report creation is additive only; it never replaces source test case status updates.
 
 ## Input Paths
 
@@ -131,6 +131,13 @@ If the source is read-only, ambiguous, or lacks a stable locator, record `source
 Do not create a new execution report page/document/workbook by default.
 
 Create a report only when the user explicitly asks with commands such as `buat report`, `create report`, `publish execution page`, `generate SIT report`, `generate UAT report`, `export Markdown report`, or when `report_output_policy.create_report = true`.
+
+When report output is enabled:
+- keep incremental source updates enabled.
+- update each selected writable source row/item/section with status and actual result before or alongside report rendering.
+- record a `source_update` entry or `source_update_gap` for every selected writable-source test case.
+- render the report from `execution_result.json` after source update attempts are recorded.
+- never treat a Notion execution page, Google Doc, Word doc, Markdown report, spreadsheet export, Plane wiki, or other report artifact as a substitute for updating the original test case source.
 
 When report output is disabled:
 - update source rows/items only.
@@ -343,6 +350,8 @@ Execution page content:
 
 Source database update rule: when `source_database_update = true`, update existing test case rows only. Do not create duplicate source rows unless the user explicitly asks.
 
+Report coexistence rule: when `execution_page_sync = true` or `report_output_policy.create_report = true`, still update source test case rows/pages when writable and allowed. The execution page is a rendered report, not the test case source update.
+
 Execution database rule: when `execution_database_sync = true`, create or update result rows keyed by `execution_id + tc_id`. Use `templates/notion-result-row.json` as the row shape.
 
 Comment rule: when `comment_sync = true`, add or update concise comments for execution progress, final result, or OK/NOK review decisions.
@@ -380,6 +389,7 @@ Bridge source of truth:
 Bridge behavior after execution:
 - Update Notion test case rows or pages from `execution_result.json` when `notion_write_policy.source_database_update = true`.
 - Create or update a Notion execution page only when `notion_write_policy.execution_page_sync = true` or `report_output_policy.create_report = true`.
+- If both source updates and a Notion execution page/report are enabled, attempt source row/page updates first or in the same execution pass, then render the execution page from the canonical result.
 - Update Plane managed comment, status, worklog, links, and description summary according to `plane_write_policy`. Plane managed comments must follow completion/review-only timing unless `progress_comment_sync = true`.
 - Add the Notion execution page link to Plane output when `plane_write_policy.link_sync = true`.
 - Add or update the Notion execution page link in the Plane managed comment and managed description summary when those sync policies are enabled.
@@ -497,6 +507,7 @@ Before presenting review-ready output, verify:
 - image evidence is uploaded/embedded when supported or `evidence_upload_gap` is recorded.
 - every selected writable-source test case has a source update record or `source_update_gap`.
 - no new report page/document/workbook is created unless report output is explicitly requested.
+- if a report page/document/workbook is created, source update records or gaps still exist for every selected writable-source test case.
 - issue candidates exist for `Failed` and `Blocked`.
 - source row/item updates and optional rendered reports match `execution_result.json`.
 - manual input with missing expected result is not marked pass/fail without clarification.

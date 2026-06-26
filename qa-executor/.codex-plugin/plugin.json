@@ -1,7 +1,7 @@
 {
   "name": "qa-executor",
-  "version": "0.10.0",
-  "description": "Portable QA execution plugin with a qa-executor skill for running or guiding approved QA test cases, enforcing guarded Plane.so QA workflow states, capturing evidence, producing execution_result JSON, incrementally updating source test case rows/items, syncing completion/review-only Plane.so summaries and optional Notion execution reports, and handing structured results to QA reporter and automation agents.",
+  "version": "0.11.0",
+  "description": "Portable QA execution plugin with a qa-executor skill for running or guiding approved QA test cases, enforcing guarded Plane.so QA workflow states, capturing evidence, producing execution_result JSON, incrementally updating source test case rows/items even when optional reports are requested, syncing completion/review-only Plane.so summaries and optional Notion execution reports, and handing structured results to QA reporter and automation agents.",
   "author": {
     "name": "Local developer"
   },
@@ -9,7 +9,7 @@
   "interface": {
     "displayName": "QA Executor",
     "shortDescription": "Execute QA cases and capture evidence.",
-    "longDescription": "QA Executor provides a portable skill for normalizing planner-driven, manual, Plane.so, Notion, spreadsheet, or document test cases, resolving run policy scope, enforcing guarded Plane state workflow from Ready to Test through In Testing, Need Review Test Execute, Need Issue Report, and Ready to Report, executing API, UI, DB, hybrid, or manual-instruction checks, capturing redacted evidence, producing execution_result JSON, incrementally updating the original source row/item/section after each test case, embedding or uploading image evidence when supported, discovering Notion links from Plane, creating report pages/documents only when explicitly requested, keeping Plane output summary-only with source or report links, writing Plane comments only at completion and review approval by default, managing sync preflight policy and idempotency, managing OK/NOK execution review, and generating handoffs for qa-reporter and qa-automation.",
+    "longDescription": "QA Executor provides a portable skill for normalizing planner-driven, manual, Plane.so, Notion, spreadsheet, or document test cases, resolving run policy scope, enforcing guarded Plane state workflow from Ready to Test through In Testing, Need Review Test Execute, Need Issue Report, and Ready to Report, executing API, UI, DB, hybrid, or manual-instruction checks, capturing redacted evidence, producing execution_result JSON, incrementally updating the original source row/item/section after each test case even when a separate report is requested, embedding or uploading image evidence when supported, discovering Notion links from Plane, creating report pages/documents only when explicitly requested, keeping Plane output summary-only with source or report links, writing Plane comments only at completion and review approval by default, managing sync preflight policy and idempotency, managing OK/NOK execution review, and generating handoffs for qa-reporter and qa-automation.",
     "developerName": "Local developer",
     "category": "Productivity",
     "capabilities": [],

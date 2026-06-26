@@ -49,6 +49,8 @@ Review status: `<review_status>`
 ## Notion Sync
 
 - Source database update: `<notion_write_policy.source_database_update>`
+- Source update status: `<report_outputs.source_update_status>`
+- Source update summary: `<report_outputs.source_update_summary>`
 - Execution database sync: `<notion_write_policy.execution_database_sync>`
 - Comment sync: `<notion_write_policy.comment_sync>`
 - Issue candidate sync: `<notion_write_policy.issue_candidate_sync>`

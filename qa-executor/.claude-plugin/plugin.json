@@ -1,7 +1,7 @@
 {
   "name": "qa-executor",
-  "version": "0.10.0",
-  "description": "Portable QA execution plugin for Claude-compatible agents, including guarded Plane.so QA state workflow, incremental source test case updates, completion/review-only Plane summary sync, optional Notion execution reports, bridge support, and image evidence upload guidance. It uses skills/qa-executor/SKILL.md as the canonical instruction source and preserves the Codex plugin wrapper.",
+  "version": "0.11.0",
+  "description": "Portable QA execution plugin for Claude-compatible agents, including guarded Plane.so QA state workflow, incremental source test case updates even when reports are requested, completion/review-only Plane summary sync, optional Notion execution reports, bridge support, and image evidence upload guidance. It uses skills/qa-executor/SKILL.md as the canonical instruction source and preserves the Codex plugin wrapper.",
   "author": {
     "name": "Local developer"
   },

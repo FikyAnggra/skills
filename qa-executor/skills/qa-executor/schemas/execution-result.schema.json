@@ -389,6 +389,11 @@
         "target": { "type": "string", "enum": ["notion_page", "google_doc", "word_doc", "markdown", "spreadsheet", "plane_wiki", "none"] },
         "created": { "type": "boolean" },
         "ref": { "type": ["string", "null"] },
+        "source_update_status": {
+          "type": "string",
+          "enum": ["not_started", "synced", "partial", "failed", "skipped"]
+        },
+        "source_update_summary": { "type": "string" },
         "reason": { "type": "string" }
       }
     },

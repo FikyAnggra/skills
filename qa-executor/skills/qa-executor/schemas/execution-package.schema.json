@@ -312,6 +312,7 @@
         "incremental_update": { "type": "boolean", "default": true },
         "update_after_each_case": { "type": "boolean", "default": true },
         "batch_only_when_required": { "type": "boolean", "default": true },
+        "required_even_when_report_created": { "type": "boolean", "default": true },
         "requires_confirmation": { "type": "boolean", "default": true },
         "writable_sources": {
           "type": "array",
@@ -343,6 +344,7 @@
           "type": "string",
           "enum": ["notion_page", "google_doc", "word_doc", "markdown", "spreadsheet", "plane_wiki", "none"]
         },
+        "source_updates_required": { "type": "boolean", "default": true },
         "requires_confirmation": { "type": "boolean", "default": true },
         "notes": { "type": "string" }
       }

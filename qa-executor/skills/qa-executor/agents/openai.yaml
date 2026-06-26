@@ -1,4 +1,4 @@
 interface:
   display_name: "QA Executor"
   short_description: "Run QA with guarded Plane workflow."
-  default_prompt: "Use $qa-executor to execute approved QA cases, enforce Plane Ready to Test -> In Testing -> Need Review Test Execute workflow when Plane input is present, update the original source row/item after each case, write Plane comments only at completion or review approval, and produce execution_result.json."
+  default_prompt: "Use $qa-executor to execute approved QA cases, enforce Plane Ready to Test -> In Testing -> Need Review Test Execute workflow when Plane input is present, update the original source row/item after each case even when a report is requested, write Plane comments only at completion or review approval, and produce execution_result.json."
