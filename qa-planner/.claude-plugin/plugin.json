@@ -1,6 +1,6 @@
 {
   "name": "qa-planner",
-  "version": "0.2.12",
+  "version": "0.2.13",
   "description": "Portable QA planning plugin for Claude-compatible agents with core QA planning in SKILL.md, conditional Plane MCP guidance in references/plane-hybrid.md, and conditional Notion MCP guidance in references/notion-mcp.md. It uses skills/qa-planner/SKILL.md as the canonical instruction source and preserves the Codex plugin wrapper.",
   "author": {
     "name": "Local developer"
@@ -33,6 +33,8 @@
     "planning_state_json",
     "test_plan",
     "test_case_design",
+    "ui_test_case_design",
+    "api_test_case_design",
     "coverage_mapping",
     "review_loop",
     "handoff_contracts"

@@ -28,7 +28,7 @@ Plane inputs can come from work item/card title and description, comments, activ
 
 Plane QA planning follows a state workflow. By default, `qa-planner` processes Plane work items only from `Todo Test`, moves them to `Analyze Test` for analysis/routing, uses `Update Test` when artifacts must be created or updated, moves completed work to `Need Review Test`, and moves approved work to `Ready to Test`. Any non-`Todo Test` source state requires separate user confirmation after the current state is known. Mentioning a specific item id or asking for direct planning is not confirmation.
 
-Notion output can create or update a QA test plan page and a Notion test case database. The test case artifact must be a Notion database when `notion-create-database` and required `notion-update-data-source` support are available. Database columns and managed table views use the required display order: `TC ID`, `Scenario`, `Summary`, `Test Type`, `Priority`, `PreConditions`, `Test Step`, `Test Data`, `Expected Result`, `Actual Result`, `Test Case Status`, `Automation Status`, `Notes`. Notion page/database links are stored in `planning_state`, handoff contracts, and other active platform sync outputs.
+Notion output can create or update a QA test plan page plus separate Notion databases for UI and API test cases. UI database columns use `TC ID`, `Scenario`, `Summary`, `Test Type`, `Priority`, `PreConditions`, `Test Step`, `Test Data`, `Expected Result`, `Actual Result`, `Test Case Status`, `Automation Status`, `Notes`. API database columns use `TC ID`, `Scenario`, `Summary`, `Method`, `URL`, `Header`, `Params`, `Body`, `Expected Result`, `Actual Result`, `Test Case Status`, `Automation Status`, `Notes`. Notion page/database links are stored in `planning_state`, handoff contracts, and other active platform sync outputs.
 
 ## Outputs
 
@@ -36,7 +36,7 @@ The source of truth is `planning_state.json`. Human-readable plans, test cases, 
 
 Expected outputs include:
 - test plan
-- test cases using the `Template Test Case.xlsx` field model
+- separated UI test cases and API test cases
 - requirement coverage map
 - `qa-executor`, `qa-automation`, and `qa-reporter` handoff contracts
 - Plane comment, attachment, wiki/page, page link, sync record, and optional status transition output when Plane tools are available
@@ -72,7 +72,11 @@ Gunakan skill qa-planner.
 Buat test cases dari requirement berikut:
 <isi requirement>
 
-Gunakan field:
+Pisahkan hasil menjadi:
+- UI test cases untuk flow layar/user interface
+- API test cases untuk endpoint/contract/payload
+
+Gunakan field UI:
 - TC ID
 - Scenario
 - Summary
@@ -81,6 +85,21 @@ Gunakan field:
 - PreConditions
 - Test Step
 - Test Data
+- Expected Result
+- Actual Result
+- Test Case Status
+- Automation Status
+- Notes
+
+Gunakan field API:
+- TC ID
+- Scenario
+- Summary
+- Method
+- URL
+- Header
+- Params
+- Body
 - Expected Result
 - Actual Result
 - Test Case Status
@@ -182,12 +201,13 @@ Buat QA planning dari requirement berikut:
 
 Output ke Notion:
 - test plan sebagai Notion page
-- test cases sebagai Notion database
+- UI test cases sebagai Notion database jika ada UI cases
+- API test cases sebagai Notion database jika ada API cases
 
 Parent Notion page:
 <URL atau page id Notion>
 
-Kolom database test cases harus urut:
+Kolom database UI test cases harus urut:
 1. TC ID
 2. Scenario
 3. Summary
@@ -202,7 +222,22 @@ Kolom database test cases harus urut:
 12. Automation Status
 13. Notes
 
-Simpan/copy link Notion page dan database di output akhir.
+Kolom database API test cases harus urut:
+1. TC ID
+2. Scenario
+3. Summary
+4. Method
+5. URL
+6. Header
+7. Params
+8. Body
+9. Expected Result
+10. Actual Result
+11. Test Case Status
+12. Automation Status
+13. Notes
+
+Simpan/copy link Notion page dan database UI/API di output akhir.
 ```
 
 ### Plane And Notion
@@ -215,7 +250,8 @@ Ambil requirement dari Plane work item:
 
 Buat QA planning package dan publish ke Notion:
 - test plan sebagai Notion page
-- test cases sebagai Notion database
+- UI test cases sebagai Notion database jika ada
+- API test cases sebagai Notion database jika ada
 
 Parent Notion page:
 <URL atau page id Notion>
@@ -345,7 +381,8 @@ Source requirement:
 Buat QA planning package:
 - planning_state.json
 - test plan
-- test cases
+- UI test cases
+- API test cases
 - coverage map
 - risk analysis
 - open questions
@@ -370,14 +407,15 @@ Rules:
 - jika ada konflik antar source, tanyakan dulu
 - Actual Result kosong
 - Test Case Status default Untested
-- ikuti urutan kolom database Notion yang sudah ditentukan
+- pisahkan test cases UI dan API
+- ikuti urutan kolom database Notion UI/API yang sudah ditentukan
 ```
 
 ## Notion MCP Output
 
-When Notion output is requested, `qa-planner` creates the test plan as a Notion page and test cases as a Notion database. The test plan page follows `templates/test-plan.md` with clean headings, compact tables, and bullet lists. Each test case becomes a database row/page with ordered display properties: `TC ID`, `Scenario`, `Summary`, `Test Type`, `Priority`, `PreConditions`, `Test Step`, `Test Data`, `Expected Result`, `Actual Result`, `Test Case Status`, `Automation Status`, and `Notes`. The default view, `All Cases`, and every qa-planner-created view must use that same visual column order; if a view cannot be updated or verified, `qa-planner` records the Notion view order gap.
+When Notion output is requested, `qa-planner` creates the test plan as a Notion page and creates separate UI/API test case databases as needed. UI cases use ordered display properties: `TC ID`, `Scenario`, `Summary`, `Test Type`, `Priority`, `PreConditions`, `Test Step`, `Test Data`, `Expected Result`, `Actual Result`, `Test Case Status`, `Automation Status`, and `Notes`. API cases use ordered display properties: `TC ID`, `Scenario`, `Summary`, `Method`, `URL`, `Header`, `Params`, `Body`, `Expected Result`, `Actual Result`, `Test Case Status`, `Automation Status`, and `Notes`. The default view and every qa-planner-created view must use the matching visual column order; if a view cannot be updated or verified, `qa-planner` records the Notion view order gap.
 
-The planner captures `test_plan_page_url` and `test_case_database_url` in `planning_state.notion_context` and mirrors them into `artifact_outputs` and handoff contracts. If database creation or schema update is unavailable, the planner creates a fallback Notion page containing a table with the same test case columns and records a Notion database/schema gap.
+The planner captures `test_plan_page_url`, `ui_test_case_database_url`, and `api_test_case_database_url` in `planning_state.notion_context` and mirrors them into `artifact_outputs` and handoff contracts. If database creation or schema update is unavailable, the planner creates a fallback Notion page containing separate UI/API tables and records a Notion database/schema gap.
 
 ## Plane Hybrid Sync
 

@@ -6,6 +6,8 @@
   "source_refs": {
     "planning_state": "planning_state.json",
     "test_cases": "planning_state.test_cases",
+    "ui_test_cases": "planning_state.ui_test_cases",
+    "api_test_cases": "planning_state.api_test_cases",
     "coverage_map": "planning_state.coverage_map",
     "test_plan": "planning_state.test_plan",
     "review_history": "planning_state.review_history"

@@ -1,6 +1,6 @@
 ---
 name: qa-planner
-description: Portable QA planning agent for converting requirements, PRDs, user stories, API specs, UI flows, screenshots, database notes, technical constraints, optional Plane.so work items/cards, and optional Notion pages/databases into governed planning_state JSON, test plans, test cases using the Template Test Case field model, coverage maps, OK/NOK or partial review updates, Notion test plan pages, Notion test case databases, copied Notion links, and handoff contracts for qa-executor, qa-automation, and qa-reporter. Use when asked to create or revise QA plans, QA scenarios, test cases, requirement coverage, downstream QA handoffs, Plane-attached planning artifacts, Notion-published planning artifacts, or planning review packages. Do not use for running tests, creating defect tickets, writing final automation scripts, or producing final execution reports.
+description: Portable QA planning agent for converting requirements, PRDs, user stories, API specs, UI flows, screenshots, database notes, technical constraints, optional Plane.so work items/cards, and optional Notion pages/databases into governed planning_state JSON, test plans, separated UI/API test cases, coverage maps, OK/NOK or partial review updates, Notion test plan pages, Notion UI/API test case databases, copied Notion links, and handoff contracts for qa-executor, qa-automation, and qa-reporter. Use when asked to create or revise QA plans, QA scenarios, UI test cases, API test cases, requirement coverage, downstream QA handoffs, Plane-attached planning artifacts, Notion-published planning artifacts, or planning review packages. Do not use for running tests, creating defect tickets, writing final automation scripts, or producing final execution reports.
 ---
 
 # QA Planner
@@ -54,7 +54,9 @@ Required sections:
 - `risk_analysis`: product, technical, data, integration, operational, and business risks
 - `test_strategy`: test levels, test types, priority model, coverage target, execution approach
 - `test_plan`: objective, environment, entry criteria, exit criteria, schedule notes, dependencies
-- `test_cases`: test cases following the approved field model
+- `ui_test_cases`: UI/manual-flow test cases using the UI field model
+- `api_test_cases`: API/contract test cases using the API field model
+- `test_cases`: legacy aggregate for compatibility; keep in sync with `ui_test_cases` plus API summaries when downstream tools only support one list
 - `coverage_map`: requirement-to-test-case mapping or exclusion reason
 - `handoff_contracts`: contracts for `qa-executor`, `qa-automation`, and `qa-reporter`
 - `review_history`: OK/NOK/partial feedback and resolution history
@@ -86,6 +88,8 @@ Inline fallback skeleton when schema files are unavailable:
   "risk_analysis": [],
   "test_strategy": {},
   "test_plan": {},
+  "ui_test_cases": [],
+  "api_test_cases": [],
   "test_cases": [],
   "coverage_map": [],
   "handoff_contracts": { "qa_executor": {}, "qa_automation": {}, "qa_reporter": {} },
@@ -112,7 +116,7 @@ Standard path:
 4. Classify ambiguity as blocking or non-blocking using the rules above; ask only for blocking ambiguity and record non-blocking ambiguity in `open_questions`.
 5. Analyze ambiguity, gaps, conflicts, edge cases, state transitions, validation gaps, risks, and dependencies.
 6. Build test strategy and test plan content.
-7. Design test cases using the approved Template Test Case field model.
+7. Classify and design test cases into `ui_test_cases` and `api_test_cases` using the approved split field models.
 8. Build coverage map.
 9. Render artifacts using the output decision rules.
 10. Apply review feedback until the package is approved or remaining gaps are explicit.
@@ -130,18 +134,28 @@ Notion path:
 2. Resolve destination parent page/database or ask the user when no destination is clear.
 3. Continue with the standard path.
 4. Create or update a Notion test plan page.
-5. Create or update a Notion test case database. Test cases must use a Notion database with the exact Template Test Case columns when `notion-create-database` and required `notion-update-data-source` support are available.
+5. Create or update separate Notion UI/API test case databases as needed. UI and API cases must use their exact database columns when `notion-create-database` and required `notion-update-data-source` support are available.
 6. Store Notion page/database URLs in `planning_state.artifact_outputs`, `planning_state.notion_context`, and handoff contracts.
 
 Large-input handling:
 - If estimated test cases exceed 50, propose batching by feature, module, epic, API group, or risk priority before generating all cases.
 - If estimated test cases exceed 100 or source input is too large to hold safely, ask the user to choose first batch scope.
-- Preserve one `planning_state` and append batches into `test_cases`, `coverage_map`, `review_history`, and `changelog`.
+- Preserve one `planning_state` and append batches into `ui_test_cases`, `api_test_cases`, legacy `test_cases`, `coverage_map`, `review_history`, and `changelog`.
 - Never truncate silently. Record omitted scope explicitly.
 
-## Test Case Field Model
+## Test Case Field Models
 
-Use `templates/Template Test Case.xlsx` as the spreadsheet baseline. Markdown, Word, PDF, Notion, and JSON outputs must preserve these logical fields:
+Split generated cases by execution surface. Do not mix API request fields into UI cases or UI step fields into API cases.
+
+Classification:
+- Use `api_test_cases` when source evidence mentions endpoint, HTTP method, URL/path, headers, params, request body, response body, status code, API contract, webhook, integration API, auth token, or service-to-service behavior.
+- Use `ui_test_cases` when source evidence mentions screen, button, form, navigation, copy, layout, visual behavior, responsive behavior, browser, or user-facing workflow.
+- If one requirement needs both API and UI coverage, create separate UI and API cases and map both IDs to the same requirement in `coverage_map`.
+- If the surface is unclear and affects test design, ask the user before generating impacted cases.
+
+### UI Test Case Model
+
+Use `templates/Template Test Case.xlsx` as the UI spreadsheet baseline. Markdown, Word, PDF, Notion, and JSON outputs must preserve these logical fields for UI cases:
 
 | Field | Rule |
 |---|---|
@@ -158,6 +172,26 @@ Use `templates/Template Test Case.xlsx` as the spreadsheet baseline. Markdown, W
 | `test_case_status` | Latest execution status |
 | `automation_status` | Automation treatment |
 | `notes` | Planner notes, constraints, or gaps |
+
+### API Test Case Model
+
+Use `templates/test-case-api.md` as the API baseline. Markdown, Word, PDF, Notion, and JSON outputs must preserve these logical fields for API cases:
+
+| Field | Rule |
+|---|---|
+| `tc_id` | Stable identifier such as `TC0001`; do not reuse an ID from UI cases |
+| `scenario` | Short API scenario label, for example `Create user` or `Reject invalid token` |
+| `summary` | Test purpose, for example `Verify POST /users returns 201 for a valid payload` |
+| `method` | HTTP method: `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `HEAD`, or `OPTIONS` |
+| `url` | Endpoint path or URL; do not invent base URL when source only provides path |
+| `header` | Required request headers, auth scheme, content type, or header refs |
+| `params` | Query/path params and values or fixture refs |
+| `body` | Request body, payload shape, or fixture ref |
+| `expected_result` | Expected status code, response body, schema, side effect, or error contract |
+| `actual_result` | Blank before execution |
+| `test_case_status` | Latest execution status |
+| `automation_status` | Automation treatment |
+| `notes` | Planner notes, constraints, contract refs, or gaps |
 
 Allowed priority values:
 - `P0 - Critical`
@@ -206,7 +240,7 @@ Rules:
 - `actual_result` stays blank until `qa-executor` returns a result or user explicitly provides one.
 - If input priority is not one of the allowed values, add an `open_question` and ask the user to clarify. Do not downgrade or remap invalid priority silently.
 - Apply the automation status decision rules above; when evidence is insufficient, use `Manual Only` and record the gap.
-- Mark missing selectors, endpoints, fixture data, or credentials as gaps, not invented data.
+- Mark missing selectors, endpoints, methods, headers, params, request body, fixture data, or credentials as gaps, not invented data.
 
 ## Coverage Map
 
@@ -259,6 +293,8 @@ Inline fallback contract shape when schema files are unavailable:
   "source_refs": {
     "planning_state": "planning_state.json",
     "test_cases": "planning_state.test_cases",
+    "ui_test_cases": "planning_state.ui_test_cases",
+    "api_test_cases": "planning_state.api_test_cases",
     "coverage_map": "planning_state.coverage_map"
   },
   "scope": {
@@ -278,12 +314,12 @@ Always produce or update `planning_state.json` as the canonical state.
 
 Produce additional artifacts only under these rules:
 - Test plan: produce for new planning packages or when plan sections changed.
-- Test cases: produce when requirements, scope, risks, or cases changed.
+- Test cases: produce separated UI and API artifacts when requirements, scope, risks, or cases changed.
 - Coverage map: produce when requirements or test cases changed.
 - Handoff contracts: produce only when approved, explicitly requested, or clearly marked draft.
 - Spreadsheet: produce when user asks for Excel/Sheets, when Plane/full-sync policy requests attachments, or when test cases are large enough that a table is hard to review in Markdown.
 - Plane comment/page/sync outputs: produce only when Plane path is active and Plane write policy allows it.
-- Notion page/database outputs: produce only when Notion path is active and Notion write policy allows it. Test plan output is a page rendered from `templates/test-plan.md`; test case output is a database with exact `templates/test-case.md` columns unless database/schema tooling is unavailable, in which case create a Notion page containing that same test case table.
+- Notion page/database outputs: produce only when Notion path is active and Notion write policy allows it. Test plan output is a page rendered from `templates/test-plan.md`; UI test cases use a UI test case database with exact `templates/test-case.md` columns, and API test cases use an API test case database with exact `templates/test-case-api.md` columns. If database/schema tooling is unavailable, create a Notion page containing separate UI and API tables as needed.
 
 If schemas or templates are unavailable, generate inline JSON/Markdown structures from the field model and rules in this skill. Do not fail solely because `/schemas/` or `/templates/` files are unavailable.
 
@@ -294,6 +330,8 @@ Content gates, always apply:
 - Priority values match the allowed enum exactly.
 - New test cases have `test_case_status = Untested`.
 - Automation status values match the allowed enum exactly.
+- API and UI cases are separated into `api_test_cases` and `ui_test_cases`; mixed-surface requirements map to both case types instead of one overloaded case.
+- API cases include method, URL/path, headers, params, body, and expected result from source evidence or record a blocking gap/open question.
 - Each test case has a clear expected result.
 - Each requirement maps to at least one test case or has an exclusion reason.
 - Duplicated or overlapping cases are removed, merged, or noted.
@@ -317,8 +355,9 @@ Notion sync gates, apply only on Notion path:
 - Destination parent page/database was resolved or the user approved fallback.
 - Test plan was created or updated as a Notion page when write tools were available.
 - Test plan page follows the structure of `templates/test-plan.md` and avoids raw JSON dumps.
-- Test cases were created or updated as a Notion database when `notion-create-database` and required `notion-update-data-source` support were available.
-- Test case database has exact Notion display columns in this order: `TC ID`, `Scenario`, `Summary`, `Test Type`, `Priority`, `PreConditions`, `Test Step`, `Test Data`, `Expected Result`, `Actual Result`, `Test Case Status`, `Automation Status`, `Notes`.
+- UI and API test cases were created or updated as separate Notion databases when both case types exist and `notion-create-database` plus required `notion-update-data-source` support were available.
+- UI test case database has exact Notion display columns in this order: `TC ID`, `Scenario`, `Summary`, `Test Type`, `Priority`, `PreConditions`, `Test Step`, `Test Data`, `Expected Result`, `Actual Result`, `Test Case Status`, `Automation Status`, `Notes`.
+- API test case database has exact Notion display columns in this order: `TC ID`, `Scenario`, `Summary`, `Method`, `URL`, `Header`, `Params`, `Body`, `Expected Result`, `Actual Result`, `Test Case Status`, `Automation Status`, `Notes`.
 - Default view, `All Cases`, and every qa-planner-created Notion view use the same visual property order; record `notion_view_column_order_gap` when a view cannot be updated and `notion_view_order_unverified` when order cannot be verified.
 - If database/schema tools were unavailable, fallback Notion page contains a table with the same ordered display columns and records the database/schema gap.
 - Notion page/database links were captured in `planning_state` and handoff contracts.
@@ -350,6 +389,7 @@ Read only when needed:
 - `templates/Template Test Case.xlsx`: spreadsheet baseline copied unchanged from source template
 - `templates/test-plan.md`: human-readable test plan skeleton
 - `templates/test-case.md`: human-readable test case skeleton
+- `templates/test-case-api.md`: human-readable API test case skeleton
 - `templates/handoff-contract.json`: multi-agent contract skeleton
 - `templates/plane-comment.md`: Plane comment skeleton, only for Plane path
 - `templates/plane-page.md`: Plane wiki/page skeleton, only for Plane path

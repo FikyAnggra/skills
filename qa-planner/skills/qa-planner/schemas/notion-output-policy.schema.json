@@ -39,7 +39,7 @@
         "enabled": { "type": "boolean", "default": true },
         "required": { "type": "boolean", "default": true },
         "create_or_update_managed_database": { "type": "boolean", "default": true },
-        "database_title_template": { "type": "string", "default": "QA Test Cases - <PROJECT> - <FEATURE> - <VERSION>" },
+        "database_title_template": { "type": "string", "default": "QA UI Test Cases - <PROJECT> - <FEATURE> - <VERSION>" },
         "required_properties": {
           "type": "array",
           "items": { "type": "string" },
@@ -112,6 +112,96 @@
           "type": "array",
           "items": { "type": "string" },
           "default": ["default_view", "All Cases", "all_managed_views"]
+        },
+        "verify_view_property_order": { "type": "boolean", "default": true },
+        "on_view_order_unavailable": {
+          "type": "string",
+          "enum": ["record_notion_view_column_order_gap"],
+          "default": "record_notion_view_column_order_gap"
+        },
+        "batch_size": { "type": "integer", "minimum": 1, "default": 25 }
+      }
+    },
+    "api_test_case_database": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean", "default": true },
+        "required_when_api_cases_exist": { "type": "boolean", "default": true },
+        "create_or_update_managed_database": { "type": "boolean", "default": true },
+        "database_title_template": { "type": "string", "default": "QA API Test Cases - <PROJECT> - <FEATURE> - <VERSION>" },
+        "required_properties": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["TC ID", "Scenario", "Summary", "Method", "URL", "Header", "Params", "Body", "Expected Result", "Actual Result", "Test Case Status", "Automation Status", "Notes"]
+        },
+        "required_property_types": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "TC ID": { "type": "string", "const": "title" },
+            "Scenario": { "type": "string", "const": "rich_text" },
+            "Summary": { "type": "string", "const": "rich_text" },
+            "Method": { "type": "string", "const": "select" },
+            "URL": { "type": "string", "const": "rich_text" },
+            "Header": { "type": "string", "const": "rich_text" },
+            "Params": { "type": "string", "const": "rich_text" },
+            "Body": { "type": "string", "const": "rich_text" },
+            "Expected Result": { "type": "string", "const": "rich_text" },
+            "Actual Result": { "type": "string", "const": "rich_text" },
+            "Test Case Status": { "type": "string", "const": "select" },
+            "Automation Status": { "type": "string", "const": "select" },
+            "Notes": { "type": "string", "const": "rich_text" }
+          },
+          "default": {
+            "TC ID": "title",
+            "Scenario": "rich_text",
+            "Summary": "rich_text",
+            "Method": "select",
+            "URL": "rich_text",
+            "Header": "rich_text",
+            "Params": "rich_text",
+            "Body": "rich_text",
+            "Expected Result": "rich_text",
+            "Actual Result": "rich_text",
+            "Test Case Status": "select",
+            "Automation Status": "select",
+            "Notes": "rich_text"
+          }
+        },
+        "logical_field_mapping": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "TC ID": { "type": "string", "const": "tc_id" },
+            "Scenario": { "type": "string", "const": "scenario" },
+            "Summary": { "type": "string", "const": "summary" },
+            "Method": { "type": "string", "const": "method" },
+            "URL": { "type": "string", "const": "url" },
+            "Header": { "type": "string", "const": "header" },
+            "Params": { "type": "string", "const": "params" },
+            "Body": { "type": "string", "const": "body" },
+            "Expected Result": { "type": "string", "const": "expected_result" },
+            "Actual Result": { "type": "string", "const": "actual_result" },
+            "Test Case Status": { "type": "string", "const": "test_case_status" },
+            "Automation Status": { "type": "string", "const": "automation_status" },
+            "Notes": { "type": "string", "const": "notes" }
+          }
+        },
+        "views": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["All API Cases", "By Method", "By Status", "Automation Candidates", "Manual Only"]
+        },
+        "view_property_order": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["TC ID", "Scenario", "Summary", "Method", "URL", "Header", "Params", "Body", "Expected Result", "Actual Result", "Test Case Status", "Automation Status", "Notes"]
+        },
+        "apply_property_order_to": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["default_view", "All API Cases", "all_managed_views"]
         },
         "verify_view_property_order": { "type": "boolean", "default": true },
         "on_view_order_unavailable": {

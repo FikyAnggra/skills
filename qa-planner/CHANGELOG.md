@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.13 - 2026-06-26
+
+- Split generated test cases into `ui_test_cases` and `api_test_cases` while keeping legacy `test_cases` for compatibility.
+- Added API test case field model: TC ID, Scenario, Summary, Method, URL, Header, Params, Body, Expected Result, Actual Result, Test Case Status, Automation Status, Notes.
+- Added Notion policy and fallback guidance for separate UI and API test case databases.
+- Added `templates/test-case-api.md` and downstream handoff refs for UI/API test case lists.
+
 ## 0.2.12 - 2026-06-26
 
 - Added explicit Plane page/wiki read and update workflow for QA pages.

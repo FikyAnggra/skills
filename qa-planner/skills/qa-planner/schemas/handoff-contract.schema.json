@@ -29,6 +29,8 @@
       "properties": {
         "planning_state": { "type": "string", "minLength": 1 },
         "test_cases": { "type": "string", "minLength": 1 },
+        "ui_test_cases": { "type": "string" },
+        "api_test_cases": { "type": "string" },
         "coverage_map": { "type": "string", "minLength": 1 },
         "test_plan": { "type": "string" },
         "review_history": { "type": "string" },
