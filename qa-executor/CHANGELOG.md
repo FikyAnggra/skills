@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.10.0 - 2026-06-26
+
+- Changed Plane comment timing to completion/review-only by default.
+- Prevented Plane managed comments during `Ready to Test` -> `In Testing` start transition.
+- Prevented Plane progress comments during active testing unless `progress_comment_sync = true` is explicitly enabled.
+- Added `progress_comment_sync` and `comment_timing` to Plane write policy.
+- Updated Plane managed comment template to represent completion/review summaries only.
+
 ## 0.9.0 - 2026-06-25
 
 - Added guarded Plane.so execution workflow for Plane inputs, readable issue ids, URLs, UUIDs, and Plane work item requests.

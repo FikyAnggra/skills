@@ -446,6 +446,11 @@
       "properties": {
         "source_work_item": { "type": "string" },
         "managed_comment_id": { "type": ["string", "null"] },
+        "comment_timing": {
+          "type": "string",
+          "enum": ["completion_and_review_only", "progress_and_final"]
+        },
+        "progress_comment_created": { "type": "boolean" },
         "wiki_page_id": { "type": ["string", "null"] },
         "worklog_id": { "type": ["string", "null"] },
         "description_summary_status": {

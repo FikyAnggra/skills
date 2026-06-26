@@ -1,12 +1,14 @@
 <!-- qa-executor:execution:<execution_id>:<plane_work_item_id> -->
 
-# QA Execution Summary
+# QA Execution Completion / Review Summary
 
 - Execution ID: `<execution_id>`
 - Package ID: `<package_id>`
 - Run mode: `<run_policy.mode>`
 - Environment: `<environment.name>`
 - Status: `<plane_sync.status_before>` -> `<plane_sync.status_after>`
+- Comment timing: `<plane_sync.comment_timing>`
+- Progress comment created: `<plane_sync.progress_comment_created>`
 - Review status: `<review_status>`
 - Detailed report: `<notion_plane_bridge.notion_execution_page_ref or execution_report_ref>`
 

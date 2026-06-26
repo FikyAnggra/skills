@@ -19,7 +19,7 @@ Use manual input when a human provides test cases from Excel, Google Sheets, Mar
 
 Use Plane input when a user provides a Plane readable id such as `ENG-42`, a Plane URL, UUID, or MCP payload. Plane content is executable only when it contains an executor handoff, structured execution package, or minimum test case fields. Raw requirements should be routed to `qa-planner` instead of executed.
 
-For Plane Managed Sync, resolve the work item, project states, write policy, and guarded state workflow before execution. qa-executor may start directly only from `Ready to Test`. If the work item is in another state, it must ask for user approval before testing and moving to `In Testing`. Write policy controls managed comments, status movement, worklogs, links, wiki/page sync, follow-up creation, and confirmation requirements.
+For Plane Managed Sync, resolve the work item, project states, write policy, and guarded state workflow before execution. qa-executor may start directly only from `Ready to Test`. If the work item is in another state, it must ask for user approval before testing and moving to `In Testing`. Write policy controls completion/review comments, status movement, worklogs, links, wiki/page sync, follow-up creation, and confirmation requirements.
 
 Use Notion input when a user provides a Notion page URL, database URL, data source id, page id, or MCP payload. Notion content is executable only when it contains an executor handoff, structured execution package, or minimum test case fields. Raw requirements should be routed to `qa-planner` instead of executed.
 
@@ -34,7 +34,7 @@ Expected outputs are:
 - issue candidates for failed and blocked cases.
 - `qa_reporter_handoff` after human OK review.
 - `qa_automation_signal` when automation gaps or update candidates exist.
-- managed Plane execution comment when `comment_sync` is enabled.
+- managed Plane execution comment when testing is finished or review is approved and `comment_sync` is enabled.
 - Plane worklog/status/link sync when enabled.
 - Plane wiki/page only when `wiki_sync` is explicitly true.
 - managed Notion execution page only when `execution_page_sync` is enabled by an explicit report request.
@@ -60,7 +60,7 @@ Execution output goes through human `OK` or `NOK` review. `OK` accepts the packa
 
 Plane is a synced workflow surface, not the canonical state. `execution_result.json` remains the source of truth.
 
-Managed Plane output uses idempotency keys and markers to avoid duplicate comments, description summaries, worklogs, wiki pages, links, and follow-up items. Wiki/page sync, description sync, and follow-up work item creation are off by default unless the write policy enables them. Secrets, tokens, cookies, credentials, authorization values, session ids, and PII must be redacted before any Plane write.
+Managed Plane output uses idempotency keys and markers to avoid duplicate comments, description summaries, worklogs, wiki pages, links, and follow-up items. By default, qa-executor does not create comments when moving `Ready to Test` -> `In Testing` and does not create progress comments while testing. Plane comments are written only when testing finishes or after user review approval, unless live progress comments are explicitly enabled. Wiki/page sync, description sync, and follow-up work item creation are off by default unless the write policy enables them. Secrets, tokens, cookies, credentials, authorization values, session ids, and PII must be redacted before any Plane write.
 
 Guarded Plane workflow:
 - `Ready to Test` -> `In Testing` when execution starts.

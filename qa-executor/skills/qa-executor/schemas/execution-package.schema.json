@@ -177,6 +177,12 @@
       "additionalProperties": false,
       "properties": {
         "comment_sync": { "type": "boolean", "default": true },
+        "progress_comment_sync": { "type": "boolean", "default": false },
+        "comment_timing": {
+          "type": "string",
+          "enum": ["completion_and_review_only", "progress_and_final"],
+          "default": "completion_and_review_only"
+        },
         "status_sync": { "type": "boolean", "default": true },
         "worklog_sync": { "type": "boolean", "default": false },
         "link_sync": { "type": "boolean", "default": false },
