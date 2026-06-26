@@ -45,10 +45,25 @@
         "enabled": { "type": "boolean", "default": true },
         "create_or_update_when_useful": { "type": "boolean", "default": true },
         "target": { "type": "string", "enum": ["project_page", "workspace_page"], "default": "project_page" },
+        "read_existing_page_before_update": { "type": "boolean", "default": true },
+        "update_existing_managed_page": { "type": "boolean", "default": true },
+        "allowed_read_tools": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["retrieve_project_page", "retrieve_workspace_page", "get_project_page", "get_workspace_page"]
+        },
+        "allowed_update_tools": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["update_project_page", "update_workspace_page", "update_page"]
+        },
         "html_body_required": { "type": "boolean", "default": true },
         "page_title_template": { "type": "string", "default": "QA Plan - <PROJECT>-<SEQ> - <feature title>" },
         "preserve_manual_sections": { "type": "boolean", "default": true },
-        "managed_section_marker": { "type": "string", "default": "qa-planner-managed" }
+        "managed_section_marker": { "type": "string", "default": "qa-planner-managed" },
+        "fallback_when_update_unavailable": { "type": "string", "enum": ["create_versioned_page_and_link"], "default": "create_versioned_page_and_link" },
+        "on_page_read_unavailable": { "type": "string", "enum": ["record_plane_page_read_gap"], "default": "record_plane_page_read_gap" },
+        "on_page_update_unavailable": { "type": "string", "enum": ["record_plane_page_update_gap"], "default": "record_plane_page_update_gap" }
       }
     },
     "link_policy": {

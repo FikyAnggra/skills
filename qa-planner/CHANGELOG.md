@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.2.12 - 2026-06-26
+
+- Added explicit Plane page/wiki read and update workflow for QA pages.
+- Added Plane page MCP tool mapping for retrieving, creating, updating, and versioned fallback behavior.
+- Extended Plane output policy schema with page read-before-update, managed-section update, page tool aliases, and page read/update gap handling.
+
+## 0.2.11 - 2026-06-26
+
+- Changed the Notion display column name from `Pre-Conditions` to `PreConditions`.
+- Added Notion view-order policy so the default view, `All Cases`, and every qa-planner-created view use the requested test case column order.
+- Added schema fields for Notion view property order, view-order verification, and view-order gap handling.
+
 ## 0.2.10 - 2026-06-25
 
 - Updated Notion test case database display columns to use `Pre-Conditions` and `Test Step` in the required order.

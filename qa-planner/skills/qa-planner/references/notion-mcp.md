@@ -36,13 +36,13 @@ When Notion output is requested:
 - Create each test case as a database row/page using `notion-create-pages`; put all Template Test Case fields into database properties, including long fields.
 - Store created or reused Notion URLs and IDs in `planning_state.artifact_outputs`, `planning_state.notion_context`, and relevant handoff contracts.
 
-Required test case database properties must use this exact Notion display order and names:
+Required test case database properties and managed table views must use this exact Notion display order and names:
 1. `TC ID`: title, mapped from `tc_id`, stable test case id such as `TC0001`
 2. `Scenario`: rich text, mapped from `scenario`
 3. `Summary`: rich text, mapped from `summary`
 4. `Test Type`: select with qa-planner allowed `test_type` values
 5. `Priority`: select with qa-planner allowed priority values
-6. `Pre-Conditions`: rich text, mapped from `pre_conditions`
+6. `PreConditions`: rich text, mapped from `pre_conditions`
 7. `Test Step`: rich text, mapped from `test_steps`; preserve ordered steps as newline-separated text
 8. `Test Data`: rich text, mapped from `test_data`
 9. `Expected Result`: rich text, mapped from `expected_result`
@@ -51,7 +51,13 @@ Required test case database properties must use this exact Notion display order 
 12. `Automation Status`: select with qa-planner allowed automation status values
 13. `Notes`: rich text, mapped from `notes`
 
-Do not reorder these columns. Do not move `Pre-Conditions`, `Test Step`, `Test Data`, `Expected Result`, `Actual Result`, or `Notes` into row page body by default. The row body can remain empty or contain only optional source backlinks when the user asks for richer row pages.
+Do not reorder these columns. Do not move `PreConditions`, `Test Step`, `Test Data`, `Expected Result`, `Actual Result`, or `Notes` into row page body by default. The row body can remain empty or contain only optional source backlinks when the user asks for richer row pages.
+
+View order policy:
+- After `notion-create-database`, use `notion-create-view` or `notion-update-view` to make the default view, `All Cases`, and every qa-planner-created view show properties in the exact order listed above.
+- Preserve that property order for filtered/sorted views such as `By Priority`, `By Status`, `Automation Candidates`, and `Manual Only`; filters and sorts may differ, property order must not.
+- If Notion MCP returns an existing default view, update it. If the default view cannot be updated, create or update `All Cases` with the required property order, record `notion_view_column_order_gap`, and do not claim the default view order was applied.
+- Verify managed view property order with `notion-fetch`, `notion-query-data-sources`, or view payloads when available. If verification is unavailable, record `notion_view_order_unverified`.
 
 Test plan page rendering must follow `templates/test-plan.md` and stay readable in Notion:
 - Use clear headings matching the template: Metadata, Objective, Source Inputs, Scope, Assumptions and Open Questions, Risk Analysis, Test Strategy, Environment, Entry Criteria, Exit Criteria, Dependencies, Coverage Summary, Handoff Summary.
@@ -91,18 +97,19 @@ Never create duplicate databases for the same package id unless versioning is ex
 1. Resolve destination parent page/database using user input or `notion-search`.
 2. If destination is missing, ask the user for destination unless private-page creation is explicitly acceptable.
 3. Create or reuse the test plan page with `notion-create-pages` / `notion-update-page`, rendering content from `templates/test-plan.md`.
-4. Create or reuse the test case database with `notion-create-database` using the exact Notion display columns and order listed above.
+4. Create or reuse the test case database with `notion-create-database` using the exact Notion display columns listed above.
 5. Ensure required database properties exist with `notion-fetch` and `notion-update-data-source` when needed; if this cannot be done, switch to fallback only after recording the gap.
-6. Create/update views with `notion-create-view` or `notion-update-view`.
+6. Create/update the default view, `All Cases`, and all other managed views with `notion-create-view` or `notion-update-view`, applying the exact property order listed above to each view.
 7. Create test case row pages with `notion-create-pages` in batches.
-8. Update the test plan page with the database link and summary counts.
-9. Record all URLs/IDs in `planning_state` and handoff contracts.
+8. Verify or record gaps for managed view property order.
+9. Update the test plan page with the database link and summary counts.
+10. Record all URLs/IDs in `planning_state` and handoff contracts.
 
 ## Fallback
 
 If `notion-create-database` or required `notion-update-data-source` cannot be used:
 - Create or update a Notion page with a test case table matching `templates/test-case.md` exactly.
-- Include columns in this exact order: `TC ID`, `Scenario`, `Summary`, `Test Type`, `Priority`, `Pre-Conditions`, `Test Step`, `Test Data`, `Expected Result`, `Actual Result`, `Test Case Status`, `Automation Status`, `Notes`.
+- Include columns in this exact order: `TC ID`, `Scenario`, `Summary`, `Test Type`, `Priority`, `PreConditions`, `Test Step`, `Test Data`, `Expected Result`, `Actual Result`, `Test Case Status`, `Automation Status`, `Notes`.
 - Mark `test_cases_database_status = unavailable` and record `notion_database_gap` or `notion_schema_update_gap`.
 - Capture the fallback page URL in `planning_state.notion_context.fallback_test_case_page_url` and `artifact_outputs`.
 

@@ -43,7 +43,7 @@
         "required_properties": {
           "type": "array",
           "items": { "type": "string" },
-          "default": ["TC ID", "Scenario", "Summary", "Test Type", "Priority", "Pre-Conditions", "Test Step", "Test Data", "Expected Result", "Actual Result", "Test Case Status", "Automation Status", "Notes"]
+          "default": ["TC ID", "Scenario", "Summary", "Test Type", "Priority", "PreConditions", "Test Step", "Test Data", "Expected Result", "Actual Result", "Test Case Status", "Automation Status", "Notes"]
         },
         "required_property_types": {
           "type": "object",
@@ -54,7 +54,7 @@
             "Summary": { "type": "string", "const": "rich_text" },
             "Test Type": { "type": "string", "const": "select" },
             "Priority": { "type": "string", "const": "select" },
-            "Pre-Conditions": { "type": "string", "const": "rich_text" },
+            "PreConditions": { "type": "string", "const": "rich_text" },
             "Test Step": { "type": "string", "const": "rich_text" },
             "Test Data": { "type": "string", "const": "rich_text" },
             "Expected Result": { "type": "string", "const": "rich_text" },
@@ -69,7 +69,7 @@
             "Summary": "rich_text",
             "Test Type": "select",
             "Priority": "select",
-            "Pre-Conditions": "rich_text",
+            "PreConditions": "rich_text",
             "Test Step": "rich_text",
             "Test Data": "rich_text",
             "Expected Result": "rich_text",
@@ -88,7 +88,7 @@
             "Summary": { "type": "string", "const": "summary" },
             "Test Type": { "type": "string", "const": "test_type" },
             "Priority": { "type": "string", "const": "priority" },
-            "Pre-Conditions": { "type": "string", "const": "pre_conditions" },
+            "PreConditions": { "type": "string", "const": "pre_conditions" },
             "Test Step": { "type": "string", "const": "test_steps" },
             "Test Data": { "type": "string", "const": "test_data" },
             "Expected Result": { "type": "string", "const": "expected_result" },
@@ -102,6 +102,22 @@
           "type": "array",
           "items": { "type": "string" },
           "default": ["All Cases", "By Priority", "By Status", "Automation Candidates", "Manual Only"]
+        },
+        "view_property_order": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["TC ID", "Scenario", "Summary", "Test Type", "Priority", "PreConditions", "Test Step", "Test Data", "Expected Result", "Actual Result", "Test Case Status", "Automation Status", "Notes"]
+        },
+        "apply_property_order_to": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["default_view", "All Cases", "all_managed_views"]
+        },
+        "verify_view_property_order": { "type": "boolean", "default": true },
+        "on_view_order_unavailable": {
+          "type": "string",
+          "enum": ["record_notion_view_column_order_gap"],
+          "default": "record_notion_view_column_order_gap"
         },
         "batch_size": { "type": "integer", "minimum": 1, "default": 25 }
       }

@@ -372,7 +372,9 @@
       "properties": {
         "view_id": { "type": "string" },
         "name": { "type": "string" },
-        "url": { "type": "string" }
+        "url": { "type": "string" },
+        "property_order": { "type": "array", "items": { "type": "string" }, "default": [] },
+        "property_order_status": { "type": "string", "enum": ["applied", "unavailable", "unverified"], "default": "unverified" }
       }
     },
     "plane_member": {

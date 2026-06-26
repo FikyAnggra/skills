@@ -98,18 +98,26 @@ Planning enrichment tools:
 
 Output and handoff tools:
 - `create_work_item_comment` / `update_work_item_comment`: write or update the managed QA planning summary comment.
+- `retrieve_project_page` / `retrieve_workspace_page`: read an existing Plane page/wiki by id or URL before using it as requirement context or updating managed QA content.
 - `create_project_page` / `create_workspace_page`: publish full QA plan as HTML wiki/page output when requested, long, reusable, or useful for module/cycle scope.
+- `update_project_page` / `update_workspace_page`: update existing Plane page/wiki managed QA sections when the MCP client provides these tools.
 - `update_work_item`: move status, update labels, or update fields only when explicitly requested and after successful sync.
 - `create_work_item_link`: attach external test plan links such as Google Docs, Confluence, or other durable docs to the source work item.
 - `create_work_item`: create QA execution tracker work items or sub-items for test case batches only when user requests Plane handoff tracking.
 - `add_work_items_to_cycle`: place created QA execution tracker items into the configured QA cycle/sprint.
+
+Plane page tool aliases:
+- Some clients expose page tools as `get_project_page`, `get_workspace_page`, `list_project_pages`, `list_workspace_pages`, `update_page`, or generic page APIs. Use the available equivalent only after confirming it reads or writes Plane pages.
+- If no read/list page tool exists, rely on direct page payloads, work item links, or user-provided page URLs and record `plane_page_read_gap`.
+- If no update page tool exists, create a new versioned page with `create_project_page` or `create_workspace_page`, link it to the source work item, and record `plane_page_update_gap`.
 
 Preferred intake sequence for a readable id:
 1. Split `ENG-42` into `project_identifier = ENG` and `work_item_identifier = 42`.
 2. Call `retrieve_work_item_by_identifier`.
 3. From returned UUIDs, call `list_work_item_comments`, `list_work_item_activities`, `list_work_item_relations`, `list_work_item_links`, `list_work_item_properties`, `list_work_item_types`, `get_project_members`, and `list_states` as needed.
 4. If the item belongs to a cycle or module and user requested sprint/module scope, call `list_cycle_work_items` or `list_module_work_items` and plan the batch.
-5. Normalize payload, comments, activities, relations, project members, states, properties, and types into `planning_state` before test case generation.
+5. If links or payload mention Plane pages/wiki, retrieve readable page content with `retrieve_project_page` / `retrieve_workspace_page` or available aliases before test case generation.
+6. Normalize payload, comments, activities, relations, project members, states, properties, types, and page content into `planning_state` before test case generation.
 
 Do not call write tools until planning artifacts are ready, redaction checks pass, and the selected Plane write mode allows writes.
 
@@ -182,10 +190,19 @@ Managed comment idempotency:
 - If found, update that comment with `update_work_item_comment` when available; otherwise append a concise new version comment.
 - If not found, create one comment with `create_work_item_comment`.
 
+Plane page read/update flow:
+1. Detect existing Plane QA pages from work item links, page refs in the payload, source URLs, or user-provided page ids.
+2. Read existing page content with `retrieve_project_page` / `retrieve_workspace_page` or an equivalent page read tool before using it as source context or updating it.
+3. Identify managed QA sections using `qa-planner-managed` markers in `templates/plane-page.md`.
+4. Preserve all manual content outside managed sections.
+5. If a page update tool exists, update only the managed section and append a concise changelog entry.
+6. If no page update tool exists, create a new versioned page, link it back to the work item, and record `plane_page_update_gap`.
+7. If a page cannot be read before update, do not overwrite it. Create a new versioned page or ask the user, then record `plane_page_read_gap`.
+
 Wiki/page publishing:
 - Use `create_project_page` for project-scoped plans and `create_workspace_page` for cross-project plans.
 - Page body must be HTML when the tool expects `description_html`.
-- Preserve manual content by writing only inside managed sections when updating is available; if update is not available, create a new versioned page and link it.
+- Prefer updating existing managed pages when read and update tools are available. Otherwise create a new versioned page and link it.
 
 External plan links:
 - If a durable external plan URL exists or is created outside Plane, attach it with `create_work_item_link`.

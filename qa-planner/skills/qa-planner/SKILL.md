@@ -305,6 +305,8 @@ Plane sync gates, apply only on Plane path:
 - `Analyze Test` was used for analysis/routing only, not large artifact creation.
 - `Update Test` was used for creating/updating requested artifacts.
 - Plane MCP context was resolved when tools were available: work item payload, comments, activities, relations, states, members, properties, types, and requested cycle/module scope.
+- Existing Plane pages/wiki relevant to the request were read before use or `plane_page_read_gap` was recorded.
+- Existing managed Plane pages were updated only inside managed sections when update tooling existed; otherwise a versioned page was created and `plane_page_update_gap` was recorded.
 - Readable attachment content was read or `attachment_read_gap` was recorded.
 - Plane output was added or updated on the source work item/card when write tools were available.
 - Managed Plane output avoids duplicate comments/pages/attachments.
@@ -316,7 +318,8 @@ Notion sync gates, apply only on Notion path:
 - Test plan was created or updated as a Notion page when write tools were available.
 - Test plan page follows the structure of `templates/test-plan.md` and avoids raw JSON dumps.
 - Test cases were created or updated as a Notion database when `notion-create-database` and required `notion-update-data-source` support were available.
-- Test case database has exact Notion display columns in this order: `TC ID`, `Scenario`, `Summary`, `Test Type`, `Priority`, `Pre-Conditions`, `Test Step`, `Test Data`, `Expected Result`, `Actual Result`, `Test Case Status`, `Automation Status`, `Notes`.
+- Test case database has exact Notion display columns in this order: `TC ID`, `Scenario`, `Summary`, `Test Type`, `Priority`, `PreConditions`, `Test Step`, `Test Data`, `Expected Result`, `Actual Result`, `Test Case Status`, `Automation Status`, `Notes`.
+- Default view, `All Cases`, and every qa-planner-created Notion view use the same visual property order; record `notion_view_column_order_gap` when a view cannot be updated and `notion_view_order_unverified` when order cannot be verified.
 - If database/schema tools were unavailable, fallback Notion page contains a table with the same ordered display columns and records the database/schema gap.
 - Notion page/database links were captured in `planning_state` and handoff contracts.
 - Managed Notion artifacts avoid duplicate pages/databases for the same package id.

@@ -24,11 +24,11 @@ For platforms without plugin support, copy `skills/qa-planner/` as a skill folde
 
 Provide requirements, Plane work item/card ids or payloads, PRDs, acceptance criteria, UI or API notes, screenshots, technical constraints, or existing QA artifacts. For revision, provide human review feedback with `OK` or `NOK` and the target area.
 
-Plane inputs can come from work item/card title and description, comments, activities, readable attachment content, wiki/pages, parent or child work items, relations, linked work items, modules, cycles, or direct MCP/API payloads. Plane-specific rules live in `skills/qa-planner/references/plane-hybrid.md` and are loaded only for Plane inputs. If Plane MCP tools are available, the planner resolves readable ids such as `ENG-42`, reads comments and activity history, expands requested cycle/module scope, captures relations and project metadata, and asks the user instead of assuming when required information is missing or conflicting.
+Plane inputs can come from work item/card title and description, comments, activities, readable attachment content, wiki/pages, parent or child work items, relations, linked work items, modules, cycles, or direct MCP/API payloads. Plane-specific rules live in `skills/qa-planner/references/plane-hybrid.md` and are loaded only for Plane inputs. If Plane MCP tools are available, the planner resolves readable ids such as `ENG-42`, reads comments, activity history, linked pages/wiki, expands requested cycle/module scope, captures relations and project metadata, and asks the user instead of assuming when required information is missing or conflicting.
 
 Plane QA planning follows a state workflow. By default, `qa-planner` processes Plane work items only from `Todo Test`, moves them to `Analyze Test` for analysis/routing, uses `Update Test` when artifacts must be created or updated, moves completed work to `Need Review Test`, and moves approved work to `Ready to Test`. Any non-`Todo Test` source state requires separate user confirmation after the current state is known. Mentioning a specific item id or asking for direct planning is not confirmation.
 
-Notion output can create or update a QA test plan page and a Notion test case database. The test case artifact must be a Notion database when `notion-create-database` and required `notion-update-data-source` support are available. Database columns use the required display order: `TC ID`, `Scenario`, `Summary`, `Test Type`, `Priority`, `Pre-Conditions`, `Test Step`, `Test Data`, `Expected Result`, `Actual Result`, `Test Case Status`, `Automation Status`, `Notes`. Notion page/database links are stored in `planning_state`, handoff contracts, and other active platform sync outputs.
+Notion output can create or update a QA test plan page and a Notion test case database. The test case artifact must be a Notion database when `notion-create-database` and required `notion-update-data-source` support are available. Database columns and managed table views use the required display order: `TC ID`, `Scenario`, `Summary`, `Test Type`, `Priority`, `PreConditions`, `Test Step`, `Test Data`, `Expected Result`, `Actual Result`, `Test Case Status`, `Automation Status`, `Notes`. Notion page/database links are stored in `planning_state`, handoff contracts, and other active platform sync outputs.
 
 ## Outputs
 
@@ -78,7 +78,7 @@ Gunakan field:
 - Summary
 - Test Type
 - Priority
-- Pre-Conditions
+- PreConditions
 - Test Step
 - Test Data
 - Expected Result
@@ -193,7 +193,7 @@ Kolom database test cases harus urut:
 3. Summary
 4. Test Type
 5. Priority
-6. Pre-Conditions
+6. PreConditions
 7. Test Step
 8. Test Data
 9. Expected Result
@@ -375,7 +375,7 @@ Rules:
 
 ## Notion MCP Output
 
-When Notion output is requested, `qa-planner` creates the test plan as a Notion page and test cases as a Notion database. The test plan page follows `templates/test-plan.md` with clean headings, compact tables, and bullet lists. Each test case becomes a database row/page with ordered display properties: `TC ID`, `Scenario`, `Summary`, `Test Type`, `Priority`, `Pre-Conditions`, `Test Step`, `Test Data`, `Expected Result`, `Actual Result`, `Test Case Status`, `Automation Status`, and `Notes`.
+When Notion output is requested, `qa-planner` creates the test plan as a Notion page and test cases as a Notion database. The test plan page follows `templates/test-plan.md` with clean headings, compact tables, and bullet lists. Each test case becomes a database row/page with ordered display properties: `TC ID`, `Scenario`, `Summary`, `Test Type`, `Priority`, `PreConditions`, `Test Step`, `Test Data`, `Expected Result`, `Actual Result`, `Test Case Status`, `Automation Status`, and `Notes`. The default view, `All Cases`, and every qa-planner-created view must use that same visual column order; if a view cannot be updated or verified, `qa-planner` records the Notion view order gap.
 
 The planner captures `test_plan_page_url` and `test_case_database_url` in `planning_state.notion_context` and mirrors them into `artifact_outputs` and handoff contracts. If database creation or schema update is unavailable, the planner creates a fallback Notion page containing a table with the same test case columns and records a Notion database/schema gap.
 
@@ -383,7 +383,7 @@ The planner captures `test_plan_page_url` and `test_case_database_url` in `plann
 
 Default Plane write mode is `full_sync`: add or update a concise managed comment on the source work item/card, attach generated artifacts to that source item, create a project/workspace wiki page when useful, link external or Plane pages back to the work item/card, and apply the Plane QA state workflow.
 
-Plane MCP write behavior is deterministic: `create_work_item_comment` / `update_work_item_comment` handle summary comments, `create_project_page` / `create_workspace_page` publish full HTML plans, `create_work_item_link` attaches durable plan links, and `update_work_item` performs dynamic status or label updates only after resolving valid project states. Handoff tracking can create QA execution tracker items with `create_work_item` and place them into a QA cycle with `add_work_items_to_cycle` only when requested or required by an approved handoff contract.
+Plane MCP write behavior is deterministic: `create_work_item_comment` / `update_work_item_comment` handle summary comments, `retrieve_project_page` / `retrieve_workspace_page` read existing Plane pages when available, `create_project_page` / `create_workspace_page` publish full HTML plans, optional `update_project_page` / `update_workspace_page` update managed page sections when the MCP client supports it, `create_work_item_link` attaches durable plan links, and `update_work_item` performs dynamic status or label updates only after resolving valid project states. If page update tooling is unavailable, qa-planner creates a versioned replacement page, links it, and records `plane_page_update_gap`. Handoff tracking can create QA execution tracker items with `create_work_item` and place them into a QA cycle with `add_work_items_to_cycle` only when requested or required by an approved handoff contract.
 
 Plane QA state transitions are:
 - `Todo Test` -> `Analyze Test` when qa-planner starts analysis/planning.
