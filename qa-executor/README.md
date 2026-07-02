@@ -65,6 +65,8 @@ Plane is a synced workflow surface, not the canonical state. `execution_result.j
 
 Managed Plane output uses idempotency keys and markers to avoid duplicate comments, description summaries, worklogs, wiki pages, links, and follow-up items. By default, qa-executor does not create comments when moving `Ready to Test` -> `In Testing` and does not create progress comments while testing. Plane terminal result comments are required when Plane context is active and qa-executor reaches a terminal outcome, including completed execution, review approval, blocked, cancelled, source-not-executable, and state-not-ready outcomes. If the comment cannot be written, qa-executor records `terminal_comment_gap`. Wiki/page sync, description sync, and follow-up work item creation are off by default unless the write policy enables them. Secrets, tokens, cookies, credentials, authorization values, session ids, and PII must be redacted before any Plane write.
 
+Review approval must produce only one managed Plane review approval comment for an execution id. qa-executor must not write a separate free-form sync narrative such as `qa-executor review approval sync for ...`; that detail belongs in `execution_result.json`, `plane_sync`, or the managed review approval comment.
+
 Guarded Plane workflow:
 - `Ready to Test` -> `In Testing` when execution starts.
 - `In Testing` -> `Need Review Test Execute` when all selected test cases have final status.

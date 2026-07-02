@@ -291,6 +291,8 @@ Plane terminal comment invariant:
 - Terminal outcomes include `execution_finished`, `review_approved`, `source_not_executable`, `plane_state_not_ready`, `blocked`, `cancelled`, and `sync_failed_after_local_result`.
 - If a Plane terminal comment cannot be written because tools, access, confirmation, or API support are unavailable, record `plane_sync.terminal_comment_gap` and keep the local result valid but not fully synced.
 - Do not duplicate full Notion reports in Plane. Keep Plane terminal comments summary-only and link to detailed outputs when they exist.
+- On review approval, create or update only one managed Plane review approval comment for that `execution_id`. Do not create a second free-form sync narrative comment.
+- Treat comments like `qa-executor review approval sync for <execution_id>: recorded approve decision...` as `redundant_review_sync_comment`; never write them to Plane. Store that sync detail in `execution_result.json`, `plane_sync`, or the managed review approval comment instead.
 
 Include this marker in managed comments:
 
@@ -318,6 +320,11 @@ Review approval comment content, written after user approval when the state move
 - issue/no-issue decision basis
 - qa_reporter_handoff ref
 - issue candidate refs when applicable
+
+Review approval comment uniqueness:
+- Use the managed marker and idempotency key to update the existing managed review approval comment for the same `execution_id`.
+- Do not write a separate summary/sync comment after the managed review approval comment is posted.
+- If duplicate approval comment creation is attempted or detected, record `plane_sync.duplicate_review_comment_gap` and keep only the managed review approval comment as the Plane-facing output.
 
 When a managed Notion execution page exists, keep Plane output summary-only. Do not duplicate the full Notion report in Plane comments, links, worklogs, or description. Plane managed comments may include execution id, package id, run mode, status transition, summary counts, failed and blocked TC ids, blocker count, redaction status, and the Notion execution page link. Omit full per-test tables, detailed steps, detailed evidence, reproduction steps, and full issue candidate details from Plane when Notion is the detailed report surface.
 
@@ -485,7 +492,7 @@ For `OK`:
 - keep Plane managed output in sync when Plane write policy allows it.
 - keep Notion managed output in sync when Notion write policy allows it.
 - when Plane state workflow is active and current state is `Need Review Test Execute`, move Plane to `Need Issue Report` if any failed, blocked, bug, issue, or problem exists; otherwise move Plane to `Ready to Report`.
-- after the review OK state transition, create or update the Plane managed comment with the review approval summary when `comment_sync = true`.
+- after the review OK state transition, create or update the single Plane managed review approval comment when `comment_sync = true`. Do not add a separate free-form sync summary comment.
 
 For `NOK`:
 - record feedback in `execution_review_history` using `schemas/execution-review.schema.json` when structured review is needed.
@@ -552,6 +559,8 @@ Plane gates, when Plane path is active:
 - no Plane progress comment was created during testing unless `progress_comment_sync = true`.
 - managed completion/review comment was synced or sync gap was recorded when testing finished or review approval was processed.
 - managed terminal result comment was synced or `terminal_comment_gap` was recorded for every Plane terminal outcome, including source-not-executable, state-not-ready, blocked, cancelled, and sync-failed outcomes.
+- review approval produced only one managed Plane comment for the execution id; no free-form `qa-executor review approval sync for ...` comment was created.
+- duplicate review approval comments were avoided or `plane_sync.duplicate_review_comment_gap` was recorded.
 - status transition succeeded or was skipped with reason.
 - worklog synced or skipped with reason.
 - description summary synced or skipped with reason when `description_sync` is enabled.

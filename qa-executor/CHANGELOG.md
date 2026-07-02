@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.15.0 - 2026-07-02
+
+- Suppressed redundant free-form Plane review approval sync comments such as `qa-executor review approval sync for ...`.
+- Required review approval to create or update only one managed Plane review approval comment per execution id.
+- Added `review_approval_comment_count`, `redundant_review_sync_comment_suppressed`, and `duplicate_review_comment_gap` fields to Plane sync result metadata.
+- Updated Plane managed comment template to expose review approval comment count and redundant sync suppression.
+
 ## 0.14.0 - 2026-07-02
 
 - Required managed Plane terminal result comments whenever Plane context is active and qa-executor reaches a terminal outcome.

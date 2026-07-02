@@ -10,6 +10,8 @@
 - Comment timing: `<plane_sync.comment_timing>`
 - Terminal outcome: `<plane_sync.terminal_comment_outcome>`
 - Terminal comment status: `<plane_sync.terminal_comment_status>`
+- Review approval comment count: `<plane_sync.review_approval_comment_count>`
+- Redundant review sync comment suppressed: `<plane_sync.redundant_review_sync_comment_suppressed>`
 - Progress comment created: `<plane_sync.progress_comment_created>`
 - Review status: `<review_status>`
 - Detailed report: `<notion_plane_bridge.notion_execution_page_ref or execution_report_ref>`

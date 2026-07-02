@@ -465,6 +465,9 @@
           "enum": ["execution_finished", "review_approved", "source_not_executable", "plane_state_not_ready", "blocked", "cancelled", "sync_failed_after_local_result", "other"]
         },
         "terminal_comment_gap": { "type": "string" },
+        "review_approval_comment_count": { "type": "integer", "minimum": 0 },
+        "redundant_review_sync_comment_suppressed": { "type": "boolean" },
+        "duplicate_review_comment_gap": { "type": "string" },
         "comment_timing": {
           "type": "string",
           "enum": ["completion_and_review_only", "progress_and_final"]
