@@ -8,6 +8,8 @@
 - Environment: `<environment.name>`
 - Status: `<plane_sync.status_before>` -> `<plane_sync.status_after>`
 - Comment timing: `<plane_sync.comment_timing>`
+- Terminal outcome: `<plane_sync.terminal_comment_outcome>`
+- Terminal comment status: `<plane_sync.terminal_comment_status>`
 - Progress comment created: `<plane_sync.progress_comment_created>`
 - Review status: `<review_status>`
 - Detailed report: `<notion_plane_bridge.notion_execution_page_ref or execution_report_ref>`
@@ -20,6 +22,9 @@
 - Review state: `Need Review Test Execute`
 - Final workflow state: `<plane_state_workflow.final_review_state>`
 - Approval override: `<plane_state_workflow.approval_override.approved>`
+- Fresh approval required: `<plane_state_workflow.approval_override.fresh_approval_required>`
+- Initial prompt override ignored: `<plane_state_workflow.approval_override.initial_prompt_override_ignored>`
+- Approval source turn: `<plane_state_workflow.approval_override.approval_source_turn>`
 - Approval note: `<plane_state_workflow.approval_override.approval_text>`
 
 ## Counts
@@ -37,6 +42,8 @@
 
 ## Sync
 
+- Source update summary: `<source_update_summary>`
+- Source update gaps: `<source_update_gaps>`
 - Worklog: `<plane_sync.worklog_id>`
 - Notion report link synced: `<plane_to_notion_link_sync_status>`
 - Sync status: `<plane_sync.sync_status>`

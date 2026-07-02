@@ -181,6 +181,8 @@
         "url": { "type": "string" },
         "request_headers": { "type": "object", "additionalProperties": true },
         "request_body_summary": { "type": "object", "additionalProperties": true },
+        "redacted_curl": { "type": "string" },
+        "curl_generation_gap": { "type": "string" },
         "response_status": { "type": "integer" },
         "response_body_summary": { "type": "object", "additionalProperties": true }
       }
@@ -370,6 +372,8 @@
       "properties": {
         "tc_id": { "type": "string", "minLength": 1 },
         "source_locator": { "$ref": "#/$defs/source_locator" },
+        "required": { "type": "boolean" },
+        "gap_reason": { "type": "string" },
         "fields": {
           "type": "object",
           "additionalProperties": {
@@ -451,6 +455,16 @@
       "properties": {
         "source_work_item": { "type": "string" },
         "managed_comment_id": { "type": ["string", "null"] },
+        "terminal_comment_required": { "type": "boolean" },
+        "terminal_comment_status": {
+          "type": "string",
+          "enum": ["not_started", "synced", "partial", "failed", "skipped"]
+        },
+        "terminal_comment_outcome": {
+          "type": "string",
+          "enum": ["execution_finished", "review_approved", "source_not_executable", "plane_state_not_ready", "blocked", "cancelled", "sync_failed_after_local_result", "other"]
+        },
+        "terminal_comment_gap": { "type": "string" },
         "comment_timing": {
           "type": "string",
           "enum": ["completion_and_review_only", "progress_and_final"]
@@ -526,6 +540,12 @@
       "properties": {
         "required": { "type": "boolean" },
         "approved": { "type": "boolean" },
+        "fresh_approval_required": { "type": "boolean" },
+        "initial_prompt_override_ignored": { "type": "boolean" },
+        "approval_source_turn": {
+          "type": "string",
+          "enum": ["initial_prompt", "state_confirmation_response", "not_provided"]
+        },
         "approval_text": { "type": "string" },
         "approved_by": { "type": "string" },
         "approved_at": { "type": ["string", "null"] },

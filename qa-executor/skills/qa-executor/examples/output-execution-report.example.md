@@ -66,6 +66,15 @@ Completion rate: 100%
 | ISSUE-CAND-TC0002 | TC0002 | High | Invalid password allows dashboard access | Required |
 | ISSUE-CAND-TC0003 | TC0003 | Medium | Product persistence test blocked by missing DB credential | Required |
 
+## API Reproduction cURL
+
+All snippets are redacted before publication.
+
+| TC ID | Status | cURL / Gap |
+| --- | --- | --- |
+| TC0002 | Failed | `curl -X POST 'https://staging.example.com/api/auth/login' -H 'Authorization: Bearer <REDACTED>' -H 'Content-Type: application/json' --data '{"email":"active_user@example.com","password":"<REDACTED>"}'` |
+| TC0003 | Blocked | `curl -X POST 'https://staging.example.com/api/products' -H 'Authorization: Bearer <REDACTED>' -H 'Content-Type: application/json' --data '{"sku":"SKU-EXEC-001","name":"Executor Example Product"}'` |
+
 ## Downstream Handoff
 
 - `qa_reporter_handoff`: reference `execution_result.json`, summary, issue candidates, evidence refs, and OK review metadata.

@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.14.0 - 2026-07-02
+
+- Required managed Plane terminal result comments whenever Plane context is active and qa-executor reaches a terminal outcome.
+- Added `terminal_comment_required`, `terminal_comment_status`, `terminal_comment_outcome`, and `terminal_comment_gap` sync fields.
+- Strengthened source test case status updates as mandatory for every executed test case with a source locator, including qa-planner and qa-executor handoff sources.
+- Required `source_update_gap` when the original Notion, Excel, spreadsheet, document, Markdown, JSON, Plane, or other test case source cannot be updated.
+- Updated Plane managed comment template to include terminal outcome and source update summaries.
+
+## 0.13.0 - 2026-07-02
+
+- Required fresh Plane state override approval after qa-executor reads the actual Plane state and asks the state-specific confirmation question.
+- Clarified that approval-like text in the initial prompt is execution intent only and must not bypass the `Ready to Test` gate.
+- Added approval audit fields for `fresh_approval_required`, `initial_prompt_override_ignored`, and `approval_source_turn`.
+- Updated Plane managed comment template to show fresh approval audit fields.
+
+## 0.12.0 - 2026-07-02
+
+- Added redacted reproducible curl evidence for failed, blocked, or otherwise problematic API execution results.
+- Added `redacted_curl` and `curl_generation_gap` fields to API evidence in `execution_result.json`.
+- Updated execution report, Notion execution page, and Plane wiki templates to include API reproduction curl sections.
+- Updated examples to show redacted curl snippets for failed and blocked API cases.
+
 ## 0.11.0 - 2026-06-26
 
 - Enforced source test case updates even when an execution report page/document/workbook is requested.

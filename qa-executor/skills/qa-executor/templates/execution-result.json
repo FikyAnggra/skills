@@ -82,6 +82,9 @@
     "approval_override": {
       "required": false,
       "approved": false,
+      "fresh_approval_required": false,
+      "initial_prompt_override_ignored": false,
+      "approval_source_turn": "not_provided",
       "approval_text": "",
       "approved_by": "",
       "approved_at": null,
@@ -119,6 +122,8 @@
         "data_source_id": "notion-data-source-id",
         "locator_confidence": "high"
       },
+      "required": true,
+      "gap_reason": "",
       "fields": {
         "Test Case Status": "Passed",
         "Actual Result": "User landed on dashboard.",

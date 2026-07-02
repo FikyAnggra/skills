@@ -1,6 +1,6 @@
 ---
 name: qa-executor
-description: Portable QA execution agent for approved qa-planner handoffs, manual test cases, Plane.so work items, Notion pages/databases, spreadsheets, and documents. Executes or guides API/UI/DB/manual QA, enforces guarded Plane workflow states, writes Plane comments only at completion/review by default, captures redacted evidence, writes execution_result JSON, incrementally updates source test case rows/items even when an execution report is requested, embeds or uploads image evidence when supported, syncs managed Plane/Notion output, creates issue candidates, handles OK/NOK review, and produces qa-reporter handoffs and qa-automation signals. Use for QA execution, retest, smoke/targeted runs, evidence capture, source row updates, Plane/Notion execution sync, Plane work item execution, and execution result prep. Do not use for test planning, final defect submission, final automation scripts, or final QA reports.
+description: Portable QA execution agent for approved qa-planner handoffs, manual test cases, Plane.so work items, Notion pages/databases, spreadsheets, and documents. Executes or guides API/UI/DB/manual QA, enforces guarded Plane workflow states, writes Plane terminal result comments whenever Plane context is active, captures redacted evidence including reproducible redacted curl for failed/blocked API cases, writes execution_result JSON, requires source test case status updates or explicit gaps for every executed test case even when handoff/report outputs exist, embeds or uploads image evidence when supported, syncs managed Plane/Notion output, creates issue candidates, handles OK/NOK review, and produces qa-reporter handoffs and qa-automation signals. Use for QA execution, retest, smoke/targeted runs, evidence capture, source row updates, Plane/Notion execution sync, Plane work item execution, and execution result prep. Do not use for test planning, final defect submission, final automation scripts, or final QA reports.
 ---
 
 # QA Executor
@@ -13,7 +13,7 @@ Do execution work only. Do not create test plans, invent test cases from raw req
 
 Plane, Notion, spreadsheets, documents, and other source artifacts are synced workflow surfaces, not the source of truth. Keep `execution_result.json` canonical and render source row/item updates, Plane/Notion comments, status moves, worklogs, links, wiki pages, and optional report pages from that state.
 
-Default to incremental source updates. Read one test case or a small ordered batch, execute it, update the same source row/item/section when writable, record the update result in `execution_result.json`, then continue. Do not create a new execution report document/page/workbook by default. Create a new report only when the user explicitly asks for report output or the package sets report output policy to enabled. Report creation is additive only; it never replaces source test case status updates.
+Default to mandatory incremental source updates. Read one test case or a small ordered batch, execute it, update the same source row/item/section when writable, record the update result in `execution_result.json`, then continue. When a selected test case came from Notion, Excel, Google Sheets, Google Docs, Word, Markdown, JSON, Plane, a qa-planner handoff, a qa-executor handoff, or any other source with a locator, source status update is required. If the source cannot be updated, record a `source_update_gap`; do not silently skip it. Do not create a new execution report document/page/workbook by default. Create a new report only when the user explicitly asks for report output or the package sets report output policy to enabled. Report creation, handoff contracts, Plane comments, and `execution_result.json` are additive only; they never replace source test case status updates.
 
 ## Input Paths
 
@@ -93,7 +93,7 @@ Execution modes:
 
 Default to sequential execution. Run in parallel only when cases are independent, use isolated data, do not share mutable state, and run policy allows it.
 
-## Incremental Source Updates
+## Mandatory Incremental Source Updates
 
 Default execution loop:
 1. Read one test case or a small ordered batch from the source.
@@ -103,6 +103,13 @@ Default execution loop:
 5. Continue to the next selected test case.
 
 Do not wait until all tests finish to update source statuses unless the platform only supports batch writes or the user requests a dry run.
+
+Source update invariant:
+- Every executed test case with a source locator must produce either a `source_update` record or a `source_update_gap`.
+- This applies even when the execution input is a `qa_executor` handoff, `qa-planner` handoff, Plane work item, Notion link discovered from Plane, spreadsheet, document, Markdown, JSON, or manually supplied test case document.
+- Do not treat `execution_result.json`, QA Execution Report, Notion execution page, Plane comment, Plane wiki, reporter handoff, or automation signal as a substitute for updating the original test case status.
+- If a handoff contains test cases copied from another source, preserve and use their original source locators. If the handoff lacks locators, record `source_update_gap` with reason `missing_source_locator`.
+- If source update requires user confirmation, ask before attempting writes. If confirmation is unavailable or denied, record `source_update_gap`; do not mark the source as synced.
 
 Source update fields:
 - `Test Case Status`
@@ -167,7 +174,9 @@ State validation before execution:
 - If the current Plane state is `Ready to Test`, qa-executor may move it to `In Testing` and start execution after normal write-policy approval.
 - If the current Plane state is not `Ready to Test`, qa-executor must ask the user for approval before testing or moving the item to `In Testing`.
 - Use this prompt shape: `Work item <id> saat ini berada di state <current_state>, bukan Ready to Test. qa-executor hanya boleh langsung bekerja dari Ready to Test. Apakah tetap lanjut testing dan pindahkan ke In Testing?`
-- Approval override phrases include `ok`, `approve`, `lanjut`, `ya`, `boleh`, `proceed`, and equivalent confirmations.
+- Fresh approval rule: approval override is valid only when it is given after qa-executor has read the actual Plane state and asked the state-specific confirmation question. Do not treat approval-like text in the initial user prompt as valid approval override.
+- Initial prompt phrases such as `eksekusi`, `lanjut`, `approve`, `jalankan walaupun state apa pun`, or equivalent first-turn instructions are execution intent only. If the state is not `Ready to Test`, record `initial_prompt_override_ignored = true`, set `fresh_approval_required = true`, ask the state-specific confirmation question, and stop.
+- Approval override phrases include `ok`, `approve`, `lanjut`, `ya`, `boleh`, `proceed`, and equivalent confirmations only when they appear in the follow-up user response to the state-specific confirmation question.
 - When approval override is given, record the reviewer/user approval text, timestamp, previous state, target state, and reason in `execution_result.json`. Do not create a Plane comment only for approval override; include it later in the completion or review managed comment.
 - If approval override is not given, do not execute. Record `plane_state_not_ready` and wait for user action.
 
@@ -184,7 +193,8 @@ Ask the user for this mapping when it is absent. Match mapped names against the 
 When the project contains the named workflow states above, prefer the Plane state workflow mapping over generic status mapping. If a workflow state is missing from the Plane project, record `plane_sync.status_transition_gap`, ask for mapping only for the missing transition, and continue local execution only when safe.
 
 Plane write policy fields:
-- `comment_sync`: create or update a managed Plane comment only when testing is finished or after user review approval. Do not comment on start/progress by default.
+- `comment_sync`: create or update a managed Plane terminal result comment whenever Plane context is active and qa-executor reaches a terminal outcome. Do not comment on start/progress by default.
+- `terminal_comment_required`: require a managed Plane terminal result comment or explicit `terminal_comment_gap` for every Plane execution attempt. Default is `true`.
 - `progress_comment_sync`: create progress comments while execution is running. Default is `false`; enable only when the user explicitly asks for live progress comments.
 - `status_sync`: move Plane state using approved mapping.
 - `worklog_sync`: create or update one execution worklog.
@@ -248,6 +258,11 @@ Dependency rule: if test case A fails and test case B depends on A, mark B as `B
 API execution:
 - Use provided endpoints, methods, headers, payloads, auth sources, and expected assertions only.
 - Capture request summary, response status, response body summary, assertions, duration, and logs where available.
+- For API results with `Failed`, `Blocked`, or another problem status, generate a reproducible `redacted_curl` when method, URL, headers, and body are known.
+- Put `redacted_curl` in `execution_result.json` API evidence and in requested execution reports. Do not add curl for `Passed` cases unless the user explicitly asks.
+- If curl cannot be generated because request details are missing, ambiguous, unsafe, or only available as a non-reproducible summary, record `curl_generation_gap`.
+- Redact authorization headers, bearer/basic tokens, API keys, cookies, passwords, secrets, credentials, session ids, and visible PII before storing curl.
+- Replace sensitive values with placeholders such as `<REDACTED>` or `<TEST_VALUE_REQUIRED>`; never publish raw production credentials or raw user PII in curl.
 - Redact secrets before storing evidence.
 
 UI execution:
@@ -269,7 +284,13 @@ Manual instruction execution:
 
 ## Plane Managed Sync
 
-Use one managed Plane comment for completion and review outcomes unless the user requests versioned comments. Do not create or update a Plane comment when moving `Ready to Test` -> `In Testing`, and do not create progress comments while test execution is running unless `progress_comment_sync = true` is explicitly enabled.
+Use one managed Plane comment for terminal outcomes unless the user requests versioned comments. Do not create or update a Plane comment when moving `Ready to Test` -> `In Testing`, and do not create progress comments while test execution is running unless `progress_comment_sync = true` is explicitly enabled.
+
+Plane terminal comment invariant:
+- When Plane context is active and qa-executor does any work on the item, create or update a managed Plane terminal result comment after the work reaches a terminal outcome.
+- Terminal outcomes include `execution_finished`, `review_approved`, `source_not_executable`, `plane_state_not_ready`, `blocked`, `cancelled`, and `sync_failed_after_local_result`.
+- If a Plane terminal comment cannot be written because tools, access, confirmation, or API support are unavailable, record `plane_sync.terminal_comment_gap` and keep the local result valid but not fully synced.
+- Do not duplicate full Notion reports in Plane. Keep Plane terminal comments summary-only and link to detailed outputs when they exist.
 
 Include this marker in managed comments:
 
@@ -277,7 +298,7 @@ Include this marker in managed comments:
 <!-- qa-executor:execution:<execution_id>:<plane_work_item_id> -->
 ```
 
-Completion comment content, written when execution finishes and the state moves `In Testing` -> `Need Review Test Execute`:
+Completion comment content, written when execution finishes and the state moves `In Testing` -> `Need Review Test Execute` or another terminal outcome is reached:
 - execution id and package id
 - summary counts
 - failed and blocked TC ids
@@ -289,6 +310,7 @@ Completion comment content, written when execution finishes and the state moves 
 - redaction status
 - review status
 - review instruction
+- source update summary and gaps
 
 Review approval comment content, written after user approval when the state moves out of `Need Review Test Execute`:
 - reviewer and review decision
@@ -352,6 +374,8 @@ Source database update rule: when `source_database_update = true`, update existi
 
 Report coexistence rule: when `execution_page_sync = true` or `report_output_policy.create_report = true`, still update source test case rows/pages when writable and allowed. The execution page is a rendered report, not the test case source update.
 
+Handoff coexistence rule: when a Notion source, spreadsheet source, document source, or other test case document is referenced through a qa-planner or qa-executor handoff, update the original source rows/pages/items when writable and allowed. The handoff is an execution input, not the status update target unless it is the only source locator available.
+
 Execution database rule: when `execution_database_sync = true`, create or update result rows keyed by `execution_id + tc_id`. Use `templates/notion-result-row.json` as the row shape.
 
 Comment rule: when `comment_sync = true`, add or update concise comments for execution progress, final result, or OK/NOK review decisions.
@@ -390,7 +414,7 @@ Bridge behavior after execution:
 - Update Notion test case rows or pages from `execution_result.json` when `notion_write_policy.source_database_update = true`.
 - Create or update a Notion execution page only when `notion_write_policy.execution_page_sync = true` or `report_output_policy.create_report = true`.
 - If both source updates and a Notion execution page/report are enabled, attempt source row/page updates first or in the same execution pass, then render the execution page from the canonical result.
-- Update Plane managed comment, status, worklog, links, and description summary according to `plane_write_policy`. Plane managed comments must follow completion/review-only timing unless `progress_comment_sync = true`.
+- Update Plane managed terminal comment, status, worklog, links, and description summary according to `plane_write_policy`. Plane managed comments must follow terminal-only timing unless `progress_comment_sync = true`.
 - Add the Notion execution page link to Plane output when `plane_write_policy.link_sync = true`.
 - Add or update the Notion execution page link in the Plane managed comment and managed description summary when those sync policies are enabled.
 - Add the Plane work item link to the Notion execution page when `notion_write_policy.execution_page_sync = true`.
@@ -479,7 +503,7 @@ Canonical output:
 - `execution_result.json` using `schemas/execution-result.schema.json`.
 
 Human outputs:
-- Source row/item updates where `Actual Result`, `Test Case Status`, `Notes`, `Evidence`, and `Evidence Status` derive from `execution_result.json`.
+- Mandatory source row/item updates or source update gaps where `Actual Result`, `Test Case Status`, `Notes`, `Evidence`, and `Evidence Status` derive from `execution_result.json`.
 - Markdown execution report using `templates/execution-report.md` only when report output is requested.
 - Spreadsheet-compatible exports only when requested or required by the source update path.
 
@@ -487,7 +511,7 @@ Downstream outputs:
 - `qa_reporter_handoff` using `templates/qa-reporter-handoff.json`.
 - `qa_automation_signal` using `templates/qa-automation-signal.json` when relevant.
 - Issue candidates using `templates/issue-candidate.json`.
-- Plane managed comment using `templates/plane-execution-comment.md` when `comment_sync` is enabled.
+- Plane managed terminal result comment using `templates/plane-execution-comment.md` whenever Plane context is active and `comment_sync` is enabled, or `terminal_comment_gap` when it cannot be written.
 - Plane managed description summary using `templates/plane-description-summary.md` when `description_sync` is enabled.
 - Plane wiki/page using `templates/plane-wiki-page.md` only when `wiki_sync` is enabled.
 - Plane sync records using `templates/plane-sync-record.json` when Plane writes are attempted.
@@ -504,8 +528,10 @@ Before presenting review-ready output, verify:
 - dependency blocks include `blocked_by`.
 - every retry is logged.
 - evidence is redacted or gaps are explicit.
+- every failed, blocked, or problematic API result has `redacted_curl` or `curl_generation_gap`.
 - image evidence is uploaded/embedded when supported or `evidence_upload_gap` is recorded.
 - every selected writable-source test case has a source update record or `source_update_gap`.
+- every executed test case with a source locator has a source update record or `source_update_gap`, regardless of whether the input came from handoff, report output, Plane, Notion, spreadsheet, document, Markdown, JSON, or manual test case document.
 - no new report page/document/workbook is created unless report output is explicitly requested.
 - if a report page/document/workbook is created, source update records or gaps still exist for every selected writable-source test case.
 - issue candidates exist for `Failed` and `Blocked`.
@@ -517,13 +543,15 @@ Plane gates, when Plane path is active:
 - Plane input was executable or `source_not_executable` was recorded.
 - Plane current state was read before execution or `plane_state_read_gap` was recorded.
 - Plane project states were read before transition or `plane_state_list_gap` was recorded.
-- if current state was not `Ready to Test`, user approval override was captured before execution or execution was skipped with `plane_state_not_ready`.
+- if current state was not `Ready to Test`, fresh user approval override was captured after the state-specific confirmation question, or execution was skipped with `plane_state_not_ready`.
+- approval-like text from the initial prompt was ignored for Plane state override and recorded with `initial_prompt_override_ignored = true` when present.
 - status mapping was resolved before status sync.
 - write policy was resolved before Plane writes.
 - Plane workflow transition used `Ready to Test` -> `In Testing` -> `Need Review Test Execute` -> review outcome state when those states exist.
 - no Plane comment was created for `Ready to Test` -> `In Testing` start transition unless `progress_comment_sync = true`.
 - no Plane progress comment was created during testing unless `progress_comment_sync = true`.
 - managed completion/review comment was synced or sync gap was recorded when testing finished or review approval was processed.
+- managed terminal result comment was synced or `terminal_comment_gap` was recorded for every Plane terminal outcome, including source-not-executable, state-not-ready, blocked, cancelled, and sync-failed outcomes.
 - status transition succeeded or was skipped with reason.
 - worklog synced or skipped with reason.
 - description summary synced or skipped with reason when `description_sync` is enabled.

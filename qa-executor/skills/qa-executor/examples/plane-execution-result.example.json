@@ -116,6 +116,7 @@
             "url": "https://staging.example.com/api/auth/login",
             "request_headers": { "authorization": "[REDACTED]" },
             "request_body_summary": { "email": "active_user@example.com", "password": "[REDACTED]" },
+            "redacted_curl": "curl -X POST 'https://staging.example.com/api/auth/login' -H 'Authorization: Bearer <REDACTED>' -H 'Content-Type: application/json' --data '{\"email\":\"active_user@example.com\",\"password\":\"<REDACTED>\"}'",
             "response_status": 200,
             "response_body_summary": { "token": "[REDACTED]", "user_id": "usr_123" }
           }

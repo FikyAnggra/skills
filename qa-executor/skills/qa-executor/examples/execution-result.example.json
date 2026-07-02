@@ -128,6 +128,7 @@
             "url": "https://staging.example.com/api/auth/login",
             "request_headers": { "authorization": "[REDACTED]" },
             "request_body_summary": { "email": "active_user@example.com", "password": "[REDACTED]" },
+            "redacted_curl": "curl -X POST 'https://staging.example.com/api/auth/login' -H 'Authorization: Bearer <REDACTED>' -H 'Content-Type: application/json' --data '{\"email\":\"active_user@example.com\",\"password\":\"<REDACTED>\"}'",
             "response_status": 200,
             "response_body_summary": { "token": "[REDACTED]", "user_id": "usr_123" }
           }
@@ -201,6 +202,7 @@
             "url": "https://staging.example.com/api/products",
             "request_headers": { "authorization": "[REDACTED]" },
             "request_body_summary": { "sku": "SKU-EXEC-001", "name": "Executor Example Product" },
+            "redacted_curl": "curl -X POST 'https://staging.example.com/api/products' -H 'Authorization: Bearer <REDACTED>' -H 'Content-Type: application/json' --data '{\"sku\":\"SKU-EXEC-001\",\"name\":\"Executor Example Product\"}'",
             "response_status": 201,
             "response_body_summary": { "product_id": "prod_123", "sku": "SKU-EXEC-001" }
           }

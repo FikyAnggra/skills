@@ -1,6 +1,6 @@
 # QA Executor
 
-`qa-executor` is a portable QA execution skill package. It runs approved test cases when tools and access are safe, enforces the guarded Plane.so QA state workflow, produces manual execution instructions when needed, captures redacted evidence, writes `execution_result.json`, incrementally updates the original test case source when writable, and can sync managed execution output back to Plane.so, Notion, documents, spreadsheets, or bridge contracts.
+`qa-executor` is a portable QA execution skill package. It runs approved test cases when tools and access are safe, enforces the guarded Plane.so QA state workflow, produces manual execution instructions when needed, captures redacted evidence, writes `execution_result.json`, requires original test case source status updates or explicit gaps, and can sync managed execution output back to Plane.so, Notion, documents, spreadsheets, or bridge contracts.
 
 ## Contents
 
@@ -19,7 +19,7 @@ Use manual input when a human provides test cases from Excel, Google Sheets, Mar
 
 Use Plane input when a user provides a Plane readable id such as `ENG-42`, a Plane URL, UUID, or MCP payload. Plane content is executable only when it contains an executor handoff, structured execution package, or minimum test case fields. Raw requirements should be routed to `qa-planner` instead of executed.
 
-For Plane Managed Sync, resolve the work item, project states, write policy, and guarded state workflow before execution. qa-executor may start directly only from `Ready to Test`. If the work item is in another state, it must ask for user approval before testing and moving to `In Testing`. Write policy controls completion/review comments, status movement, worklogs, links, wiki/page sync, follow-up creation, and confirmation requirements.
+For Plane Managed Sync, resolve the work item, project states, write policy, and guarded state workflow before execution. qa-executor may start directly only from `Ready to Test`. If the work item is in another state, it must ask for fresh user approval after reading the actual Plane state before testing and moving to `In Testing`. Approval-like text in the initial prompt is execution intent only and must not be treated as a Plane state override. Write policy controls completion/review comments, status movement, worklogs, links, wiki/page sync, follow-up creation, and confirmation requirements.
 
 Use Notion input when a user provides a Notion page URL, database URL, data source id, page id, or MCP payload. Notion content is executable only when it contains an executor handoff, structured execution package, or minimum test case fields. Raw requirements should be routed to `qa-planner` instead of executed.
 
@@ -29,12 +29,13 @@ Use Notion + Plane bridge when Plane tracks the QA work item and Notion stores t
 
 Expected outputs are:
 - `execution_result.json` as source of truth.
-- incremental source row/item updates for status, actual result, notes, evidence, and evidence status, even when a separate execution report is requested.
+- mandatory source row/item updates or source update gaps for status, actual result, notes, evidence, and evidence status, even when a separate execution report, qa-planner handoff, or qa-executor handoff is present.
 - Markdown/Notion/Google Doc/Word/spreadsheet reports only when explicitly requested.
+- redacted reproducible curl snippets in reports for failed, blocked, or otherwise problematic API test cases.
 - issue candidates for failed and blocked cases.
 - `qa_reporter_handoff` after human OK review.
 - `qa_automation_signal` when automation gaps or update candidates exist.
-- managed Plane execution comment when testing is finished or review is approved and `comment_sync` is enabled.
+- managed Plane terminal result comment whenever Plane context is active and qa-executor reaches a terminal outcome, or `terminal_comment_gap` when it cannot be written.
 - Plane worklog/status/link sync when enabled.
 - Plane wiki/page only when `wiki_sync` is explicitly true.
 - managed Notion execution page only when `execution_page_sync` is enabled by an explicit report request.
@@ -42,11 +43,13 @@ Expected outputs are:
 
 ## Incremental Source Updates
 
-By default, `qa-executor` reads one test case row/item or a small ordered batch, executes it, writes the result to `execution_result.json`, then updates the same source row/item/section before moving to the next case. Supported writable sources include Notion rows/pages, Plane items, Google Sheets, Excel, Google Docs, Word/PDF-derived tables where editable output is available, Markdown, and JSON.
+By default, `qa-executor` reads one test case row/item or a small ordered batch, executes it, writes the result to `execution_result.json`, then updates the same source row/item/section before moving to the next case. Supported writable sources include Notion rows/pages, Plane items, Google Sheets, Excel, Google Docs, Word/PDF-derived tables where editable output is available, Markdown, and JSON. If the source cannot be updated, `qa-executor` records `source_update_gap`; reports, handoffs, Plane comments, and `execution_result.json` do not replace the original source status update.
 
 New report documents are opt-in. The executor creates a report page/document/workbook only when the user explicitly asks for it or `report_output_policy.create_report = true`. Report creation is additive only: qa-executor must still update the original writable test case source row/item/section or record a source update gap for every selected test case.
 
 Evidence images are embedded or uploaded into the source when the active tool supports image/file upload or inline image insertion. Local screenshot paths such as `output/playwright/DKI-140/...` remain canonical local evidence refs. If a cloud tool cannot upload or embed local images, qa-executor records `evidence_upload_gap` instead of pretending the local path is an embedded image.
+
+For API execution, failed, blocked, or otherwise problematic API results should include a reproducible `redacted_curl` in `execution_result.json` and requested reports. If method, URL, headers, or body are unavailable or unsafe to reproduce, qa-executor records `curl_generation_gap` instead. Authorization values, tokens, cookies, passwords, secrets, session ids, credentials, and visible PII must be replaced with placeholders before publication.
 
 ## Status Model
 
@@ -60,7 +63,7 @@ Execution output goes through human `OK` or `NOK` review. `OK` accepts the packa
 
 Plane is a synced workflow surface, not the canonical state. `execution_result.json` remains the source of truth.
 
-Managed Plane output uses idempotency keys and markers to avoid duplicate comments, description summaries, worklogs, wiki pages, links, and follow-up items. By default, qa-executor does not create comments when moving `Ready to Test` -> `In Testing` and does not create progress comments while testing. Plane comments are written only when testing finishes or after user review approval, unless live progress comments are explicitly enabled. Wiki/page sync, description sync, and follow-up work item creation are off by default unless the write policy enables them. Secrets, tokens, cookies, credentials, authorization values, session ids, and PII must be redacted before any Plane write.
+Managed Plane output uses idempotency keys and markers to avoid duplicate comments, description summaries, worklogs, wiki pages, links, and follow-up items. By default, qa-executor does not create comments when moving `Ready to Test` -> `In Testing` and does not create progress comments while testing. Plane terminal result comments are required when Plane context is active and qa-executor reaches a terminal outcome, including completed execution, review approval, blocked, cancelled, source-not-executable, and state-not-ready outcomes. If the comment cannot be written, qa-executor records `terminal_comment_gap`. Wiki/page sync, description sync, and follow-up work item creation are off by default unless the write policy enables them. Secrets, tokens, cookies, credentials, authorization values, session ids, and PII must be redacted before any Plane write.
 
 Guarded Plane workflow:
 - `Ready to Test` -> `In Testing` when execution starts.
@@ -69,7 +72,7 @@ Guarded Plane workflow:
 - `Need Review Test Execute` -> `Need Issue Report` on OK review with any failed, blocked, bug, issue, or problem.
 - `Need Review Test Execute` -> `Ready to Report` on OK review with no issue.
 
-If the initial state is not `Ready to Test`, qa-executor must ask for approval before execution and record the approval override in `execution_result.json` and the managed Plane comment.
+If the initial state is not `Ready to Test`, qa-executor must ask for fresh approval before execution and record the approval override in `execution_result.json` and the managed Plane comment. If the initial prompt already contains approval-like wording, qa-executor records `initial_prompt_override_ignored = true`, asks the state-specific confirmation question, and waits.
 
 ## Notion Managed Sync
 

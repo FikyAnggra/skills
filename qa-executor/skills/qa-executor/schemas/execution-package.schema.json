@@ -177,6 +177,7 @@
       "additionalProperties": false,
       "properties": {
         "comment_sync": { "type": "boolean", "default": true },
+        "terminal_comment_required": { "type": "boolean", "default": true },
         "progress_comment_sync": { "type": "boolean", "default": false },
         "comment_timing": {
           "type": "string",
@@ -230,6 +231,12 @@
       "properties": {
         "required": { "type": "boolean" },
         "approved": { "type": "boolean" },
+        "fresh_approval_required": { "type": "boolean", "default": false },
+        "initial_prompt_override_ignored": { "type": "boolean", "default": false },
+        "approval_source_turn": {
+          "type": "string",
+          "enum": ["initial_prompt", "state_confirmation_response", "not_provided"]
+        },
         "approval_text": { "type": "string" },
         "approved_by": { "type": "string" },
         "approved_at": { "type": ["string", "null"] },
@@ -313,6 +320,9 @@
         "update_after_each_case": { "type": "boolean", "default": true },
         "batch_only_when_required": { "type": "boolean", "default": true },
         "required_even_when_report_created": { "type": "boolean", "default": true },
+        "required_for_all_executed_cases": { "type": "boolean", "default": true },
+        "applies_to_handoff_sources": { "type": "boolean", "default": true },
+        "gap_required_when_unwritable": { "type": "boolean", "default": true },
         "requires_confirmation": { "type": "boolean", "default": true },
         "writable_sources": {
           "type": "array",

@@ -39,6 +39,14 @@ This Plane wiki/page output is opt-in only. Create or update it only when `plane
 | --- | --- | --- | --- | --- |
 | `<issue_candidate_id>` | `<tc_id>` | `<severity_suggestion>` | `<title>` | `<evidence_refs>` |
 
+## API Reproduction cURL
+
+Include only API test cases with `Failed`, `Blocked`, or another problem status. All curl snippets must be redacted before publication.
+
+| TC ID | Status | cURL / Gap |
+| --- | --- | --- |
+| `<tc_id>` | `<test_case_status>` | `<api.redacted_curl or api.curl_generation_gap>` |
+
 ## Downstream Refs
 
 - Execution result: `<execution_result_ref>`
