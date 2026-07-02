@@ -152,6 +152,15 @@
             "additionalProperties": true
           }
         },
+        "parent_work_item": { "$ref": "#/$defs/plane_work_item_ref" },
+        "sub_work_items": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/plane_work_item_ref" }
+        },
+        "sub_work_item_duplicates": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
         "source_comments": {
           "type": "array",
           "items": {
@@ -170,6 +179,30 @@
           "type": "array",
           "items": { "type": "string" }
         }
+      }
+    },
+    "plane_work_item_ref": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "workspace_id": { "type": "string" },
+        "project_id": { "type": "string" },
+        "project_identifier": { "type": "string" },
+        "work_item_id": { "type": "string" },
+        "readable_identifier": { "type": "string" },
+        "url": { "type": "string" },
+        "title": { "type": "string" },
+        "state": { "type": "string" },
+        "is_sub_work_item": { "type": "boolean" },
+        "parent_readable_id": { "type": ["string", "null"] },
+        "parent_work_item_id": { "type": ["string", "null"] },
+        "read_status": {
+          "type": "string",
+          "enum": ["not_started", "read", "failed", "skipped"]
+        },
+        "read_gap": { "type": "string" },
+        "relations": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+        "links": { "type": "array", "items": { "type": "object", "additionalProperties": true } }
       }
     },
     "plane_write_policy": {
@@ -487,6 +520,10 @@
       "properties": {
         "tc_id": { "type": "string", "minLength": 1 },
         "scenario": { "type": "string", "minLength": 1 },
+        "plane_work_item_id": { "type": "string" },
+        "plane_readable_id": { "type": "string" },
+        "is_sub_work_item": { "type": "boolean" },
+        "parent_readable_id": { "type": ["string", "null"] },
         "summary": { "type": "string" },
         "priority": { "type": "string", "enum": ["P0 - Critical", "P1 - High", "P2 - Medium", "P3 - Low"] },
         "pre_conditions": {

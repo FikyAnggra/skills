@@ -19,6 +19,8 @@ Use manual input when a human provides test cases from Excel, Google Sheets, Mar
 
 Use Plane input when a user provides a Plane readable id such as `ENG-42`, a Plane URL, UUID, or MCP payload. Plane content is executable only when it contains an executor handoff, structured execution package, or minimum test case fields. Raw requirements should be routed to `qa-planner` instead of executed.
 
+Plane input may include a parent work item plus one or more sub-work-items. In that mode, qa-executor resolves the parent as roll-up context, deduplicates requested sub-work-item ids, reads each sub-work-item context when tools allow, and treats the requested sub-work-items as execution targets unless the user explicitly targets the parent too. Test scenarios mapped to sub-work-items must include the sub-work-item readable id so results, source updates, evidence, and Plane sync are traceable.
+
 For Plane Managed Sync, resolve the work item, project states, write policy, and guarded state workflow before execution. qa-executor may start directly only from `Ready to Test`. If the work item is in another state, it must ask for fresh user approval after reading the actual Plane state before testing and moving to `In Testing`. Approval-like text in the initial prompt is execution intent only and must not be treated as a Plane state override. Write policy controls completion/review comments, status movement, worklogs, links, wiki/page sync, follow-up creation, and confirmation requirements.
 
 Use Notion input when a user provides a Notion page URL, database URL, data source id, page id, or MCP payload. Notion content is executable only when it contains an executor handoff, structured execution package, or minimum test case fields. Raw requirements should be routed to `qa-planner` instead of executed.
@@ -29,6 +31,7 @@ Use Notion + Plane bridge when Plane tracks the QA work item and Notion stores t
 
 Expected outputs are:
 - `execution_result.json` as source of truth.
+- `plane_sub_work_item_executions[]` and `parent_rollup` when Plane sub-work-item execution is active.
 - mandatory source row/item updates or source update gaps for status, actual result, notes, evidence, and evidence status, even when a separate execution report, qa-planner handoff, or qa-executor handoff is present.
 - Markdown/Notion/Google Doc/Word/spreadsheet reports only when explicitly requested.
 - redacted reproducible curl snippets in reports for failed, blocked, or otherwise problematic API test cases.
@@ -66,6 +69,10 @@ Plane is a synced workflow surface, not the canonical state. `execution_result.j
 Managed Plane output uses idempotency keys and markers to avoid duplicate comments, description summaries, worklogs, wiki pages, links, and follow-up items. By default, qa-executor does not create comments when moving `Ready to Test` -> `In Testing` and does not create progress comments while testing. Plane terminal result comments are required when Plane context is active and qa-executor reaches a terminal outcome, including completed execution, review approval, blocked, cancelled, source-not-executable, and state-not-ready outcomes. If the comment cannot be written, qa-executor records `terminal_comment_gap`. Wiki/page sync, description sync, and follow-up work item creation are off by default unless the write policy enables them. Secrets, tokens, cookies, credentials, authorization values, session ids, and PII must be redacted before any Plane write.
 
 Review approval must produce only one managed Plane review approval comment for an execution id. qa-executor must not write a separate free-form sync narrative such as `qa-executor review approval sync for ...`; that detail belongs in `execution_result.json`, `plane_sync`, or the managed review approval comment.
+
+When sub-work-items are active, qa-executor applies the guarded workflow independently to each executable sub-work-item. Each executed sub-work-item should move to `In Testing` on start and `Need Review Test Execute` on completion when status sync is allowed, then receive a managed terminal result comment. The parent work item receives a summary-only roll-up comment with per-sub selected/passed/failed/blocked counts, sync status, Notion/report links, and gaps. Unsupported sub-work-item reads, state changes, comments, or updates must be recorded as gaps rather than treated as successful.
+
+Sub-work-item CRUD is intentionally narrow. Reading, QA-managed updates, and state changes are allowed when required by execution and write policy. Creating or deleting sub-work-items is allowed only when the user explicitly requests it; deletion requires separate explicit confirmation.
 
 Guarded Plane workflow:
 - `Ready to Test` -> `In Testing` when execution starts.

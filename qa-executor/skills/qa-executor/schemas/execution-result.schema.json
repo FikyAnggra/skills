@@ -56,6 +56,11 @@
     "qa_automation_signal": { "$ref": "#/$defs/automation_signal" },
     "plane_sync": { "$ref": "#/$defs/plane_sync" },
     "plane_state_workflow": { "$ref": "#/$defs/plane_state_workflow" },
+    "plane_sub_work_item_executions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/plane_sub_work_item_execution" }
+    },
+    "parent_rollup": { "$ref": "#/$defs/parent_rollup" },
     "notion_sync": { "$ref": "#/$defs/notion_sync" },
     "notion_plane_bridge": { "$ref": "#/$defs/notion_plane_bridge" },
     "source_updates": {
@@ -311,6 +316,10 @@
       "properties": {
         "tc_id": { "type": "string", "minLength": 1 },
         "scenario": { "type": "string", "minLength": 1 },
+        "plane_work_item_id": { "type": "string" },
+        "plane_readable_id": { "type": "string" },
+        "is_sub_work_item": { "type": "boolean" },
+        "parent_readable_id": { "type": ["string", "null"] },
         "selected": { "type": "boolean" },
         "execution_mode": { "$ref": "#/$defs/execution_mode" },
         "test_case_status": { "$ref": "#/$defs/status" },
@@ -423,8 +432,54 @@
         "markdown_anchor": { "type": "string" },
         "json_pointer": { "type": "string" },
         "plane_ref": { "type": "string" },
+        "plane_work_item_id": { "type": "string" },
+        "plane_readable_id": { "type": "string" },
+        "is_sub_work_item": { "type": "boolean" },
+        "parent_readable_id": { "type": ["string", "null"] },
         "column_map": { "type": "object", "additionalProperties": { "type": "string" } },
         "locator_confidence": { "type": "string", "enum": ["high", "medium", "low"] }
+      }
+    },
+    "plane_sub_work_item_execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["readable_identifier", "selected_count", "sync_status"],
+      "properties": {
+        "work_item_id": { "type": "string" },
+        "readable_identifier": { "type": "string" },
+        "parent_readable_id": { "type": ["string", "null"] },
+        "title": { "type": "string" },
+        "state_before": { "type": ["string", "null"] },
+        "state_after": { "type": ["string", "null"] },
+        "selected_tc_ids": { "type": "array", "items": { "type": "string" } },
+        "selected_count": { "type": "integer", "minimum": 0 },
+        "passed": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "integer", "minimum": 0 },
+        "blocked": { "type": "integer", "minimum": 0 },
+        "read_status": { "type": "string", "enum": ["not_started", "read", "failed", "skipped"] },
+        "read_gap": { "type": "string" },
+        "state_sync_status": { "type": "string", "enum": ["not_started", "synced", "partial", "failed", "skipped"] },
+        "terminal_comment_status": { "type": "string", "enum": ["not_started", "synced", "partial", "failed", "skipped"] },
+        "managed_comment_id": { "type": ["string", "null"] },
+        "sync_status": { "type": "string", "enum": ["not_started", "synced", "partial", "failed", "skipped"] },
+        "sync_gaps": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "parent_rollup": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "parent_readable_id": { "type": "string" },
+        "parent_work_item_id": { "type": "string" },
+        "sub_work_item_count": { "type": "integer", "minimum": 0 },
+        "executed_sub_work_item_count": { "type": "integer", "minimum": 0 },
+        "selected": { "type": "integer", "minimum": 0 },
+        "passed": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "integer", "minimum": 0 },
+        "blocked": { "type": "integer", "minimum": 0 },
+        "managed_comment_id": { "type": ["string", "null"] },
+        "rollup_comment_status": { "type": "string", "enum": ["not_started", "synced", "partial", "failed", "skipped"] },
+        "rollup_gap": { "type": "string" }
       }
     },
     "reporter_handoff": {

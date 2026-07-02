@@ -35,13 +35,22 @@ Plane input:
 - Accept Plane readable ids such as `ENG-42`, Plane URLs, UUIDs, or MCP payloads.
 - Use the Plane guarded execution workflow whenever user input contains Plane context, including `Plane`, `Plane.so`, `work item Plane`, `card Plane`, readable ids such as `DKI-179`, Plane URLs, Plane UUIDs, or requests to read, analyze, execute, review, or update QA results from a Plane work item.
 - If input is a readable id such as `DKI-179`, split it into project identifier `DKI` and issue number `179`, then resolve the Plane work item before execution.
+- Accept a parent work item plus one or more Plane sub-work-item readable ids. Deduplicate repeated ids before execution while recording duplicates in `plane_context.sub_work_item_duplicates`.
 - Treat Plane work item/card descriptions, comments, linked refs, wiki/page refs, attachments, cycle/module context, relations, and worklogs as source context when tools allow.
+- Treat requested sub-work-items as execution targets and the parent work item as roll-up context unless the user explicitly targets the parent too.
+- For every parent and sub-work-item, read title, description, comments, attachment/link refs, child/sub-work-items, relations, Notion links, evidence refs, state, labels, assignees, cycle/module, and worklogs when tools allow.
+- When testing a scenario that comes from a sub-work-item, prefix or otherwise include the sub-work-item readable id in the scenario, for example `DKI-179 - Verify active staff can access endpoint`.
 - Scan Plane descriptions, comments, links, and attachment refs for Notion URLs. Store discovered refs in `notion_plane_bridge.discovered_notion_refs` when the bridge is active.
 - Read Plane issue detail, project states, comments, description, attachment/link refs, module/cycle, relations, and worklogs when tools allow before deciding executable state.
 - Read project states before status movement. Do not assume state names exist.
 - Extract executable test cases only when Plane content contains a planner executor handoff, structured execution package, or minimum manual fields: `TC ID`, `Scenario`, `Test Step`, and `Expected Result`.
 - If a Plane work item contains only requirements, acceptance criteria, or feature text, record `source_not_executable` and ask whether to route it to `qa-planner`. Do not invent test cases.
 - Parse Plane comments or user text commands such as `run smoke`, `run TC0001, TC0004`, `retest failed`, `publish wiki`, and `sync reporter handoff` as requested policy signals. These commands do not bypass Plane write preflight.
+- Sub-work-item operations:
+  - Read, update, and change state for sub-work-items when required by QA execution and write policy allows.
+  - Create, delete, or structurally modify sub-work-items only when the user explicitly requests that operation.
+  - Require explicit confirmation before deleting any sub-work-item.
+  - Record unsupported create/update/delete/state operations as `plane_sub_work_item_sync_gap`; do not pretend the operation succeeded.
 
 Notion input:
 - Accept Notion page URLs, database URLs, data source ids, page ids, or MCP payloads.
@@ -60,6 +69,9 @@ Required package sections:
 
 Plane package sections when Plane path is active:
 - `plane_context`: workspace/project/work item ids, readable id, URL, state, assignees, labels, cycle/module refs, relations, comments, links, and attachment refs.
+- `plane_context.parent_work_item`: parent/epic work item used as roll-up context.
+- `plane_context.sub_work_items`: one entry per requested or discovered sub-work-item execution target.
+- `plane_context.sub_work_item_duplicates`: duplicate readable ids removed from the execution target list.
 - `plane_write_policy`: comment, status, worklog, link, wiki, follow-up item, and confirmation settings.
 - `plane_status_mapping`: target states for start, all passed, any failed, blocked, partial, and cancelled outcomes.
 - `plane_state_workflow`: guarded state workflow, current state, expected start state, review state, issue-report state, ready-report state, approval override, and state transition history.
@@ -121,6 +133,8 @@ Source update fields:
 - `Blocker` or `Issue Candidate Ref` when applicable
 
 Source locator rule: every normalized test case should keep a `source_locator` when discoverable. Use it to update the exact original source without creating duplicates.
+
+Plane source locator rule: when a test case or scenario maps to a Plane parent or sub-work-item, keep `source_locator.plane_ref`, `plane_readable_id`, `plane_work_item_id`, `parent_readable_id`, and `is_sub_work_item` when discoverable.
 
 Supported locator types:
 - Notion database/data source row id or page id.
@@ -336,6 +350,45 @@ Status transition rules:
 - human review OK and no failed, blocked, bug, issue, or problem exists -> `Ready to Report`.
 - user cancelled -> `on_cancelled` or skipped with reason when no cancelled state exists.
 
+## Plane Sub-Work-Item Execution
+
+Activate this workflow when the user provides `Sub-Work Items`, child work item ids, sub-work-item URLs, or asks to execute QA against sub-work-items.
+
+Resolution rules:
+- Resolve the parent work item first and store it as `plane_context.parent_work_item`.
+- Resolve each requested sub-work-item and store it in `plane_context.sub_work_items`.
+- Deduplicate repeated sub-work-item ids before execution and store removed duplicates in `plane_context.sub_work_item_duplicates`.
+- Read parent and sub-work-item context before selecting test cases: title, description, comments, links/attachments, child/sub-work-items, relations, Notion links, evidence refs, state, labels, assignees, cycle/module, and worklogs when tools allow.
+- Record `plane_sub_item_read_gap` for any requested sub-work-item that cannot be read.
+
+Execution targeting:
+- Treat the parent work item as roll-up context by default.
+- Treat requested sub-work-items as execution targets.
+- A single qa-executor run may execute many sub-work-items. Keep each result mapped to exactly one Plane target when possible.
+- If a test case maps to a sub-work-item, include that readable id in the scenario text and result metadata.
+- If a test case cannot be mapped to a specific sub-work-item, map it to the parent and record `sub_work_item_mapping_gap`.
+
+Per sub-work-item workflow:
+- Apply the guarded Plane state workflow independently to each executable sub-work-item.
+- If a sub-work-item state is not `Ready to Test`, ask for fresh approval before testing or moving that sub-work-item to `In Testing`.
+- When execution starts for a sub-work-item, move that sub-work-item to `In Testing` when status sync is allowed.
+- When execution finishes for a sub-work-item, move that sub-work-item to `Need Review Test Execute` when status sync is allowed.
+- Create or update a managed terminal result comment on each sub-work-item that was executed, or record `terminal_comment_gap`.
+- Parent work item still receives a roll-up managed terminal result comment and state transition according to the existing Plane workflow.
+
+Sub-work-item CRUD:
+- `read`: allowed when resolving context or execution targets.
+- `update`: allowed when updating QA-managed fields, labels, links, comments, or status according to write policy.
+- `change_state`: allowed through the guarded workflow and write policy.
+- `create`: allowed only when the user explicitly asks to create sub-work-items.
+- `delete`: allowed only when the user explicitly asks and gives separate delete confirmation.
+- Record `plane_sub_work_item_sync_gap` for any requested CRUD/change-state operation that is unsupported, denied, unsafe, or unavailable.
+
+Roll-up rules:
+- Parent work item comments must summarize per-sub-work-item selected/passed/failed/blocked counts, state/comment sync status, Notion output links, and gaps.
+- Parent comments must not duplicate every sub-work-item detail when sub-item comments or Notion reports already contain detail.
+- `execution_result.json` remains canonical and must include `plane_sub_work_item_executions[]` plus `parent_rollup` when sub-work-item workflow is active.
+
 During `In Testing`, every selected test case must end as `Passed`, `Failed`, `Blocked`, `Untested`, or `Retest`. Capture actual result, screenshot/trace/video for UI when available, API summary for API, DB verification for DB, logs/network summary when relevant, blocker reason for blocked cases, and redacted evidence refs.
 
 Worklog rule: when `worklog_sync = true`, create or update one worklog per `execution_id`. Include package id, selected count, passed/failed/blocked count, run mode, and source Plane readable id in the description.
@@ -513,6 +566,8 @@ Human outputs:
 - Mandatory source row/item updates or source update gaps where `Actual Result`, `Test Case Status`, `Notes`, `Evidence`, and `Evidence Status` derive from `execution_result.json`.
 - Markdown execution report using `templates/execution-report.md` only when report output is requested.
 - Spreadsheet-compatible exports only when requested or required by the source update path.
+- Plane sub-work-item state/comment updates or explicit gaps for every requested/executed sub-work-item when Plane sub-work-item workflow is active.
+- Parent Plane roll-up comment summarizing sub-work-item execution when parent and sub-work-items are both present.
 
 Downstream outputs:
 - `qa_reporter_handoff` using `templates/qa-reporter-handoff.json`.
@@ -561,6 +616,11 @@ Plane gates, when Plane path is active:
 - managed terminal result comment was synced or `terminal_comment_gap` was recorded for every Plane terminal outcome, including source-not-executable, state-not-ready, blocked, cancelled, and sync-failed outcomes.
 - review approval produced only one managed Plane comment for the execution id; no free-form `qa-executor review approval sync for ...` comment was created.
 - duplicate review approval comments were avoided or `plane_sync.duplicate_review_comment_gap` was recorded.
+- if sub-work-items were requested, every requested sub-work-item was resolved or `plane_sub_item_read_gap` was recorded.
+- each executed sub-work-item has a state transition result or `plane_sub_work_item_sync_gap`.
+- each executed sub-work-item has a managed terminal comment result or `terminal_comment_gap`.
+- parent work item has a roll-up managed comment result or terminal comment gap when parent and sub-work-items are both present.
+- every sub-work-item scenario includes the sub-work-item readable id or records `sub_work_item_mapping_gap`.
 - status transition succeeded or was skipped with reason.
 - worklog synced or skipped with reason.
 - description summary synced or skipped with reason when `description_sync` is enabled.

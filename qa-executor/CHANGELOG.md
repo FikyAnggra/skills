@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.16.0 - 2026-07-02
+
+- Added Plane parent plus multi sub-work-item execution workflow.
+- Required requested sub-work-items to be resolved, deduplicated, mapped to scenarios by readable id, and tracked independently.
+- Added guarded state transitions and terminal result comments for every executed sub-work-item, plus parent roll-up comment behavior.
+- Added explicit sub-work-item CRUD rules: read/update/change state during QA execution, create/delete only on explicit user request, and delete only after separate confirmation.
+- Added `plane_sub_work_item_executions[]`, `parent_rollup`, and Plane source locator fields for sub-work-item execution results.
+
 ## 0.15.0 - 2026-07-02
 
 - Suppressed redundant free-form Plane review approval sync comments such as `qa-executor review approval sync for ...`.

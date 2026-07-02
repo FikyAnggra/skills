@@ -10,6 +10,8 @@
 - Comment timing: `<plane_sync.comment_timing>`
 - Terminal outcome: `<plane_sync.terminal_comment_outcome>`
 - Terminal comment status: `<plane_sync.terminal_comment_status>`
+- Parent roll-up: `<parent_rollup.parent_readable_id>`
+- Sub-work-items executed: `<parent_rollup.executed_sub_work_item_count>` / `<parent_rollup.sub_work_item_count>`
 - Review approval comment count: `<plane_sync.review_approval_comment_count>`
 - Redundant review sync comment suppressed: `<plane_sync.redundant_review_sync_comment_suppressed>`
 - Progress comment created: `<plane_sync.progress_comment_created>`
@@ -34,6 +36,12 @@
 | Selected | Passed | Failed | Blocked | Untested | Retest |
 | ---: | ---: | ---: | ---: | ---: | ---: |
 | `<summary.selected>` | `<summary.passed>` | `<summary.failed>` | `<summary.blocked>` | `<summary.untested>` | `<summary.retest>` |
+
+## Sub-Work-Item Roll-up
+
+| Work item | Selected | Passed | Failed | Blocked | State | Comment |
+| --- | ---: | ---: | ---: | ---: | --- | --- |
+<plane_sub_work_item_executions_rows>
 
 ## Attention
 

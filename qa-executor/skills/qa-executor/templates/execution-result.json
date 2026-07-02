@@ -113,6 +113,40 @@
     "final_review_state": "Need Review Test Execute",
     "state_gaps": []
   },
+  "plane_sub_work_item_executions": [
+    {
+      "work_item_id": "plane-work-item-id",
+      "readable_identifier": "DKI-179",
+      "parent_readable_id": "DKI-214",
+      "title": "Active user login coverage",
+      "state_before": "Ready to Test",
+      "state_after": "Need Review Test Execute",
+      "selected_tc_ids": ["TC0001"],
+      "selected_count": 1,
+      "passed": 1,
+      "failed": 0,
+      "blocked": 0,
+      "read_status": "read",
+      "state_sync_status": "synced",
+      "terminal_comment_status": "synced",
+      "managed_comment_id": "plane-managed-comment-id",
+      "sync_status": "synced",
+      "sync_gaps": []
+    }
+  ],
+  "parent_rollup": {
+    "parent_readable_id": "DKI-214",
+    "parent_work_item_id": "plane-parent-work-item-id",
+    "sub_work_item_count": 1,
+    "executed_sub_work_item_count": 1,
+    "selected": 1,
+    "passed": 1,
+    "failed": 0,
+    "blocked": 0,
+    "managed_comment_id": "plane-parent-managed-comment-id",
+    "rollup_comment_status": "synced",
+    "rollup_gap": ""
+  },
   "source_updates": [
     {
       "tc_id": "TC0001",
@@ -120,6 +154,10 @@
         "source_type": "notion",
         "row_id": "notion-row-id",
         "data_source_id": "notion-data-source-id",
+        "plane_work_item_id": "plane-work-item-id",
+        "plane_readable_id": "DKI-179",
+        "is_sub_work_item": true,
+        "parent_readable_id": "DKI-214",
         "locator_confidence": "high"
       },
       "required": true,
