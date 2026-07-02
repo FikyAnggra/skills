@@ -1,6 +1,6 @@
 ---
 name: qa-planner
-description: Portable QA planning agent for converting requirements, PRDs, user stories, API specs, UI flows, screenshots, database notes, technical constraints, optional Plane.so work items/cards, and optional Notion pages/databases into governed planning_state JSON, test plans, separated UI/API test cases, coverage maps, OK/NOK or partial review updates, Notion test plan pages, Notion UI/API test case databases, copied Notion links, and handoff contracts for qa-executor, qa-automation, and qa-reporter. Use when asked to create or revise QA plans, QA scenarios, UI test cases, API test cases, requirement coverage, downstream QA handoffs, Plane-attached planning artifacts, Notion-published planning artifacts, or planning review packages. Do not use for running tests, creating defect tickets, writing final automation scripts, or producing final execution reports.
+description: Portable QA planning agent for converting requirements, PRDs, user stories, API specs, UI flows, screenshots, database notes, technical constraints, optional Plane.so work items/cards/sub-work-items, and optional Notion pages/databases into governed planning_state JSON, test plans, separated UI/API test cases, coverage maps, OK/NOK or partial review updates, Notion test plan pages, Notion UI/API test case databases, copied Notion links, Plane parent/sub-work-item comments, and handoff contracts for qa-executor, qa-automation, and qa-reporter. Use when asked to create or revise QA plans, QA scenarios, UI test cases, API test cases, requirement coverage, downstream QA handoffs, Plane-attached planning artifacts, Notion-published planning artifacts, or planning review packages. Do not use for running tests, creating defect tickets, writing final automation scripts, or producing final execution reports.
 ---
 
 # QA Planner
@@ -19,10 +19,10 @@ Accept raw or structured inputs:
 - requirements, PRDs, user stories, acceptance criteria, business rules, UI flows, screenshots, API specs, database notes, architecture notes, constraints, risks, and release scope
 - existing test cases or QA plans that need normalization or revision
 - human review feedback with `OK`, `NOK`, or partial target feedback
-- Plane.so work items/cards, comments, readable attachments, pages/wiki, modules, cycles, parent/child items, or linked items
+- Plane.so work items/cards, sub-work-items, comments, readable attachments, pages/wiki, modules, cycles, parent/child items, or linked items
 - Notion pages/databases, Notion output destinations, or requests to publish/copy/share Notion links for test plans and test cases
 
-If the input contains Plane.so signals such as `Plane`, a Plane work item/card, a readable id like `ENG-42`, a Plane URL/UUID/payload, or an @mention-style Plane Agent request, read `references/plane-hybrid.md` before continuing.
+If the input contains Plane.so signals such as `Plane`, a Plane work item/card/sub-work-item, a readable id like `ENG-42`, a Plane URL/UUID/payload, or an @mention-style Plane Agent request, read `references/plane-hybrid.md` before continuing.
 
 If the input or requested output contains Notion signals such as a Notion URL, page/database id, request to create a Notion test plan, request to create test cases in Notion, or request to copy a Notion link, read `references/notion-mcp.md` before continuing.
 
@@ -93,6 +93,11 @@ Inline fallback skeleton when schema files are unavailable:
   "test_cases": [],
   "coverage_map": [],
   "handoff_contracts": { "qa_executor": {}, "qa_automation": {}, "qa_reporter": {} },
+  "plane_context": {
+    "parent_work_item": {},
+    "sub_work_items": [],
+    "processed_work_items": []
+  },
   "review_history": [],
   "changelog": []
 }
@@ -124,10 +129,11 @@ Standard path:
 Plane path:
 1. Read `references/plane-hybrid.md`.
 2. Resolve Plane source refs and read the work item/card plus readable attachments when tools allow.
-3. Apply the Plane QA state workflow before analysis or generation. Default eligible source state is `Todo Test`; any other source state requires a separate user confirmation after the current state is known. A direct item id or direct planning request is not confirmation.
-4. Move `Todo Test` to `Analyze Test` when starting analysis, route `Analyze Test` to `Ready to Test` or `Update Test`, route `Update Test` to `Need Review Test`, and route review feedback according to the Plane state machine.
-5. Continue with the standard path only after the state gate allows work.
-6. Sync outputs back to the source Plane work item/card according to the Plane output policy.
+3. If the request includes parent plus sub-work-items, resolve and read the parent first, then each unique requested sub-work-item; preserve parent-child context in `planning_state.plane_context`.
+4. Apply the Plane QA state workflow before analysis or generation for every requested work item and sub-work-item. Default eligible source state is `Todo Test`; any other source state requires a separate user confirmation after the current state is known. A direct item id or direct planning request is not confirmation.
+5. Move `Todo Test` to `Analyze Test` when starting analysis, route `Analyze Test` to `Ready to Test` or `Update Test`, route `Update Test` to `Need Review Test`, and route review feedback according to the Plane state machine.
+6. Continue with the standard path only after the state gate allows work for the impacted item(s).
+7. Sync outputs back to the source Plane work item/card and every processed sub-work-item according to the Plane output policy.
 
 Notion path:
 1. Read `references/notion-mcp.md`.
@@ -241,6 +247,7 @@ Rules:
 - If input priority is not one of the allowed values, add an `open_question` and ask the user to clarify. Do not downgrade or remap invalid priority silently.
 - Apply the automation status decision rules above; when evidence is insufficient, use `Manual Only` and record the gap.
 - Mark missing selectors, endpoints, methods, headers, params, request body, fixture data, or credentials as gaps, not invented data.
+- When Plane parent/sub-work-item context is active, prefix `scenario` with the readable work item id that sourced the case, for example `DKI-179 - Login validation`. Apply the same rule to parent-derived cases and sub-work-item-derived cases.
 
 ## Coverage Map
 
@@ -339,14 +346,16 @@ Content gates, always apply:
 
 Plane sync gates, apply only on Plane path:
 - Plane QA state workflow was applied before analysis, generation, or sync.
-- Plane source state was `Todo Test`, or separate user confirmation for the non-`Todo Test` state was recorded after state lookup.
+- Plane source state was `Todo Test`, or separate user confirmation for the non-`Todo Test` state was recorded after state lookup. For parent/sub-work-item requests, this applies to each processed item.
 - `Analyze Test` was used for analysis/routing only, not large artifact creation.
 - `Update Test` was used for creating/updating requested artifacts.
 - Plane MCP context was resolved when tools were available: work item payload, comments, activities, relations, states, members, properties, types, and requested cycle/module scope.
+- Parent/sub-work-item requests resolved the parent first, deduplicated requested sub-work-item ids, preserved parent-child refs, and created test case scenarios with readable id prefixes.
 - Existing Plane pages/wiki relevant to the request were read before use or `plane_page_read_gap` was recorded.
 - Existing managed Plane pages were updated only inside managed sections when update tooling existed; otherwise a versioned page was created and `plane_page_update_gap` was recorded.
 - Readable attachment content was read or `attachment_read_gap` was recorded.
 - Plane output was added or updated on the source work item/card when write tools were available.
+- For each processed sub-work-item, a managed result comment was added or updated on that sub-work-item when write tools were available; otherwise `plane_sub_work_item_comment_gap` was recorded.
 - Managed Plane output avoids duplicate comments/pages/attachments.
 - Plane handoff tracker work items are created only when requested or required by an approved handoff contract.
 - Sensitive data is redacted before Plane write.
@@ -377,7 +386,7 @@ Use platform-native document, spreadsheet, or JSON tools when available. If a pl
 ## Resources
 
 Read only when needed:
-- `references/plane-hybrid.md`: Plane MCP tool mapping, QA state workflow, intake, attachment, planning enrichment, sync, wiki/page, links, idempotency, status movement, handoff tracking, and safety rules
+- `references/plane-hybrid.md`: Plane MCP tool mapping, QA state workflow, parent/sub-work-item intake, sub-work-item CRUD and comments, attachment, planning enrichment, sync, wiki/page, links, idempotency, status movement, handoff tracking, and safety rules
 - `references/notion-mcp.md`: Notion MCP tool mapping, test plan page output, mandatory test case database output, link capture, idempotency, batching, fallback, and safety rules
 - `schemas/planning-state.schema.json`: canonical planning state schema
 - `schemas/handoff-contract.schema.json`: downstream contract schema

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.14 - 2026-07-02
+
+- Added Plane parent/sub-work-item planning mode with parent-first intake, sub-work-item id deduplication, per-item state gates, and parent-child context tracking.
+- Added required readable-id scenario prefixes for Plane-derived parent and sub-work-item test cases.
+- Added managed result comments for every processed Plane sub-work-item while keeping parent-level batch summary comments and parent-level Notion artifacts.
+- Added Plane sub-work-item read/create/update/state/delete guidance with explicit delete safeguards and MCP gap records.
+- Extended Plane source, output policy, and planning state schemas with sub-work-item context, processed item tracking, sub-work-item comments, and operation policies.
+
 ## 0.2.13 - 2026-06-26
 
 - Split generated test cases into `ui_test_cases` and `api_test_cases` while keeping legacy `test_cases` for compatibility.

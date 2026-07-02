@@ -28,6 +28,8 @@ Plane inputs can come from work item/card title and description, comments, activ
 
 Plane QA planning follows a state workflow. By default, `qa-planner` processes Plane work items only from `Todo Test`, moves them to `Analyze Test` for analysis/routing, uses `Update Test` when artifacts must be created or updated, moves completed work to `Need Review Test`, and moves approved work to `Ready to Test`. Any non-`Todo Test` source state requires separate user confirmation after the current state is known. Mentioning a specific item id or asking for direct planning is not confirmation.
 
+Plane sub-work-item planning can process a parent work item plus one or many sub-work-items in one run. The planner reads the parent first, deduplicates repeated sub-work-item ids, reads each sub-work-item context, applies the state gate per item, creates parent-level Notion/Plane artifacts, prefixes each test case `Scenario` with the source readable id such as `DKI-179 - Login validation`, and writes a managed result comment to every processed sub-work-item.
+
 Notion output can create or update a QA test plan page plus separate Notion databases for UI and API test cases. UI database columns use `TC ID`, `Scenario`, `Summary`, `Test Type`, `Priority`, `PreConditions`, `Test Step`, `Test Data`, `Expected Result`, `Actual Result`, `Test Case Status`, `Automation Status`, `Notes`. API database columns use `TC ID`, `Scenario`, `Summary`, `Method`, `URL`, `Header`, `Params`, `Body`, `Expected Result`, `Actual Result`, `Test Case Status`, `Automation Status`, `Notes`. Notion page/database links are stored in `planning_state`, handoff contracts, and other active platform sync outputs.
 
 ## Outputs
@@ -40,6 +42,7 @@ Expected outputs include:
 - requirement coverage map
 - `qa-executor`, `qa-automation`, and `qa-reporter` handoff contracts
 - Plane comment, attachment, wiki/page, page link, sync record, and optional status transition output when Plane tools are available
+- per-sub-work-item Plane result comments when a parent/sub-work-item Plane request is processed
 - Notion test plan page, Notion test case database, Notion views, and captured Notion links when Notion tools are available
 - review history and changelog entries
 
@@ -189,6 +192,60 @@ Output:
 - risk analysis
 - handoff contract
 - summary comment ke Plane
+```
+
+### Plane Parent And Sub-Work Items To Notion
+
+```text
+Gunakan skill qa-planner.
+
+Baca work item Plane, pahami konteks dari title, description, comment, link, attachment, child/sub work item, relation, Notion link, dan evidence yang tersedia.
+Baca juga Sub-Work Items Plane, pahami konteks dari title, description, comment, link, attachment, child/sub work item, relation, Notion link, dan evidence yang tersedia.
+
+Planning Plane Work Items:
+<DKI-214>
+
+Sub-Work Items:
+<DKI-179, DKI-180, DKI-181, DKI-182, DKI-183, DKI-184>
+
+Buat QA planning package dan publish ke Notion:
+- test plan sebagai Notion page
+- UI test cases sebagai Notion database jika ada UI cases
+- API test cases sebagai Notion database jika ada API cases
+- planning_state.json sebagai child/page atau attachment di parent Notion test plan
+- handoff contract sebagai child/page atau section di parent Notion test plan
+
+Rules:
+- resolve dan baca parent work item terlebih dahulu
+- deduplicate sub-work-item id yang duplikat
+- apply Plane QA state gate untuk parent dan setiap sub-work-item
+- jika ada item bukan `Todo Test`, berhenti untuk item tersebut dan minta konfirmasi saya sebelum lanjut
+- buat artifact Notion di konteks parent work item
+- setiap test case Scenario harus diawali readable id sumber, contoh `DKI-179 - Login validation`
+- tambahkan summary comment ke parent work item
+- tambahkan managed result comment ke setiap sub-work-item yang diproses
+- jangan gunakan asumsi jika requirement kurang jelas atau konflik
+```
+
+### Plane Sub-Work Item Operations
+
+```text
+Gunakan skill qa-planner.
+
+Untuk Plane parent work item:
+<DKI-214>
+
+Lakukan operasi pada sub-work-items berikut:
+- baca dan analisis: <DKI-179, DKI-180>
+- update field/state jika diperlukan sesuai workflow QA
+- buat sub-work-item/tracker baru hanya jika dibutuhkan untuk handoff
+- hapus/archive sub-work-item hanya jika saya menyebut id yang harus dihapus secara eksplisit
+
+Sebelum update/change state/delete:
+- resolve state dan metadata project dari Plane
+- apply state gate per item
+- catat semua perubahan di planning_state.changelog
+- tulis managed result comment ke setiap sub-work-item yang diproses
 ```
 
 ### Notion Test Plan And Test Case Database

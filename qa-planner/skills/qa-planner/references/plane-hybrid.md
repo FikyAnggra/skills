@@ -1,6 +1,6 @@
 # Plane Hybrid Reference
 
-Load this file only when input contains Plane.so signals such as a Plane work item/card, readable id like `ENG-42`, Plane URL/UUID/payload, Plane comment, attachment, page/wiki, or Plane Agent @mention.
+Load this file only when input contains Plane.so signals such as a Plane work item/card/sub-work-item, readable id like `ENG-42`, Plane URL/UUID/payload, Plane comment, attachment, page/wiki, or Plane Agent @mention.
 
 ## Plane Intake
 
@@ -10,16 +10,17 @@ Accept Plane input from:
 - readable attachment content
 - project pages or wiki pages
 - parent, child, linked work items
+- explicitly requested sub-work-items or child work items
 - module and cycle context
 - direct MCP/API payloads
 
-Capture available refs in `planning_state.source_inputs[].plane_refs` using `schemas/plane-source.schema.json` when possible: workspace, project, work item UUID, readable identifier, source URL, source status, comments, attachments, pages, modules, cycles, and links.
+Capture available refs in `planning_state.source_inputs[].plane_refs` using `schemas/plane-source.schema.json` when possible: workspace, project, work item UUID, readable identifier, source URL, source status, comments, attachments, pages, parent item, sub-work-items, modules, cycles, and links.
 
 For Plane QA planning, source status controls whether qa-planner may proceed. Follow the Plane QA state workflow below before analysis, generation, or status movement.
 
 ## Plane QA State Workflow
 
-Use this workflow whenever input contains Plane context such as `Plane`, `Plane.so`, Plane work item/card, readable issue id like `DKI-179`, Plane URL/UUID, or a request to read, analyze, create, or update QA artifacts from a Plane work item.
+Use this workflow whenever input contains Plane context such as `Plane`, `Plane.so`, Plane work item/card/sub-work-item, readable issue id like `DKI-179`, Plane URL/UUID, or a request to read, analyze, create, or update QA artifacts from a Plane work item.
 
 Known QA states:
 - `Backlog Test Human`
@@ -45,6 +46,8 @@ Default state gate:
 - Mentioning a specific item id such as `DKI-213`, saying "planning langsung", or explicitly naming a non-`Todo Test` state is not confirmation.
 - Proceed only after the user gives clear approval such as `OK`, `approve`, `lanjut`, or equivalent confirmation after being told the current non-`Todo Test` state.
 - Record the confirmation in `planning_state.review_history` or `custom_fields.plane_state_confirmation`.
+- For parent/sub-work-item requests, apply this gate independently to the parent and to every requested sub-work-item. Do not analyze, generate, transition, or comment on an item whose non-`Todo Test` state has not been confirmed.
+- If only some items are eligible or confirmed, process only those items when the user explicitly allows partial processing; otherwise ask for confirmation for the blocked item list before continuing the batch.
 
 State machine:
 - `Todo Test` -> `Analyze Test` when user asks qa-planner to start analysis/planning.
@@ -88,6 +91,7 @@ Intake and scope tools:
 - `list_cycle_work_items`: expand sprint/cycle scope when the requirement points to a cycle or sprint.
 - `list_module_work_items`: expand feature/module scope when the requirement points to a module.
 - `list_work_item_links`: detect existing PRD, design, QA plan, Google Docs, Confluence, Figma, API docs, or release notes before creating new links.
+- Child/sub-work-item listing tools when exposed by the client: read child items for a parent work item before planning a parent-and-sub-work-item batch. If no child listing tool exists, rely on child refs from the parent payload or the user-provided sub-work-item ids and record `plane_sub_work_item_list_gap`.
 
 Planning enrichment tools:
 - `list_work_item_relations`: capture `blocking`, `blocked_by`, `duplicate_of`, `duplicate`, and `relates_to` dependencies.
@@ -103,7 +107,8 @@ Output and handoff tools:
 - `update_project_page` / `update_workspace_page`: update existing Plane page/wiki managed QA sections when the MCP client provides these tools.
 - `update_work_item`: move status, update labels, or update fields only when explicitly requested and after successful sync.
 - `create_work_item_link`: attach external test plan links such as Google Docs, Confluence, or other durable docs to the source work item.
-- `create_work_item`: create QA execution tracker work items or sub-items for test case batches only when user requests Plane handoff tracking.
+- `create_work_item`: create QA execution tracker work items or create sub-work-items using parent/sub-item fields only when the user explicitly requests it.
+- `delete_work_item` or equivalent delete/archive tool when exposed by the client: delete or archive sub-work-items only when the user explicitly requests deletion for named item ids. If unavailable, record `plane_sub_work_item_delete_gap`.
 - `add_work_items_to_cycle`: place created QA execution tracker items into the configured QA cycle/sprint.
 
 Plane page tool aliases:
@@ -121,6 +126,44 @@ Preferred intake sequence for a readable id:
 
 Do not call write tools until planning artifacts are ready, redaction checks pass, and the selected Plane write mode allows writes.
 
+## Plane Sub-Work Item Mode
+
+Activate this mode when the user mentions `sub-work item`, `child work item`, parent plus sub ids, or asks qa-planner to work from both a Plane work item and its sub-work-items.
+
+Processing order:
+1. Parse parent work item ids and requested sub-work-item ids from the prompt, URLs, payloads, or links.
+2. Deduplicate repeated readable ids while preserving the first occurrence order.
+3. Resolve and read the parent work item first with the preferred intake sequence.
+4. Resolve and read each unique sub-work-item with the same intake sequence: title, description, comments, activities, links, attachments, relations, pages/wiki refs, Notion links, existing QA artifacts, and evidence.
+5. Verify parent-child relationship when Plane payloads or relation tools expose it. If a requested sub-work-item is not linked to the parent, record `plane_sub_work_item_relation_gap` and ask the user when the mismatch changes scope.
+6. Apply the Plane QA state gate independently to the parent and each sub-work-item before analysis, generation, transition, or write-back for that item.
+7. Normalize the parent and sub-work-items into `planning_state.plane_context.parent_work_item`, `planning_state.plane_context.sub_work_items`, and `planning_state.plane_context.processed_work_items`.
+8. Use parent context for the overall test plan, Notion parent page/database, risk analysis, and package-level summary.
+9. Use each processed sub-work-item as a scoped requirement source for test cases, coverage rows, and sub-item comments.
+
+Planning rules:
+- Test case `scenario` must start with the readable id that sourced the case, for example `DKI-179 - Login validation`. Use the parent id for parent-derived cases and the sub-work-item id for sub-work-item-derived cases.
+- Add the readable id to `requirement_refs`, `plane_refs`, coverage map `requirement_id`, and handoff contract source refs whenever possible.
+- Coverage map rows should use the work item/sub-work-item readable id as the requirement id when Plane is the requirement source.
+- If the same requirement is described by the parent and a sub-work-item, prefer the more specific sub-work-item for test cases and keep the parent as context. Do not duplicate cases.
+- If a sub-work-item is `blocked_by` another item, add the blocker to `test_plan.entry_criteria` for affected cases and note the impact in the sub-work-item coverage row.
+
+Output placement:
+- Parent-level artifacts remain attached to or published under the parent work item context: Notion test plan page, Notion UI/API databases, `planning_state.json`, coverage map, and handoff contracts.
+- Sub-work-item-derived test cases are rows in the parent-level UI/API databases, not separate databases per sub-work-item unless the user explicitly requests separate databases.
+- Parent work item gets a managed batch summary comment with package id, processed item list, artifact links, total UI/API case counts, open gaps, and transition summary.
+- Every processed sub-work-item gets its own managed result comment. Include package id, readable id, sub-scope summary, test case ids generated or updated for that sub-item, coverage status, open questions/gaps, relevant Notion/Plane links, and transition result.
+- Use idempotency markers for sub comments: `qa-planner-managed`, package id, and the sub-work-item readable id. Check existing comments before creating a new one.
+- If comment write tooling is unavailable for a sub-work-item, record `plane_sub_work_item_comment_gap` with readable id and impact.
+
+Sub-work-item operations:
+- Read: use `retrieve_work_item_by_identifier` or `retrieve_work_item`, then comments, activities, relations, links, attachments/pages, states, members, properties, and types when available.
+- Create: use `create_work_item` with parent/sub-item relation fields only when the user asks qa-planner to create sub-work-items or tracker sub-items. Record created ids in `planning_state.plane_context.processed_work_items`.
+- Update: use `update_work_item` for explicit field, label, assignee, link, or state updates after resolving valid project metadata.
+- Change state: resolve target state with `list_states`, then use `update_work_item`; apply workflow gates and sync-success rules before movement.
+- Delete/archive: require explicit user instruction naming the sub-work-item id(s), read the item first, record impact in `planning_state.changelog`, then use `delete_work_item` or equivalent only if available. If unavailable, record `plane_sub_work_item_delete_gap`; do not emulate delete by changing unrelated fields unless the user explicitly requests an archive/status fallback.
+- Batch processing may be concurrent conceptually after all required state gates are satisfied, but planning state, coverage map, and comments must remain deterministic and traceable per readable id.
+
 ## Planning State Enrichment
 
 Record Plane-derived context in `planning_state.plane_context` when schema support exists, otherwise use `custom_fields.plane_context` with the same shape.
@@ -129,6 +172,9 @@ Minimum shape:
 
 ```json
 {
+  "parent_work_item": {},
+  "sub_work_items": [],
+  "processed_work_items": [],
   "project_members": [],
   "states": [],
   "work_item_properties": [],

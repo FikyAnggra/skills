@@ -22,7 +22,9 @@
       "properties": {
         "enabled": { "type": "boolean", "default": true },
         "update_existing_managed_comment": { "type": "boolean", "default": true },
-        "include_status_transition_result": { "type": "boolean", "default": true }
+        "include_status_transition_result": { "type": "boolean", "default": true },
+        "comment_each_processed_sub_work_item": { "type": "boolean", "default": true },
+        "sub_work_item_comment_marker_template": { "type": "string", "default": "qa-planner-managed <package_id> <readable_identifier>" }
       }
     },
     "attachment_policy": {
@@ -109,6 +111,28 @@
         "ready_state": { "type": "string", "default": "Ready to Test" },
         "on_non_default_state": { "type": "string", "enum": ["ask_user_for_confirmation_after_state_read"], "default": "ask_user_for_confirmation_after_state_read" },
         "resolve_states_with_list_states": { "type": "boolean", "default": true }
+      }
+    },
+    "sub_work_item_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean", "default": true },
+        "resolve_parent_before_sub_items": { "type": "boolean", "default": true },
+        "dedupe_requested_ids": { "type": "boolean", "default": true },
+        "apply_state_gate_per_item": { "type": "boolean", "default": true },
+        "require_confirmation_for_each_non_default_state": { "type": "boolean", "default": true },
+        "scenario_prefix_format": { "type": "string", "default": "<readable_identifier> - <scenario>" },
+        "parent_level_artifacts": { "type": "boolean", "default": true },
+        "comment_each_processed_item": { "type": "boolean", "default": true },
+        "allow_create": { "type": "boolean", "default": true },
+        "allow_update": { "type": "boolean", "default": true },
+        "allow_state_change": { "type": "boolean", "default": true },
+        "allow_delete_when_explicit": { "type": "boolean", "default": true },
+        "delete_requires_named_item_ids": { "type": "boolean", "default": true },
+        "on_missing_child_list_tool": { "type": "string", "enum": ["record_plane_sub_work_item_list_gap"], "default": "record_plane_sub_work_item_list_gap" },
+        "on_missing_comment_tool": { "type": "string", "enum": ["record_plane_sub_work_item_comment_gap"], "default": "record_plane_sub_work_item_comment_gap" },
+        "on_missing_delete_tool": { "type": "string", "enum": ["record_plane_sub_work_item_delete_gap"], "default": "record_plane_sub_work_item_delete_gap" }
       }
     },
     "fallback_behavior": {

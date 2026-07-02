@@ -178,6 +178,17 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "parent_work_item": { "$ref": "#/$defs/plane_work_item_context" },
+        "sub_work_items": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/plane_work_item_context" },
+          "default": []
+        },
+        "processed_work_items": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/plane_processed_item" },
+          "default": []
+        },
         "project_members": {
           "type": "array",
           "items": { "$ref": "#/$defs/plane_member" },
@@ -491,6 +502,90 @@
         "cycle_id": { "type": "string" },
         "coverage_status": { "type": "string", "enum": ["included", "excluded", "deferred"] },
         "notes": { "type": "string" }
+      }
+    },
+    "plane_work_item_context": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["work_item_id"],
+      "properties": {
+        "work_item_id": { "type": "string" },
+        "readable_identifier": { "type": "string" },
+        "title": { "type": "string" },
+        "source_url": { "type": "string" },
+        "parent_work_item_id": { "type": "string" },
+        "parent_readable_identifier": { "type": "string" },
+        "source_status": { "type": "string" },
+        "source_status_id": { "type": "string" },
+        "state_gate_status": {
+          "type": "string",
+          "enum": ["eligible", "confirmed", "blocked", "skipped", "unknown"],
+          "default": "unknown"
+        },
+        "state_confirmation_ref": { "type": "string" },
+        "requested_actions": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["read", "analyze", "create", "update", "delete", "change_state", "comment", "link", "sync_artifacts"] },
+          "default": []
+        },
+        "processing_status": {
+          "type": "string",
+          "enum": ["not_started", "read", "analyzed", "updated", "commented", "synced", "skipped", "blocked", "failed"],
+          "default": "not_started"
+        },
+        "artifact_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/artifact_output" },
+          "default": []
+        },
+        "comment_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/plane_comment_ref" },
+          "default": []
+        },
+        "gaps": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        }
+      }
+    },
+    "plane_processed_item": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["work_item_id", "readable_identifier"],
+      "properties": {
+        "work_item_id": { "type": "string" },
+        "readable_identifier": { "type": "string" },
+        "role": { "type": "string", "enum": ["parent", "sub_work_item", "linked", "tracker"] },
+        "parent_readable_identifier": { "type": "string" },
+        "actions_completed": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        },
+        "test_case_ids": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        },
+        "coverage_status": { "type": "string", "enum": ["Covered", "Partial", "Gap", "Excluded", "covered", "partial", "gap", "excluded"] },
+        "comment_status": { "type": "string", "enum": ["not_requested", "created", "updated", "skipped", "failed"] },
+        "transition_status": { "type": "string" },
+        "notes": { "type": "string" }
+      }
+    },
+    "plane_comment_ref": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["comment_id"],
+      "properties": {
+        "comment_id": { "type": "string" },
+        "work_item_id": { "type": "string" },
+        "readable_identifier": { "type": "string" },
+        "managed_marker": { "type": "string" },
+        "source_url": { "type": "string" },
+        "sync_status": { "type": "string", "enum": ["created", "updated", "skipped", "failed"] }
       }
     }
   }

@@ -1,4 +1,4 @@
 interface:
   display_name: "QA Planner"
-  short_description: "Plan QA from requirements or Plane cards."
-  default_prompt: "Use $qa-planner to create a QA planning package from requirements or a Plane work item."
+  short_description: "Plan QA from requirements, Plane items, or Notion."
+  default_prompt: "Use $qa-planner to create a QA planning package from requirements, a Plane work item with sub-work-items, or a Notion output request."

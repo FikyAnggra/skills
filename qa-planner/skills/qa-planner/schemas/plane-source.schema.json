@@ -48,7 +48,7 @@
     },
     "source_type": {
       "type": "string",
-      "enum": ["work_item", "comment", "attachment", "page", "module", "cycle", "payload"]
+      "enum": ["work_item", "sub_work_item", "comment", "attachment", "page", "module", "cycle", "payload"]
     },
     "comments": {
       "type": "array",
@@ -99,7 +99,13 @@
       "items": { "$ref": "#/$defs/ref" },
       "default": []
     },
+    "parent_work_item": { "$ref": "#/$defs/ref" },
     "child_work_items": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/ref" },
+      "default": []
+    },
+    "sub_work_items": {
       "type": "array",
       "items": { "$ref": "#/$defs/ref" },
       "default": []

@@ -1,6 +1,6 @@
 {
   "name": "qa-planner",
-  "version": "0.2.13",
+  "version": "0.2.14",
   "description": "Portable QA planning plugin for Claude-compatible agents with core QA planning in SKILL.md, conditional Plane MCP guidance in references/plane-hybrid.md, and conditional Notion MCP guidance in references/notion-mcp.md. It uses skills/qa-planner/SKILL.md as the canonical instruction source and preserves the Codex plugin wrapper.",
   "author": {
     "name": "Local developer"
@@ -18,6 +18,9 @@
     "qa_planning",
     "plane_hybrid_planning",
     "plane_work_item_intake",
+    "plane_sub_work_item_intake",
+    "plane_sub_work_item_crud",
+    "plane_sub_work_item_comments",
     "plane_mcp_context_enrichment",
     "plane_artifact_sync",
     "plane_wiki_update",
