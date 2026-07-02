@@ -14,4 +14,4 @@
 - `expected_result`: expected status code, response body, schema, side effect, or error contract.
 - `actual_result` remains blank until executor result or explicit user instruction exists.
 - `test_case_status`: `Untested`, `On Progress`, `Passed`, `Failed`, `Blocked`, or `Retest`.
-- `automation_status`: `Manual Only`, `To Be Automate`, or `Already Automate`.
+- `automation_status`: `Manual Only`, `To Be Automate`, `Automation Implemented`, or `Already Automate`.

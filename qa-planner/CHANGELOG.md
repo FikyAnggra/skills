@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.15 - 2026-07-02
+
+- Added `Automation Implemented` as an allowed automation status between `To Be Automate` and `Already Automate`.
+- Clarified `Automation Implemented` means automation exists but is not reviewed, approved, or proven as stable maintained coverage.
+- Clarified `Already Automate` requires reviewed, approved, maintained automation coverage.
+- Updated planning state schema, handoff contract schema, templates, examples, Plane comment summary, and README prompts.
+
 ## 0.2.14 - 2026-07-02
 
 - Added Plane parent/sub-work-item planning mode with parent-first intake, sub-work-item id deduplication, per-item state gates, and parent-child context tracking.

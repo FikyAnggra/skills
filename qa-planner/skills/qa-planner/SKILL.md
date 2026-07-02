@@ -216,6 +216,7 @@ Allowed test case status values:
 Allowed automation status values:
 - `Manual Only`
 - `To Be Automate`
+- `Automation Implemented`
 - `Already Automate`
 
 Allowed test type values:
@@ -236,7 +237,8 @@ Allowed test type values:
 If a source uses a non-listed type such as `Happy Path` or `Sanity`, map it to the closest allowed type only when the mapping is obvious and note the mapping. If not obvious, ask the user.
 
 Automation status decision rules:
-- `Already Automate`: choose only when source references an existing script, suite, test id, CI job, or maintained automation coverage.
+- `Already Automate`: choose only when source references automation that has been reviewed, approved, and maintained as existing coverage, such as an approved suite, test id, CI job, or maintained automation coverage.
+- `Automation Implemented`: choose when an automation script has already been created or implemented, but is not yet reviewed, not yet approved, or not yet proven as stable maintained coverage.
 - `To Be Automate`: choose for repetitive regression candidates with stable UI/API behavior, deterministic data, observable expected result, and known or discoverable automation surface.
 - `Manual Only`: choose for exploratory testing, subjective visual judgment, usability review, one-off investigation, unsupported external dependency, unstable selectors, missing fixtures, CAPTCHA/OTP/manual approval, or high automation cost compared with regression value.
 - Borderline cases default to `Manual Only` plus a note explaining what information would make automation feasible.

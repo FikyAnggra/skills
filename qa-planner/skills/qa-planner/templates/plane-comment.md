@@ -20,6 +20,8 @@ Planning status: `{{planning_status}}`
 | P2 - Medium | {{p2_count}} |
 | P3 - Low | {{p3_count}} |
 | To Be Automate | {{to_be_automate_count}} |
+| Automation Implemented | {{automation_implemented_count}} |
+| Already Automate | {{already_automate_count}} |
 | Manual Only | {{manual_only_count}} |
 
 ## Gaps and Questions

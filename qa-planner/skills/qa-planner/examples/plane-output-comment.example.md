@@ -19,7 +19,9 @@ Generated QA plan for checkout promo code validation. Covered valid promo applic
 | P1 - High | 2 |
 | P2 - Medium | 2 |
 | P3 - Low | 0 |
-| To Be Automate | 2 |
+| To Be Automate | 1 |
+| Automation Implemented | 1 |
+| Already Automate | 1 |
 | Manual Only | 1 |
 
 ## Gaps and Questions

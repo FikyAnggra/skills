@@ -398,9 +398,12 @@ Buat handoff contract untuk qa-automation.
 
 Klasifikasikan:
 - To Be Automate
+- Automation Implemented
 - Already Automate
 - Manual Only
 
+Gunakan `Automation Implemented` jika script automation sudah dibuat/diimplementasikan tetapi belum direview, belum di-approve, atau belum terbukti sebagai maintained coverage.
+Gunakan `Already Automate` hanya jika automation sudah direview, di-approve, dan menjadi maintained coverage.
 Jelaskan alasan automation_status untuk borderline cases.
 Jangan tulis automation script final.
 ```

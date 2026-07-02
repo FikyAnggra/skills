@@ -1,6 +1,6 @@
 {
   "name": "qa-planner",
-  "version": "0.2.14",
+  "version": "0.2.15",
   "description": "Portable QA planning plugin for converting requirements into planning_state JSON, test plans, test cases, coverage maps, review feedback, and downstream handoff contracts, with conditional Plane MCP and Notion MCP output integration.",
   "author": {
     "name": "Local developer"
@@ -9,7 +9,7 @@
   "interface": {
     "displayName": "QA Planner",
     "shortDescription": "Create QA plans from requirements, Plane, or Notion.",
-    "longDescription": "QA Planner provides portable QA planning for normalizing requirements, resolving blocking ambiguity and conflicting sources without unsupported assumptions, creating deterministic planning_state JSON, rendering test plans, coverage maps, and separated UI/API test cases from governed field models, managing OK/NOK and partial review loops, handling large inputs incrementally, and producing governed handoff contracts for qa-executor, qa-automation, and qa-reporter. Plane.so MCP integration is documented as a conditional reference loaded only for Plane inputs and follows the QA state workflow from Todo Test through Analyze Test, Update Test, Need Review Test, and Ready to Test. It can process Plane parent work items plus multiple sub-work-items with per-item state gates, readable-id scenario prefixes, parent-level artifacts, and managed comments on every processed sub-work-item. Notion MCP integration is documented as a conditional reference loaded only for Notion outputs and creates a test plan page plus separate UI/API test case databases with exact columns when database tooling is available.",
+    "longDescription": "QA Planner provides portable QA planning for normalizing requirements, resolving blocking ambiguity and conflicting sources without unsupported assumptions, creating deterministic planning_state JSON, rendering test plans, coverage maps, and separated UI/API test cases from governed field models, managing OK/NOK and partial review loops, handling large inputs incrementally, classifying automation status as Manual Only, To Be Automate, Automation Implemented, or Already Automate, and producing governed handoff contracts for qa-executor, qa-automation, and qa-reporter. Plane.so MCP integration is documented as a conditional reference loaded only for Plane inputs and follows the QA state workflow from Todo Test through Analyze Test, Update Test, Need Review Test, and Ready to Test. It can process Plane parent work items plus multiple sub-work-items with per-item state gates, readable-id scenario prefixes, parent-level artifacts, and managed comments on every processed sub-work-item. Notion MCP integration is documented as a conditional reference loaded only for Notion outputs and creates a test plan page plus separate UI/API test case databases with exact columns when database tooling is available.",
     "developerName": "Local developer",
     "category": "Productivity",
     "capabilities": [],

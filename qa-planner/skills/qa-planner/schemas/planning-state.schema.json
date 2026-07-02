@@ -234,7 +234,7 @@
     },
     "automation_status": {
       "type": "string",
-      "enum": ["Manual Only", "To Be Automate", "Already Automate"]
+      "enum": ["Manual Only", "To Be Automate", "Automation Implemented", "Already Automate"]
     },
     "note": {
       "type": "object",

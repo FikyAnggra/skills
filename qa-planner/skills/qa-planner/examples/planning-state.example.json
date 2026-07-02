@@ -131,8 +131,8 @@
       "expected_result": "Error Promo code has expired appears and payable total remains 100.00.",
       "actual_result": "",
       "test_case_status": "Untested",
-      "automation_status": "To Be Automate",
-      "notes": "Negative case.",
+      "automation_status": "Automation Implemented",
+      "notes": "Automation script exists but is not reviewed or approved yet.",
       "requirement_refs": ["REQ-002"],
       "tags": ["checkout", "negative"]
     },
@@ -244,18 +244,18 @@
         "review_history": "planning_state.review_history"
       },
       "scope": {
-        "create_scripts": ["TC0001", "TC0002"],
-        "update_scripts": ["TC0003"],
+        "create_scripts": ["TC0001"],
+        "update_scripts": ["TC0002", "TC0003"],
         "manual_only": ["TC0004"]
       },
       "automation_policy": {
-        "include_status": ["To Be Automate", "Already Automate"],
+        "include_status": ["To Be Automate", "Automation Implemented", "Already Automate"],
         "exclude_status": ["Manual Only"],
         "priority_filter": ["P0 - Critical", "P1 - High"]
       },
       "constraints": ["Selector names are not confirmed."],
       "gaps": ["Promo configuration API endpoint is not documented."],
-      "summary": "Automation candidates for valid and expired promo flows."
+      "summary": "Automation candidates for valid promo creation and expired/empty promo automation review."
     },
     "qa_reporter": {
       "contract_version": "1.0",

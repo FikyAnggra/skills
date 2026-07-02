@@ -32,7 +32,7 @@
   "qa_automation": {
     "target_agent": "qa-automation",
     "automation_policy": {
-      "include_status": ["To Be Automate", "Already Automate"],
+      "include_status": ["To Be Automate", "Automation Implemented", "Already Automate"],
       "exclude_status": ["Manual Only"],
       "priority_filter": ["P0 - Critical", "P1 - High"]
     },

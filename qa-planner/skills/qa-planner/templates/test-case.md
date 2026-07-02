@@ -8,6 +8,6 @@
 
 - `priority`: `P0 - Critical`, `P1 - High`, `P2 - Medium`, or `P3 - Low`.
 - `test_case_status`: `Untested`, `On Progress`, `Passed`, `Failed`, `Blocked`, or `Retest`.
-- `automation_status`: `Manual Only`, `To Be Automate`, or `Already Automate`.
+- `automation_status`: `Manual Only`, `To Be Automate`, `Automation Implemented`, or `Already Automate`.
 - `actual_result` remains blank until executor result or explicit user instruction exists.
 - `test_steps` should be ordered and observable.
