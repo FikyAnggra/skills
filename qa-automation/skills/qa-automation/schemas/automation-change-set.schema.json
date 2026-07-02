@@ -32,6 +32,88 @@
         "executor_signal": { "type": "string" },
         "manual_request": { "type": "string" },
         "test_case_source": { "type": "string" },
+        "notion_refs": { "type": "array", "items": { "$ref": "#/$defs/external_ref" } },
+        "plane_refs": { "type": "array", "items": { "$ref": "#/$defs/external_ref" } },
+        "custom_fields": { "type": "object" }
+      }
+    },
+    "repo_context": { "$ref": "#/$defs/repo_context" },
+    "framework": { "$ref": "#/$defs/framework" },
+    "branch_policy": { "$ref": "#/$defs/branch_policy" },
+    "automation_scope": { "$ref": "#/$defs/automation_scope" },
+    "test_case_mappings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/test_case_mapping" }
+    },
+    "planned_changes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/file_change" }
+    },
+    "applied_changes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/file_change" }
+    },
+    "validation_results": {
+      "type": "array",
+      "items": { "$ref": "validation-result.schema.json" }
+    },
+    "review_gates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["script_review", "promotion_review"],
+      "properties": {
+        "script_review": { "$ref": "#/$defs/review_gate" },
+        "promotion_review": { "$ref": "#/$defs/review_gate" },
+        "custom_fields": { "type": "object" }
+      }
+    },
+    "promotion_status": { "$ref": "#/$defs/promotion_status" },
+    "notion_context": { "$ref": "#/$defs/notion_context" },
+    "notion_write_policy": { "$ref": "#/$defs/notion_write_policy" },
+    "notion_sync": {
+      "type": "array",
+      "items": { "$ref": "notion-sync-record.schema.json" }
+    },
+    "plane_context": { "$ref": "#/$defs/plane_context" },
+    "plane_write_policy": { "$ref": "#/$defs/plane_write_policy" },
+    "plane_state_mapping": { "$ref": "#/$defs/plane_state_mapping" },
+    "plane_sync": {
+      "type": "array",
+      "items": { "$ref": "plane-sync-record.schema.json" }
+    },
+    "notion_plane_bridge": { "$ref": "#/$defs/notion_plane_bridge" },
+    "crud_operations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/crud_operation" }
+    },
+    "gaps": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/gap" }
+    },
+    "changelog": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/changelog_item" }
+    },
+    "custom_fields": { "type": "object" }
+  },
+  "$defs": {
+    "automation_status": {
+      "type": "string",
+      "enum": ["Manual Only", "To Be Automate", "Automation Implemented", "Already Automate"]
+    },
+    "sync_status": {
+      "type": "string",
+      "enum": ["not_started", "synced", "partial", "failed", "skipped"]
+    },
+    "external_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ref_type", "ref"],
+      "properties": {
+        "ref_type": { "type": "string" },
+        "ref": { "type": "string" },
+        "role": { "type": "string" },
+        "read_status": { "type": "string", "enum": ["not_started", "read", "failed", "skipped"] },
         "custom_fields": { "type": "object" }
       }
     },
@@ -43,17 +125,11 @@
         "repo_path": { "type": "string" },
         "repo_available": { "type": "boolean" },
         "package_manager": { "type": "string", "enum": ["npm", "pnpm", "yarn", "bun", "maven", "gradle", "pip", "poetry", "unknown", "none"] },
-        "test_commands": {
-          "type": "array",
-          "items": { "type": "string" }
-        },
+        "test_commands": { "type": "array", "items": { "type": "string" } },
         "current_branch": { "type": "string" },
         "base_branch": { "type": "string" },
         "target_branch": { "type": "string" },
-        "detected_conventions": {
-          "type": "array",
-          "items": { "type": "string" }
-        },
+        "detected_conventions": { "type": "array", "items": { "type": "string" } },
         "custom_fields": { "type": "object" }
       }
     },
@@ -66,10 +142,7 @@
         "language": { "type": "string" },
         "source": { "type": "string", "enum": ["detected", "provided", "fallback"] },
         "test_id_attribute": { "type": "string" },
-        "config_files": {
-          "type": "array",
-          "items": { "type": "string" }
-        },
+        "config_files": { "type": "array", "items": { "type": "string" } },
         "custom_fields": { "type": "object" }
       }
     },
@@ -96,96 +169,76 @@
         "scope_type": { "type": "string", "enum": ["create", "update", "manual_only", "skipped", "validation_only", "mixed"] },
         "actions": {
           "type": "array",
-          "items": { "type": "string", "enum": ["create_script", "update_script", "skip_manual_only", "mark_gap", "refactor_approved", "validation_only"] }
+          "items": {
+            "type": "string",
+            "enum": ["create_script", "update_script", "skip_manual_only", "mark_gap", "refactor_approved", "validation_only", "sync_notion", "sync_plane", "bridge_notion_plane"]
+          }
         },
         "priority_filter": { "type": "string" },
-        "selected_tc_ids": {
-          "type": "array",
-          "items": { "type": "string" }
-        },
+        "selected_tc_ids": { "type": "array", "items": { "type": "string" } },
         "custom_fields": { "type": "object" }
       }
     },
-    "test_case_mappings": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["tc_id", "automation_status", "mapping_status"],
-        "properties": {
-          "tc_id": { "type": "string", "minLength": 1 },
-          "scenario": { "type": "string" },
-          "expected_result": { "type": "string" },
-          "automation_status": { "type": "string", "enum": ["To Be Automate", "Already Automate", "Manual Only"] },
-          "mapping_status": { "type": "string", "enum": ["planned", "created", "updated", "validated", "skipped", "blocked"] },
-          "script_path": { "type": "string" },
-          "spec_title": { "type": "string" },
-          "assertions": { "type": "array", "items": { "type": "string" } },
-          "locators": { "type": "array", "items": { "type": "string" } },
-          "gaps": { "type": "array", "items": { "type": "string" } },
-          "custom_fields": { "type": "object" }
-        }
-      }
-    },
-    "planned_changes": {
-      "type": "array",
-      "items": { "$ref": "#/$defs/file_change" }
-    },
-    "applied_changes": {
-      "type": "array",
-      "items": { "$ref": "#/$defs/file_change" }
-    },
-    "validation_results": {
-      "type": "array",
-      "items": { "$ref": "validation-result.schema.json" }
-    },
-    "review_gates": {
+    "test_case_mapping": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["script_review", "promotion_review"],
+      "required": ["tc_id", "automation_status", "mapping_status"],
       "properties": {
-        "script_review": { "$ref": "#/$defs/review_gate" },
-        "promotion_review": { "$ref": "#/$defs/review_gate" },
+        "tc_id": { "type": "string", "minLength": 1 },
+        "scenario": { "type": "string" },
+        "expected_result": { "type": "string" },
+        "automation_status": { "$ref": "#/$defs/automation_status" },
+        "target_automation_status": { "$ref": "#/$defs/automation_status" },
+        "mapping_status": { "type": "string", "enum": ["planned", "created", "updated", "implemented", "validated", "skipped", "blocked"] },
+        "script_path": { "type": "string" },
+        "spec_title": { "type": "string" },
+        "assertions": { "type": "array", "items": { "type": "string" } },
+        "locators": { "type": "array", "items": { "type": "string" } },
+        "source_locator": { "$ref": "#/$defs/source_locator" },
+        "notion_source": { "$ref": "#/$defs/notion_source" },
+        "plane_source": { "$ref": "#/$defs/plane_source" },
+        "gaps": { "type": "array", "items": { "type": "string" } },
         "custom_fields": { "type": "object" }
       }
     },
-    "promotion_status": {
+    "source_locator": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["state"],
       "properties": {
-        "state": {
-          "type": "string",
-          "enum": ["draft", "script_review_required", "revision_required", "validation_required", "promotion_review_required", "ready_to_push", "ready_to_deploy", "ready_to_merge", "promoted", "blocked"]
-        },
-        "ready_for_remote_action": { "type": "boolean" },
-        "remote_action_type": { "type": "string", "enum": ["push", "deploy", "merge", "none"] },
-        "remote_action_approved": { "type": "boolean" },
-        "reason": { "type": "string" },
+        "source_type": { "type": "string", "enum": ["notion", "plane", "planner_contract", "executor_signal", "manual", "file", "unknown"] },
+        "source_ref": { "type": "string" },
+        "row_or_page_id": { "type": "string" },
+        "property_map": { "type": "object" },
         "custom_fields": { "type": "object" }
       }
     },
-    "gaps": {
-      "type": "array",
-      "items": { "$ref": "#/$defs/gap" }
-    },
-    "changelog": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["timestamp", "summary"],
-        "properties": {
-          "timestamp": { "type": "string" },
-          "author": { "type": "string" },
-          "summary": { "type": "string" },
-          "custom_fields": { "type": "object" }
-        }
+    "notion_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "page_id": { "type": "string" },
+        "database_id": { "type": "string" },
+        "data_source_id": { "type": "string" },
+        "row_page_id": { "type": "string" },
+        "url": { "type": "string" },
+        "automation_status_property": { "type": "string" },
+        "custom_fields": { "type": "object" }
       }
     },
-    "custom_fields": { "type": "object" }
-  },
-  "$defs": {
+    "plane_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "workspace_id": { "type": "string" },
+        "project_id": { "type": "string" },
+        "work_item_id": { "type": "string" },
+        "readable_identifier": { "type": "string" },
+        "url": { "type": "string" },
+        "is_sub_work_item": { "type": "boolean" },
+        "parent_work_item_id": { "type": "string" },
+        "custom_fields": { "type": "object" }
+      }
+    },
     "file_change": {
       "type": "object",
       "additionalProperties": false,
@@ -213,17 +266,181 @@
         "custom_fields": { "type": "object" }
       }
     },
+    "promotion_status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state"],
+      "properties": {
+        "state": {
+          "type": "string",
+          "enum": ["draft", "script_review_required", "revision_required", "validation_required", "promotion_review_required", "ready_to_push", "ready_to_deploy", "ready_to_merge", "promoted", "blocked"]
+        },
+        "ready_for_remote_action": { "type": "boolean" },
+        "remote_action_type": { "type": "string", "enum": ["push", "deploy", "merge", "none"] },
+        "remote_action_approved": { "type": "boolean" },
+        "reason": { "type": "string" },
+        "custom_fields": { "type": "object" }
+      }
+    },
+    "notion_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "active": { "type": "boolean" },
+        "source_refs": { "type": "array", "items": { "$ref": "#/$defs/notion_source" } },
+        "output_targets": { "type": "array", "items": { "$ref": "#/$defs/notion_source" } },
+        "read_gaps": { "type": "array", "items": { "type": "string" } },
+        "mcp_gaps": { "type": "array", "items": { "type": "string" } },
+        "custom_fields": { "type": "object" }
+      }
+    },
+    "notion_write_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source_status_update": { "type": "boolean", "default": true },
+        "comment_sync": { "type": "boolean", "default": true },
+        "automation_page_sync": { "type": "boolean", "default": false },
+        "result_database_sync": { "type": "boolean", "default": false },
+        "schema_update": { "type": "boolean", "default": false },
+        "delete_requires_confirmation": { "type": "boolean", "const": true },
+        "delete_approved": { "type": "boolean" },
+        "custom_fields": { "type": "object" }
+      }
+    },
+    "plane_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "active": { "type": "boolean" },
+        "workspace_id": { "type": "string" },
+        "project_id": { "type": "string" },
+        "source_work_items": { "type": "array", "items": { "$ref": "#/$defs/plane_source" } },
+        "states": { "type": "array", "items": { "type": "object" } },
+        "comments": { "type": "array", "items": { "type": "object" } },
+        "links": { "type": "array", "items": { "type": "object" } },
+        "relations": { "type": "array", "items": { "type": "object" } },
+        "read_gaps": { "type": "array", "items": { "type": "string" } },
+        "mcp_gaps": { "type": "array", "items": { "type": "string" } },
+        "custom_fields": { "type": "object" }
+      }
+    },
+    "plane_write_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "comment_sync": { "type": "boolean", "default": true },
+        "description_sync": { "type": "boolean", "default": true },
+        "status_sync": { "type": "boolean", "default": false },
+        "worklog_sync": { "type": "boolean", "default": false },
+        "link_sync": { "type": "boolean", "default": true },
+        "page_sync": { "type": "boolean", "default": false },
+        "create_followup_items": { "type": "boolean", "default": false },
+        "delete_requires_confirmation": { "type": "boolean", "const": true },
+        "delete_approved": { "type": "boolean" },
+        "custom_fields": { "type": "object" }
+      }
+    },
+    "plane_state_mapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mapping_source": { "type": "string", "enum": ["user", "work_item", "package", "none"] },
+        "available_states_read": { "type": "boolean" },
+        "on_start": { "type": "string" },
+        "on_implemented": { "type": "string" },
+        "on_validation_passed": { "type": "string" },
+        "on_review_ok": { "type": "string" },
+        "on_blocked": { "type": "string" },
+        "mapping_gap": { "type": "string" },
+        "custom_fields": { "type": "object" }
+      }
+    },
+    "notion_plane_bridge": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "active": { "type": "boolean" },
+        "plane_work_item_ref": { "type": "string" },
+        "notion_test_case_source_ref": { "type": "string" },
+        "notion_automation_page_ref": { "type": "string" },
+        "discovered_notion_refs": { "type": "array", "items": { "$ref": "#/$defs/discovered_ref" } },
+        "source_of_truth": { "type": "string", "const": "automation_change_set.json" },
+        "sync_direction": { "type": "string" },
+        "cross_links": { "type": "array", "items": { "$ref": "#/$defs/cross_link" } },
+        "idempotency_key": { "type": "string" },
+        "sync_status": { "$ref": "#/$defs/sync_status" },
+        "sync_errors": { "type": "array", "items": { "type": "string" } },
+        "custom_fields": { "type": "object" }
+      }
+    },
+    "discovered_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "url", "classification", "confidence"],
+      "properties": {
+        "source": { "type": "string" },
+        "url": { "type": "string" },
+        "classification": { "type": "string", "enum": ["test_case_source", "automation_page", "result_database", "unknown"] },
+        "confidence": { "type": "string", "enum": ["low", "medium", "high"] },
+        "reason": { "type": "string" },
+        "read_status": { "type": "string", "enum": ["not_started", "read", "failed", "skipped"] },
+        "custom_fields": { "type": "object" }
+      }
+    },
+    "cross_link": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["link_type", "source_ref", "target_ref", "sync_status"],
+      "properties": {
+        "link_type": { "type": "string", "enum": ["plane_to_notion", "notion_to_plane"] },
+        "source_ref": { "type": "string" },
+        "target_ref": { "type": "string" },
+        "sync_status": { "$ref": "#/$defs/sync_status" },
+        "custom_fields": { "type": "object" }
+      }
+    },
+    "crud_operation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["system", "operation", "target_type", "target_ref", "approval_required", "status"],
+      "properties": {
+        "system": { "type": "string", "enum": ["notion", "plane"] },
+        "operation": { "type": "string", "enum": ["read", "create", "update", "delete", "archive", "comment", "link", "state_change"] },
+        "target_type": { "type": "string" },
+        "target_ref": { "type": "string" },
+        "approval_required": { "type": "boolean" },
+        "approved": { "type": "boolean" },
+        "status": { "$ref": "#/$defs/sync_status" },
+        "impact": { "type": "string" },
+        "custom_fields": { "type": "object" }
+      }
+    },
     "gap": {
       "type": "object",
       "additionalProperties": false,
       "required": ["gap_type", "description", "impact"],
       "properties": {
-        "gap_type": { "type": "string", "enum": ["selector_gap", "data_gap", "env_gap", "fixture_gap", "api_gap", "repo_gap", "framework_gap"] },
+        "gap_type": {
+          "type": "string",
+          "enum": ["selector_gap", "data_gap", "env_gap", "fixture_gap", "api_gap", "repo_gap", "framework_gap", "notion_read_gap", "notion_schema_gap", "notion_sync_gap", "plane_read_gap", "plane_state_mapping_gap", "plane_sync_gap", "bridge_sync_gap", "mcp_gap"]
+        },
         "tc_id": { "type": "string" },
         "file_path": { "type": "string" },
         "description": { "type": "string" },
         "impact": { "type": "string" },
         "recommended_action": { "type": "string" },
+        "custom_fields": { "type": "object" }
+      }
+    },
+    "changelog_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["timestamp", "summary"],
+      "properties": {
+        "timestamp": { "type": "string" },
+        "author": { "type": "string" },
+        "summary": { "type": "string" },
         "custom_fields": { "type": "object" }
       }
     }

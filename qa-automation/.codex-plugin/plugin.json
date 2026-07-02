@@ -1,18 +1,18 @@
 {
   "name": "qa-automation",
   "version": "0.1.0",
-  "description": "Portable QA automation plugin with a qa-automation skill for creating and updating governed automation scripts from approved QA inputs.",
+  "description": "Portable QA automation plugin with a qa-automation skill for creating/updating governed automation scripts and syncing automation status through Notion and Plane.",
   "author": {
     "name": "Local developer"
   },
   "skills": "./skills/",
   "interface": {
     "displayName": "QA Automation",
-    "shortDescription": "Create governed QA automation scripts.",
-    "longDescription": "QA Automation provides a portable skill for planner contracts, executor automation signals, manual automation requests, automation_change_set.json governance, Playwright TypeScript fallback, locator policy, validation tiers, review gates, and promotion readiness.",
+    "shortDescription": "Create and sync QA automation scripts.",
+    "longDescription": "QA Automation provides a portable skill for planner contracts, executor automation signals, manual automation requests, Notion and Plane MCP sources, automation_change_set.json governance, Playwright TypeScript fallback, locator policy, validation tiers, review gates, Notion automation status updates, Plane managed comments/descriptions/state sync, bridge sync, and promotion readiness.",
     "developerName": "Local developer",
     "category": "Productivity",
     "capabilities": [],
-    "defaultPrompt": "Use qa-automation to create or update governed automation scripts from approved QA inputs."
+    "defaultPrompt": "Use qa-automation to create or update governed automation scripts and sync automation status through Notion or Plane when provided."
   }
 }

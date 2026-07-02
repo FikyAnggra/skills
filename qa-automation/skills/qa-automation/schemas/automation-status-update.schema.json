@@ -17,25 +17,19 @@
         "required": ["tc_id", "previous_automation_status", "new_automation_status", "reason", "script_validation_outcome"],
         "properties": {
           "tc_id": { "type": "string", "minLength": 1 },
-          "previous_automation_status": {
-            "type": "string",
-            "enum": ["To Be Automate", "Already Automate", "Manual Only"]
-          },
-          "new_automation_status": {
-            "type": "string",
-            "enum": ["To Be Automate", "Already Automate", "Manual Only"]
-          },
+          "previous_automation_status": { "$ref": "#/$defs/automation_status" },
+          "new_automation_status": { "$ref": "#/$defs/automation_status" },
           "automation_substatus": {
             "type": "string",
-            "enum": ["script_created_validated", "script_created_unvalidated", "script_updated_validated", "validation_failed", "blocked_by_gap", "skipped_manual_only"]
+            "enum": ["script_created_unvalidated", "script_updated_unvalidated", "automation_implemented", "script_review_required", "script_review_ok", "validation_passed", "validation_failed", "blocked_by_gap", "skipped_manual_only"]
           },
           "reason": { "type": "string" },
           "script_path": { "type": "string" },
           "script_validation_outcome": { "type": "string", "enum": ["passed", "failed", "skipped", "blocked"] },
-          "validation_refs": {
-            "type": "array",
-            "items": { "type": "string" }
-          },
+          "script_review_status": { "type": "string", "enum": ["pending", "OK", "NOK", "skipped"] },
+          "validation_refs": { "type": "array", "items": { "type": "string" } },
+          "notion_source_update": { "$ref": "#/$defs/source_update_outcome" },
+          "plane_sync_refs": { "type": "array", "items": { "type": "string" } },
           "custom_fields": { "type": "object" }
         }
       }
@@ -43,5 +37,23 @@
     "qa_executor_validation_request": { "type": "object" },
     "qa_reporter_automation_summary": { "type": "object" },
     "custom_fields": { "type": "object" }
+  },
+  "$defs": {
+    "automation_status": {
+      "type": "string",
+      "enum": ["Manual Only", "To Be Automate", "Automation Implemented", "Already Automate"]
+    },
+    "source_update_outcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source_type": { "type": "string", "enum": ["notion_page", "notion_database_row", "notion_data_source_row", "plane_work_item", "none"] },
+        "source_ref": { "type": "string" },
+        "update_status": { "type": "string", "enum": ["not_started", "synced", "partial", "failed", "skipped"] },
+        "sync_record_id": { "type": "string" },
+        "gap": { "type": "string" },
+        "custom_fields": { "type": "object" }
+      }
+    }
   }
 }

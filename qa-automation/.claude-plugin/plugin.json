@@ -1,7 +1,7 @@
 {
   "name": "qa-automation",
   "version": "0.1.0",
-  "description": "Portable QA automation plugin for Claude-compatible agents. It uses skills/qa-automation/SKILL.md as the canonical instruction source and preserves the Codex plugin wrapper.",
+  "description": "Portable QA automation plugin for Claude-compatible agents. It uses skills/qa-automation/SKILL.md as the canonical instruction source for governed script automation plus Notion and Plane managed sync.",
   "author": {
     "name": "Local developer"
   },
@@ -22,7 +22,10 @@
     "playwright_typescript_fallback",
     "locator_policy",
     "validation_gates",
-    "promotion_review"
+    "promotion_review",
+    "notion_managed_sync",
+    "plane_managed_sync",
+    "notion_plane_bridge"
   ],
   "compatibility": {
     "codex": {

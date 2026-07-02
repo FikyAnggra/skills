@@ -1,0 +1,46 @@
+{
+  "input_type": "plane_work_item",
+  "plane_context": {
+    "active": true,
+    "workspace_id": "workspace-qa",
+    "project_id": "project-dki",
+    "source_work_items": [
+      {
+        "workspace_id": "workspace-qa",
+        "project_id": "project-dki",
+        "work_item_id": "plane-work-item-123",
+        "readable_identifier": "DKI-179",
+        "url": "https://app.plane.so/acme/projects/dki/issues/DKI-179",
+        "is_sub_work_item": false,
+        "custom_fields": {}
+      }
+    ],
+    "states": [
+      { "id": "state-ready-auto", "name": "Ready Automation" },
+      { "id": "state-review-auto", "name": "Need Review Automation" }
+    ],
+    "comments": [],
+    "links": [],
+    "relations": [],
+    "read_gaps": [],
+    "mcp_gaps": [],
+    "custom_fields": {}
+  },
+  "plane_write_policy": {
+    "comment_sync": true,
+    "description_sync": true,
+    "status_sync": false,
+    "worklog_sync": false,
+    "link_sync": true,
+    "page_sync": false,
+    "create_followup_items": false,
+    "delete_requires_confirmation": true,
+    "delete_approved": false
+  },
+  "plane_state_mapping": {
+    "mapping_source": "none",
+    "available_states_read": true,
+    "mapping_gap": "No automation state mapping was provided, so state movement is skipped.",
+    "custom_fields": {}
+  }
+}

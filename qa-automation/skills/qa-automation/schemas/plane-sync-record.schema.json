@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.qa/qa-automation/plane-sync-record.schema.json",
+  "title": "QA Automation Plane Sync Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "sync_record_id",
+    "change_set_id",
+    "plane_work_item_id",
+    "readable_identifier",
+    "target_type",
+    "action",
+    "idempotency_key",
+    "sync_status",
+    "last_synced_at",
+    "errors"
+  ],
+  "properties": {
+    "sync_record_id": { "type": "string", "minLength": 1 },
+    "change_set_id": { "type": "string", "minLength": 1 },
+    "tc_id": { "type": ["string", "null"] },
+    "plane_work_item_id": { "type": "string", "minLength": 1 },
+    "readable_identifier": { "type": "string", "minLength": 1 },
+    "target_type": {
+      "type": "string",
+      "enum": ["comment", "status", "worklog", "link", "description", "wiki", "page", "work_item", "delete"]
+    },
+    "target_id": { "type": ["string", "null"] },
+    "action": {
+      "type": "string",
+      "enum": ["read", "create", "update", "skip", "delete", "archive", "link", "state_change"]
+    },
+    "requires_confirmation": { "type": "boolean" },
+    "confirmed": { "type": "boolean" },
+    "idempotency_key": { "type": "string", "minLength": 1 },
+    "content_hash": { "type": ["string", "null"] },
+    "sync_status": {
+      "type": "string",
+      "enum": ["not_started", "synced", "partial", "failed", "skipped"]
+    },
+    "last_synced_at": { "type": ["string", "null"] },
+    "errors": { "type": "array", "items": { "type": "string" } },
+    "custom_fields": { "type": "object" }
+  }
+}

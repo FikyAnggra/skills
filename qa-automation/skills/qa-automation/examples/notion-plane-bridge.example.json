@@ -1,0 +1,39 @@
+{
+  "active": true,
+  "plane_work_item_ref": "DKI-179",
+  "notion_test_case_source_ref": "https://notion.so/workspace/Auth-Test-Cases-db123",
+  "notion_automation_page_ref": null,
+  "discovered_notion_refs": [
+    {
+      "source": "plane_description",
+      "url": "https://notion.so/workspace/Auth-Test-Cases-db123",
+      "classification": "test_case_source",
+      "confidence": "high",
+      "reason": "Database has TC ID, Expected Result, and Automation Status fields.",
+      "read_status": "read",
+      "custom_fields": {}
+    }
+  ],
+  "source_of_truth": "automation_change_set.json",
+  "sync_direction": "bidirectional_rendered_views",
+  "cross_links": [
+    {
+      "link_type": "plane_to_notion",
+      "source_ref": "DKI-179",
+      "target_ref": "https://notion.so/workspace/Auth-Test-Cases-db123",
+      "sync_status": "synced",
+      "custom_fields": {}
+    },
+    {
+      "link_type": "notion_to_plane",
+      "source_ref": "https://notion.so/workspace/Auth-Test-Cases-db123",
+      "target_ref": "DKI-179",
+      "sync_status": "synced",
+      "custom_fields": {}
+    }
+  ],
+  "idempotency_key": "qa-automation:AUTO-CS-20260702-001:plane:DKI-179:notion:notion-db-auth-tests",
+  "sync_status": "synced",
+  "sync_errors": [],
+  "custom_fields": {}
+}

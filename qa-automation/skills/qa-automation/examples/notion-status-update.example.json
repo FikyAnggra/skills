@@ -1,0 +1,47 @@
+{
+  "update_id": "AUTO-STATUS-20260702-001",
+  "change_set_id": "AUTO-CS-20260702-001",
+  "items": [
+    {
+      "tc_id": "TC-AUTH-001",
+      "previous_automation_status": "To Be Automate",
+      "new_automation_status": "Automation Implemented",
+      "automation_substatus": "automation_implemented",
+      "reason": "Script was created but script review and validation are not both complete yet.",
+      "script_path": "tests/e2e/login.spec.ts",
+      "script_validation_outcome": "skipped",
+      "script_review_status": "pending",
+      "validation_refs": [],
+      "notion_source_update": {
+        "source_type": "notion_database_row",
+        "source_ref": "notion-row-tc-auth-001",
+        "update_status": "synced",
+        "sync_record_id": "NSYNC-AUTO-CS-20260702-001-source-status",
+        "custom_fields": {}
+      },
+      "plane_sync_refs": ["PSYNC-AUTO-CS-20260702-001-comment"],
+      "custom_fields": {}
+    },
+    {
+      "tc_id": "TC-AUTH-001",
+      "previous_automation_status": "Automation Implemented",
+      "new_automation_status": "Already Automate",
+      "automation_substatus": "validation_passed",
+      "reason": "Script review is OK and targeted validation passed.",
+      "script_path": "tests/e2e/login.spec.ts",
+      "script_validation_outcome": "passed",
+      "script_review_status": "OK",
+      "validation_refs": ["VAL-AUTH-001"],
+      "notion_source_update": {
+        "source_type": "notion_database_row",
+        "source_ref": "notion-row-tc-auth-001",
+        "update_status": "synced",
+        "sync_record_id": "NSYNC-AUTO-CS-20260702-001-source-status-final",
+        "custom_fields": {}
+      },
+      "plane_sync_refs": ["PSYNC-AUTO-CS-20260702-001-comment-final"],
+      "custom_fields": {}
+    }
+  ],
+  "custom_fields": {}
+}

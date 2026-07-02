@@ -18,6 +18,12 @@
         "automation_status": "Already Automate",
         "script_path": "tests/e2e/login.spec.ts",
         "reason": "Expected error copy changed."
+      },
+      {
+        "tc_id": "TC-AUTH-006",
+        "automation_status": "Automation Implemented",
+        "script_path": "tests/e2e/profile.spec.ts",
+        "reason": "Script exists but review and validation are not both complete."
       }
     ],
     "manual_only": [

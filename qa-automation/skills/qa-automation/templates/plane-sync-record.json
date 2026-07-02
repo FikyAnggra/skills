@@ -1,0 +1,18 @@
+{
+  "sync_record_id": "PSYNC-<change_set_id>-<target>",
+  "change_set_id": "<change_set_id>",
+  "tc_id": "<tc_id-or-null>",
+  "plane_work_item_id": "<plane-work-item-id>",
+  "readable_identifier": "<PROJECT-123>",
+  "target_type": "comment",
+  "target_id": null,
+  "action": "create",
+  "requires_confirmation": false,
+  "confirmed": true,
+  "idempotency_key": "qa-automation:<change_set_id>:plane:<plane_work_item_id>:<target_type>",
+  "content_hash": null,
+  "sync_status": "not_started",
+  "last_synced_at": null,
+  "errors": [],
+  "custom_fields": {}
+}

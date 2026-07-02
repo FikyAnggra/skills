@@ -1,0 +1,42 @@
+{
+  "input_type": "notion_test_case_source",
+  "notion_context": {
+    "active": true,
+    "source_refs": [
+      {
+        "database_id": "notion-db-auth-tests",
+        "data_source_id": "notion-ds-auth-tests",
+        "row_page_id": "notion-row-tc-auth-001",
+        "url": "https://notion.so/workspace/Auth-Test-Cases-db123",
+        "automation_status_property": "Automation Status",
+        "custom_fields": {
+          "property_map": {
+            "tc_id": "TC ID",
+            "scenario": "Scenario",
+            "expected_result": "Expected Result",
+            "automation_status": "Automation Status"
+          }
+        }
+      }
+    ],
+    "output_targets": [],
+    "read_gaps": [],
+    "mcp_gaps": [],
+    "custom_fields": {}
+  },
+  "test_case": {
+    "tc_id": "TC-AUTH-001",
+    "scenario": "Valid user can log in",
+    "automation_status": "To Be Automate",
+    "expected_result": "Dashboard is shown for the authenticated user."
+  },
+  "notion_write_policy": {
+    "source_status_update": true,
+    "comment_sync": true,
+    "automation_page_sync": false,
+    "result_database_sync": false,
+    "schema_update": false,
+    "delete_requires_confirmation": true,
+    "delete_approved": false
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "sync_record_id": "NSYNC-<change_set_id>-<target>",
+  "change_set_id": "<change_set_id>",
+  "tc_id": "<tc_id-or-null>",
+  "source_page_id": "<notion-source-page-id-or-null>",
+  "source_database_id": "<notion-source-database-id-or-null>",
+  "source_data_source_id": "<notion-source-data-source-id-or-null>",
+  "target_type": "source_status",
+  "target_id": "<notion-target-id-or-null>",
+  "action": "update",
+  "requires_confirmation": false,
+  "confirmed": true,
+  "idempotency_key": "qa-automation:<change_set_id>:notion:<target_type>:<target_id>:<tc_id>",
+  "content_hash": null,
+  "sync_status": "not_started",
+  "last_synced_at": null,
+  "errors": [],
+  "custom_fields": {}
+}

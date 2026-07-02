@@ -1,0 +1,32 @@
+{
+  "active": true,
+  "plane_work_item_ref": "<PROJECT-123>",
+  "notion_test_case_source_ref": "<notion-test-case-source-url-or-id>",
+  "notion_automation_page_ref": null,
+  "discovered_notion_refs": [
+    {
+      "source": "plane_description",
+      "url": "<notion-url>",
+      "classification": "test_case_source",
+      "confidence": "high",
+      "reason": "Source contains TC ID and Automation Status fields.",
+      "read_status": "not_started",
+      "custom_fields": {}
+    }
+  ],
+  "source_of_truth": "automation_change_set.json",
+  "sync_direction": "bidirectional_rendered_views",
+  "cross_links": [
+    {
+      "link_type": "plane_to_notion",
+      "source_ref": "<PROJECT-123>",
+      "target_ref": "<notion-url>",
+      "sync_status": "not_started",
+      "custom_fields": {}
+    }
+  ],
+  "idempotency_key": "qa-automation:<change_set_id>:plane:<plane_ref>:notion:<notion_ref>",
+  "sync_status": "not_started",
+  "sync_errors": [],
+  "custom_fields": {}
+}

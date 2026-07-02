@@ -7,6 +7,8 @@
     "executor_signal": "path-or-id",
     "manual_request": "request-summary",
     "test_case_source": "path-or-id",
+    "notion_refs": [],
+    "plane_refs": [],
     "custom_fields": {}
   },
   "repo_context": {
@@ -62,6 +64,68 @@
     "reason": "Change set initialized.",
     "custom_fields": {}
   },
+  "notion_context": {
+    "active": false,
+    "source_refs": [],
+    "output_targets": [],
+    "read_gaps": [],
+    "mcp_gaps": [],
+    "custom_fields": {}
+  },
+  "notion_write_policy": {
+    "source_status_update": true,
+    "comment_sync": true,
+    "automation_page_sync": false,
+    "result_database_sync": false,
+    "schema_update": false,
+    "delete_requires_confirmation": true,
+    "delete_approved": false,
+    "custom_fields": {}
+  },
+  "notion_sync": [],
+  "plane_context": {
+    "active": false,
+    "workspace_id": "",
+    "project_id": "",
+    "source_work_items": [],
+    "states": [],
+    "comments": [],
+    "links": [],
+    "relations": [],
+    "read_gaps": [],
+    "mcp_gaps": [],
+    "custom_fields": {}
+  },
+  "plane_write_policy": {
+    "comment_sync": true,
+    "description_sync": true,
+    "status_sync": false,
+    "worklog_sync": false,
+    "link_sync": true,
+    "page_sync": false,
+    "create_followup_items": false,
+    "delete_requires_confirmation": true,
+    "delete_approved": false,
+    "custom_fields": {}
+  },
+  "plane_state_mapping": {
+    "mapping_source": "none",
+    "available_states_read": false,
+    "mapping_gap": "No Plane state mapping provided.",
+    "custom_fields": {}
+  },
+  "plane_sync": [],
+  "notion_plane_bridge": {
+    "active": false,
+    "source_of_truth": "automation_change_set.json",
+    "sync_direction": "rendered_views",
+    "discovered_notion_refs": [],
+    "cross_links": [],
+    "sync_status": "skipped",
+    "sync_errors": [],
+    "custom_fields": {}
+  },
+  "crud_operations": [],
   "gaps": [],
   "changelog": [],
   "custom_fields": {}

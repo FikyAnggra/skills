@@ -1,4 +1,4 @@
 interface:
   display_name: "QA Automation"
-  short_description: "Create governed QA automation scripts."
-  default_prompt: "Use $qa-automation to create or update governed automation scripts from approved QA inputs."
+  short_description: "Create and sync QA automation scripts."
+  default_prompt: "Use $qa-automation to create or update governed automation scripts and sync automation status through Notion or Plane when provided."
