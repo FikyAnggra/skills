@@ -29,6 +29,7 @@ Resolve readable identifiers to UUIDs before update/comment/link/relation operat
 Prefer current Plane MCP work item terminology when available:
 - `list_projects`, `retrieve_project`
 - `list_work_items`, `search_work_items`, `create_work_item`, `retrieve_work_item`, `retrieve_work_item_by_identifier`, `update_work_item`
+- delete/archive work item tools when exposed by the current adapter; if hard delete is not available, use an explicit user-approved archive/canceled state mapping instead
 - `create_work_item_comment`
 - `create_work_item_link`
 - `create_work_item_relation`
@@ -39,6 +40,21 @@ Prefer current Plane MCP work item terminology when available:
 - `create_project_page` or `create_workspace_page` when publishing SIT/UAT summaries as Plane pages is requested
 
 Some local MCP adapters may expose legacy issue names such as `create_issue`, `list_project_issues`, `add_issue_comment`, `add_cycle_issues`, or `add_module_issues`. Use them only as equivalent aliases when those are the tools present in the current runtime.
+
+## Sub-Work-Item Tool Behavior
+
+Plane sub-work-items are work items with a parent relation. Use normal work item tools plus parent/child fields or relations exposed by the adapter.
+
+Supported qa-reporter operations:
+- read one sub-work-item by UUID, URL, or readable id
+- read many sub-work-items from an explicit list or from a parent work item's children
+- create a sub-work-item under a parent work item or source sub-work-item when nested children are supported
+- update title, description, labels, links, relations, metadata, and report link sections
+- create comments and links on each sub-work-item
+- change state using user-approved state mapping
+- delete/archive only when the user explicitly asks and gives a second confirmation naming the target ids
+
+For every operation, resolve readable ids to UUIDs, execute the operation, read back the affected item, and record result per item. For batch operations, never let one failed sub-work-item silently mark the whole batch complete; keep per-item status as `completed`, `skipped`, `blocked`, or `failed`.
 
 ## State Discovery and Recommendation
 
@@ -83,6 +99,20 @@ If current state is outside the workflow, ask the user before generating report 
 
 Store route decisions in `report_state.plane_state_routing`.
 
+## Batch Parent/Sub-Work-Item Reporting
+
+When the prompt provides a parent work item such as `DKI-242`, fetch the parent plus all visible child/sub work items. If the parent has child/sub work items and the request is about task/sub-work-item reporting, treat the parent as context and the child/sub work items as the targets. When the prompt provides sub-work-item ids such as `DKI-179, DKI-180, DKI-181`, fetch each sub-work-item and its parent context.
+
+For each reporting target, store:
+- `work_item_id` and readable identifier
+- parent work item id/readable identifier when present
+- whether it is a sub-work-item
+- current state and labels
+- comments, links, attachments, relations, Notion links, evidence refs
+- requested output types such as bug report, testing report, SIT, UAT, issue package, or handoff contract
+
+When the request is scoped to sub-work-items, render scenarios and report sections using the sub-work-item `work_item_id` as the scenario/source id. Publish requested Notion artifacts under the configured Notion parent page, then comment/update each sub-work-item with its own report links. If the user asked for one aggregate package, include per-sub-work-item sections and a batch summary.
+
 ## Approval Blocking-Info Guard
 
 Before accepting `OK`, `approve`, or equivalent approval from Plane comments, Notion-linked reviews, or user chat, scan `report_state`, report gaps, issue package gaps, coverage gaps, metric gaps, blocked test cases, and source comments for unresolved data needed to execute, assess, retest, submit, or sign off a test case.
@@ -106,6 +136,8 @@ When Notion links are read from a Plane work item, update the source work item d
 ## Work Item vs Sub Work Item Creation
 
 If an issue package is derived from a Plane requirement/source work item, create a sub work item under that source work item. This keeps bug/issue visibility attached to the requirement work item. If there is no source Plane work item, create a normal work item in the target project. Use `comment_existing` only when the user chooses to update an existing item instead of creating a new one.
+
+If an issue package is derived from a Plane sub-work-item, create a nested sub-work-item under that source sub-work-item when the Plane adapter supports child work items under child work items. If nested children are unsupported, create the issue under the nearest supported parent and add a relation/link/comment back to the source sub-work-item.
 
 For `Need Review Issue Report` approval, the source Plane work item itself is the parent. Create approved bug/issue candidates as sub work items under that parent in `Backlog Issue`. After every created sub work item is read back and verified, move the parent/source work item to `Backlog Test`. If any sub work item creation or verification fails, do not move the parent/source work item.
 

@@ -101,6 +101,9 @@ State mapping must be approved by the user before qa-reporter uses any Plane sta
 Source role: `{{custom_fields.plane.source_work_item.source_role}}`
 Parent work item: `{{custom_fields.plane.source_work_item.parent_readable_identifier}}` / `{{custom_fields.plane.source_work_item.parent_work_item_id}}`
 Source URL: `{{custom_fields.plane.source_work_item.url}}`
+Source sub-work-item: `{{custom_fields.plane.source_sub_work_item.readable_identifier}}` / `{{custom_fields.plane.source_sub_work_item.work_item_id}}`
+Source sub-work-item parent: `{{custom_fields.plane.source_sub_work_item.parent_readable_identifier}}` / `{{custom_fields.plane.source_sub_work_item.parent_work_item_id}}`
+Source sub-work-item URL: `{{custom_fields.plane.source_sub_work_item.url}}`
 Comment sync: `{{custom_fields.plane.source_work_item.comment_sync_status}}`
 Description sync: `{{custom_fields.plane.source_work_item.description_sync_status}}`
 Comment URL: `{{custom_fields.plane.source_work_item.comment_url}}`

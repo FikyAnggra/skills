@@ -1,6 +1,12 @@
 ﻿QA reporter summary for `{{report_id}}`
 
 Source work item: `{{custom_fields.plane.source_work_item.readable_identifier}}` {{custom_fields.plane.source_work_item.url}}
+Source sub-work-item: `{{custom_fields.plane.source_sub_work_item.readable_identifier}}` {{custom_fields.plane.source_sub_work_item.url}}
+
+Target work items:
+{{#custom_fields.plane.work_item_scope.targets}}
+- `{{readable_identifier}}` / `{{work_item_id}}` status `{{processing_status}}`
+{{/custom_fields.plane.work_item_scope.targets}}
 
 Recommendation: {{signoff_recommendation.recommendation}}
 Reason: {{signoff_recommendation.reason}}

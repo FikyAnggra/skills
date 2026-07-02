@@ -686,7 +686,51 @@
                                                                                                                                                                  "type":  "string"
                                                                                                                                                              }
                                                                                                                                          }
-                                                                                                                      }
+                                                                                                                      },
+                                                                                                 "source_sub_work_item":  {
+                                                                                                                              "type":  "object",
+                                                                                                                              "additionalProperties":  false,
+                                                                                                                              "properties":  {
+                                                                                                                                                 "work_item_id":  {
+                                                                                                                                                                      "type":  "string"
+                                                                                                                                                                  },
+                                                                                                                                                 "readable_identifier":  {
+                                                                                                                                                                             "type":  "string"
+                                                                                                                                                                         },
+                                                                                                                                                 "parent_work_item_id":  {
+                                                                                                                                                                             "type":  "string"
+                                                                                                                                                                         },
+                                                                                                                                                 "parent_readable_identifier":  {
+                                                                                                                                                                                    "type":  "string"
+                                                                                                                                                                                },
+                                                                                                                                                 "title":  {
+                                                                                                                                                               "type":  "string"
+                                                                                                                                                           },
+                                                                                                                                                 "url":  {
+                                                                                                                                                             "type":  "string"
+                                                                                                                                                         },
+                                                                                                                                                 "notion_links":  {
+                                                                                                                                                                      "type":  "array",
+                                                                                                                                                                      "items":  {
+                                                                                                                                                                                    "type":  "string"
+                                                                                                                                                                                }
+                                                                                                                                                                  },
+                                                                                                                                                 "source_role":  {
+                                                                                                                                                                     "type":  "string",
+                                                                                                                                                                     "enum":  [
+                                                                                                                                                                                  "requirement",
+                                                                                                                                                                                  "planner_report_anchor",
+                                                                                                                                                                                  "executor_report_anchor",
+                                                                                                                                                                                  "release_anchor",
+                                                                                                                                                                                  "unknown"
+                                                                                                                                                                              ]
+                                                                                                                                                                 }
+                                                                                                                                             }
+                                                                                                                          },
+                                                                                                 "work_item_scope":  {
+                                                                                                                         "type":  "object",
+                                                                                                                         "additionalProperties":  true
+                                                                                                                     }
                                                                                              }
                                                                           },
                                                                 "notion":  {

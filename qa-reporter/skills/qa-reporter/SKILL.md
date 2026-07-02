@@ -1,6 +1,6 @@
 ---
 name: qa-reporter
-description: Portable QA reporting agent for converting qa-planner data, qa-executor results, manual results, exploratory issue findings, and Plane work items into governed report_state JSON, test reports, issue packages, bug reports, SIT/UAT documents, coverage-risk summaries, OK/NOK review updates, approval-blocker confirmation prompts, and Go/Conditional Go/No-Go/Not Assessed recommendations. Use when asked to create or revise QA reports, normalize failed/blocked issues for review, prepare issue submission packages, generate SIT/UAT evidence summaries, summarize coverage/risk, process review feedback, guard approvals with unresolved open questions/blockers such as missing env, email, OTP, test data, access, or execution info, or read/analyze/update reporting from Plane work items, readable IDs like DKI-179, Plane URLs/UUIDs, or Plane-linked Notion sources. Do not use for creating test cases, running tests, writing automation scripts, or submitting final issues without explicit approval and approved package/config.
+description: Portable QA reporting agent for converting qa-planner data, qa-executor results, manual results, exploratory issue findings, and Plane work/sub-work-items into governed report_state JSON, test reports, issue packages, bug reports, SIT/UAT documents, coverage-risk summaries, OK/NOK review updates, approval-blocker confirmations, and sign-off recommendations. Use to create/revise QA reports, normalize failed/blocked issues, prepare issue packages, generate SIT/UAT evidence summaries, process review feedback, guard approvals with unresolved blockers, or read/analyze/update/create/delete/change state for Plane work items or sub-work-items, readable IDs like DKI-179, Plane URLs/UUIDs, batch sub-work-item scopes, or Plane-linked Notion sources. Do not create test cases, run tests, write automation, or submit final issues without explicit approval and approved package/config.
 ---
 
 # QA Reporter
@@ -39,11 +39,11 @@ Use this workflow when the reporting source is a Plane work item, a Notion page/
 
 ### Plane Context Trigger
 
-Use the Plane workflow whenever user input contains Plane context such as `Plane`, `Plane.so`, Plane work item, Plane card, readable issue id like `DKI-179`, a Plane URL/UUID, or a request to read, analyze, create, or update a report from a Plane work item.
+Use the Plane workflow whenever user input contains Plane context such as `Plane`, `Plane.so`, Plane work item, Plane sub-work-item, Plane card, readable issue id like `DKI-179`, a Plane URL/UUID, or a request to read, analyze, create, update, delete, change state, or update a report from a Plane work item or sub-work-item.
 
 On Plane context:
 1. Fetch the Plane work item first.
-2. Read title, description, comments, links, attachments, child/sub work items, relations, Notion links, and available evidence.
+2. Read title, description, comments, links, attachments, child/sub work items, parent, relations, Notion links, and available evidence.
 3. Determine the current Plane state.
 4. Run the Plane state router before generating or moving reports.
 5. If the current state is outside the supported QA Reporter workflow states, ask for confirmation before making reports or moving state.
@@ -92,6 +92,30 @@ Workflow:
 
 If the user asks to create test cases from a Plane requirement, route that work to `qa-planner`. `qa-reporter` may summarize requirement context and traceability for reports only.
 
+### Plane Sub-Work-Item Scope
+
+Treat Plane sub-work-items as first-class reporting sources and update targets.
+
+When a prompt names a parent work item such as `DKI-242`, fetch the parent and all visible child/sub work items. If the parent has child/sub work items and the request is about reporting tasks/sub-work-items, treat the parent as context and the child/sub work items as the reporting targets. When a prompt names one or more sub-work-items such as `DKI-179, DKI-180, DKI-181`, fetch each sub-work-item, its parent, siblings when useful for context, comments, links, attachments, relations, Notion links, evidence, and current state. Store every target under `report_state.custom_fields.plane.work_item_scope.targets` with `work_item_id`, `readable_identifier`, `parent_work_item_id`, `parent_readable_identifier`, `is_sub_work_item`, `state`, `notion_links`, `source_role`, `requested_outputs`, and `processing_status`.
+
+When the user request is scoped to sub-work-items, create the reporting scenario/output with that sub-work-item `work_item_id` and readable identifier, not only the parent id. For batch requests, create one normalized target context per sub-work-item and produce either:
+- one aggregate report with per-sub-work-item sections when the user asks for one package, or
+- one report package per sub-work-item when the user asks per task/sub-work-item.
+
+After generating a requested output for a sub-work-item, update or comment on that same sub-work-item with the report summary, Notion links, issue counts, gaps, and next action. Move that sub-work-item state only through the approved state router or an explicit user-approved state mapping.
+
+### Plane Sub-Work-Item Operations
+
+QA Reporter may read, create, update, delete/archive, comment, link, relate, and change state for Plane sub-work-items only when the user request or approved workflow requires it.
+
+Rules:
+- Resolve readable ids to UUIDs before any sub-work-item operation.
+- For multiple sub-work-items, process each item independently and record per-item success, skipped, blocked, or failed status.
+- Read back every create, update, delete/archive, comment, link, relation, and state change before marking it complete.
+- Delete/archive is allowed only after explicit user request and a second confirmation naming the sub-work-item ids; prefer archive/cancel state when the Plane tool does not support hard delete.
+- If a requested operation targets a parent and children, do parent context intake first, then operate on child/sub-work-items in the requested order.
+- Do not delete or alter evidence, comments, or source execution data unless the user explicitly asks and the action is supported by tool permissions.
+
 ### Plane Source Comment and Description Sync
 
 When qa-reporter reads a Plane work item as requirement/report source, add a Plane comment summary unless the user requested read-only mode. The comment should include source work item id, short requirement/report summary, Notion links found, classified Notion source roles, report gaps, and next reporting action.
@@ -122,9 +146,11 @@ Before updating any Notion database row, fetch the database/data source schema a
 Keep every cross-system link explicit:
 
 - Plane source work item -> Notion planner report/test case database
+- Plane parent work item -> Plane sub-work-items -> Notion planner/executor/reporter artifacts
 - Plane source work item -> Notion executor report/execution database
 - Reporter output -> Notion testing report, SIT, UAT, and coverage/risk pages
 - Reporter bug work item/sub work item -> source Plane work item and source Notion evidence refs
+- Reporter nested bug sub-work-item -> source Plane sub-work-item and source Notion evidence refs
 - Plane summary comment -> published Notion reporter page links
 
 Do not store secrets from Plane or Notion. Store IDs, URLs, page titles, database/data source ids, and role labels only.
@@ -328,7 +354,7 @@ Publishing workflow:
 1. Resolve target parent page or target data source.
 2. Fetch target database/data source schema before creating or updating rows.
 3. Render Markdown from `report_state` using templates.
-4. Create or update Notion pages for testing report, SIT document, UAT document, coverage/risk summary, and issue package as requested.
+4. Create or update Notion pages for testing report, SIT document, UAT document, coverage/risk summary, issue package, bug report, and handoff contract as requested.
 5. Store created Notion page ids, urls, target data source ids, publication status, timestamp, and artifact type in `report_state.publication_history` and `report_state.custom_fields.notion.published_pages`.
 6. Add page/database comments only when the user asks or review flow needs them.
 
@@ -416,10 +442,11 @@ Never hardcode or silently infer state names such as `Done`, `Triage`, `In Progr
 Choose Plane creation target from source context:
 
 - If the issue was derived from a requirement/source Plane work item, create a sub work item under that source work item so the bug/issue is visible from the parent requirement work item.
+- If the issue was derived from a Plane sub-work-item, create the bug/issue as a sub-work-item under that source sub-work-item when Plane supports nested children. If nested children are not supported, create it under the nearest supported parent and link it back to the source sub-work-item.
 - If there is no source Plane work item, create a normal Plane work item in the target project.
 - If the user explicitly asks to comment on an existing work item, use `comment_existing` instead of creating a new item.
 
-Set `submission_mode = sub_work_item` for source-work-item-derived bugs. Store parent/source work item IDs under `custom_fields.plane.source_work_item`.
+Set `submission_mode = sub_work_item` for source-work-item-derived bugs. Store parent/source work item IDs under `custom_fields.plane.source_work_item` and, for sub-work-item sources, store `custom_fields.plane.source_sub_work_item`.
 
 Every created work item or sub work item must visibly identify itself as a bug/issue:
 
@@ -458,6 +485,7 @@ Produce these artifacts when requested or useful:
 - SIT document using `templates/sit-document.md`
 - UAT document using `templates/uat-document.md`
 - coverage/risk summary using `templates/coverage-risk-summary.md`
+- qa-reporter handoff contract for downstream QA, retest, issue triage, or release follow-up when requested
 - JSON issue submission package and sign-off recommendation when structured output is needed
 
 Supported human formats include Markdown, Excel/Google Sheets, Word, PDF, Notion-ready structure, and JSON canonical output. Keep non-JSON outputs as renderings of `report_state`, not separate sources of truth.
@@ -496,5 +524,5 @@ Read only when needed:
 - `references/plane-state-routing.md`: Plane trigger and state routing workflow for Need Issue Report, Ready to Report, review, approval, and state transitions
 - `references/plane-mcp.md`: Plane MCP setup, field mapping, tool behavior, and troubleshooting notes
 - `references/notion-mcp.md`: Notion MCP source reading, publishing, status sync, and review rules
-- `templates/`: reusable report, issue, SIT/UAT, coverage/risk, and state skeletons
+- `templates/`: reusable report, issue, SIT/UAT, coverage/risk, handoff contract, and state skeletons
 - `examples/`: sample manual result, exploratory issue, report state, and rendered outputs

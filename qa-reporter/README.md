@@ -19,7 +19,7 @@ QA Reporter is a portable agent skill package for turning QA planner data, execu
 
 ## Outputs
 
-Default outputs are `report_state.json`, `test-report.md`, `issue-package.md`, `bug-report.md`, `sit-document.md`, `uat-document.md`, and `coverage-risk-summary.md`. Other formats should render from `report_state.json` instead of becoming separate sources of truth.
+Default outputs are `report_state.json`, `test-report.md`, `issue-package.md`, `bug-report.md`, `sit-document.md`, `uat-document.md`, `coverage-risk-summary.md`, and `handoff-contract.md`. Other formats should render from `report_state.json` instead of becoming separate sources of truth.
 
 ## Sign-Off Model
 
@@ -39,7 +39,7 @@ Issue submission is never automatic. Submission requires explicit user request, 
 
 ## Plane MCP Adapter
 
-QA Reporter includes an optional Plane adapter for approved issue packages. It can prepare Plane work item payloads, resolve project routing data, run duplicate checks, create a work item or intake item when tools are available, comment on an existing work item, attach evidence links, and record read-back verification in `submission_history`. Plane-specific IDs live under `custom_fields.plane` so the core package stays portable.
+QA Reporter includes an optional Plane adapter for approved issue packages. It can prepare Plane work item payloads, resolve project routing data, run duplicate checks, create/update/delete/archive/change state for work items and sub-work-items when tools are available, comment on existing items, attach evidence links, and record read-back verification in `submission_history`. Plane-specific IDs live under `custom_fields.plane` so the core package stays portable.
 
 ### Plane State Routing
 
@@ -51,7 +51,7 @@ Testing-report route: `Ready to Report` -> `Generating Report` -> `Need Review R
 
 ### Plane Source Sync and Bug Creation Rules
 
-When QA Reporter reads Notion links from a Plane source work item, it records a Plane comment summary and updates the work item description with a QA Reporter links section, unless read-only mode is requested. When a requirement/source Plane work item produces a bug, QA Reporter creates a sub work item under that source work item after approval. If no source Plane work item exists, it creates a normal work item. Created work items must be visibly marked as bugs by type, label, or title prefix fallback.
+When QA Reporter reads Notion links from a Plane source work item or sub-work-item, it records a Plane comment summary and updates the item description with a QA Reporter links section, unless read-only mode is requested. When a requirement/source Plane work item produces a bug, QA Reporter creates a sub work item under that source work item after approval. When a source sub-work-item produces a bug, QA Reporter creates a nested sub-work-item under that source sub-work-item when supported, or links the new issue back to the source sub-work-item. Created work items must be visibly marked as bugs by type, label, or title prefix fallback.
 
 ### Dynamic Plane State Mapping
 
@@ -59,7 +59,9 @@ QA Reporter does not hardcode Plane states. Before creating or syncing Plane wor
 
 ## Plane Work Item and Notion Flow
 
-QA Reporter can use a Plane work item such as `ENG-42` as a reporting anchor. It reads the work item, extracts Notion links from description/comments/links, fetches linked Notion planner and executor artifacts, builds `report_state.json`, publishes testing/SIT/UAT reports back to Notion, and comments a compact summary with Notion links back to Plane when requested.
+QA Reporter can use a Plane work item or sub-work-item such as `ENG-42` as a reporting anchor. It reads the item, parent context, child/sub-work-items, extracts Notion links from description/comments/links, fetches linked Notion planner and executor artifacts, builds `report_state.json`, publishes requested reports back to Notion, and comments a compact summary with Notion links back to each target Plane item when requested.
+
+For parent items such as an epic with many child tasks, QA Reporter can process many sub-work-items in one request. Each sub-work-item is stored as a target in `custom_fields.plane.work_item_scope.targets`, and generated scenarios/report sections use the target sub-work-item `work_item_id`.
 
 This is reporting and traceability only. Test case design still belongs to `qa-planner`, and test execution still belongs to `qa-executor`.
 

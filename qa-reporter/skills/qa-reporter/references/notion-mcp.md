@@ -43,6 +43,7 @@ Publishable artifacts:
 - UAT document
 - coverage/risk summary
 - release sign-off summary
+- handoff contract
 
 Publishing workflow:
 1. Resolve parent page or target data source.

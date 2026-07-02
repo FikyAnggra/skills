@@ -5,6 +5,16 @@ Package ID: `{{package_id}}`
 Status: `{{report_status}}`
 Recommendation: `{{signoff_recommendation.recommendation}}`
 
+## Plane Work Item Scope
+
+Parent work item: `{{custom_fields.plane.work_item_scope.parent_readable_identifier}}` / `{{custom_fields.plane.work_item_scope.parent_work_item_id}}`
+Scope type: `{{custom_fields.plane.work_item_scope.scope_type}}`
+
+Targets:
+{{#custom_fields.plane.work_item_scope.targets}}
+- `{{readable_identifier}}` / `{{work_item_id}}` parent `{{parent_readable_identifier}}` / `{{parent_work_item_id}}` state `{{state}}` status `{{processing_status}}`
+{{/custom_fields.plane.work_item_scope.targets}}
+
 ## Summary
 
 {{summary.objective}}

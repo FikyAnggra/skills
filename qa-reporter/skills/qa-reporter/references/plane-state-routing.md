@@ -1,6 +1,6 @@
 # Plane State Routing for QA Reporter
 
-Use this reference whenever input contains Plane context: Plane, Plane.so, work item Plane, card Plane, readable issue id such as `DKI-179`, Plane URL/UUID, or a request to read, analyze, create, or update a report from a Plane work item.
+Use this reference whenever input contains Plane context: Plane, Plane.so, work item Plane, sub-work-item Plane, card Plane, readable issue id such as `DKI-179`, Plane URL/UUID, or a request to read, analyze, create, update, delete/archive, change state, or update a report from a Plane work item or sub-work-item.
 
 ## Intake
 
@@ -13,13 +13,31 @@ Read:
 - links
 - attachments
 - child/sub work items
+- parent work item when the source is a sub-work-item
 - relations
 - Notion links
 - evidence references
 - current state
 - QA Executor testing summary if present
 
-Normalize the readable issue id, URL, UUID, project id, state id/name, evidence refs, and Notion refs into `report_state.source_refs` and `custom_fields.plane.source_work_item`.
+Normalize the readable issue id, URL, UUID, project id, state id/name, evidence refs, and Notion refs into `report_state.source_refs`, `custom_fields.plane.source_work_item`, and `custom_fields.plane.work_item_scope.targets`.
+
+## Parent and Sub-Work-Item Scope
+
+If the source is a parent work item, fetch the parent and all visible child/sub work items before reporting. If the parent has child/sub work items and the request is about reporting child tasks/sub-work-items, use the parent as context and the child/sub work items as routing/reporting targets. If the source is one or more sub-work-items, fetch each sub-work-item plus parent context. For prompts with many sub-work-items, build a processing queue and run the state router per target item.
+
+For each target, record:
+- `work_item_id`
+- `readable_identifier`
+- `parent_work_item_id`
+- `parent_readable_identifier`
+- `is_sub_work_item`
+- `current_state`
+- requested output types
+- generated Notion/report links
+- processing status and blocker/error if any
+
+When the user asks to create reports for sub-work-items, use the sub-work-item `work_item_id` and readable identifier as the scenario/source id in generated report sections. After output generation, comment and update state on the target sub-work-item, not only on the parent.
 
 ## Automatic Start Gate
 
@@ -34,6 +52,8 @@ Work item saat ini berada di state `{current_state}`. Workflow QA Reporter norma
 ```
 
 Do not generate reports, move state, or create bug work items before confirmation when the state is outside the supported routing states.
+
+For batch sub-work-item scopes, apply this gate independently to every target. If some targets are routable and others require confirmation, process only the confirmed/routable targets and report the blocked targets explicitly.
 
 ## State: Need Issue Report
 
@@ -104,7 +124,7 @@ OK actions:
 2. Mark issue report as approved only after the guard passes.
 3. Treat user input such as `approve`, `approved`, or `OK` as approval plus authorization to create the approved Plane bug/issue items for this route only after the guard passes.
 4. Resolve the `Backlog Issue` target state for created bug/issue items.
-5. If the issue came from this Plane source work item, create a sub work item under the source work item for each approved issue candidate. Set each sub work item state to `Backlog Issue`.
+5. If the issue came from this Plane source work item or sub-work-item, create a sub work item under that exact source for each approved issue candidate when supported. Set each created item state to `Backlog Issue`.
 6. If there is no source Plane work item, create normal bug/issue Plane work items in `Backlog Issue`.
 7. Mark each new item as bug/issue:
    - use type `Bug` when available
@@ -113,7 +133,7 @@ OK actions:
    - fallback title prefix `[Bug]` or `[Issue]`
 8. Read back every created work item or sub work item and verify title, parent/source relation when applicable, bug marker, and state `Backlog Issue`.
 9. Save bug/issue work item links back to report source.
-10. If the issue report source is a Plane work item, resolve `Backlog Test`, move the source work item from `Need Review Issue Report` to `Backlog Test`, and verify the state by read-back.
+10. If the issue report source is a Plane work item or sub-work-item, resolve `Backlog Test`, move that source item from `Need Review Issue Report` to `Backlog Test`, and verify the state by read-back.
 11. Add Plane comment summary to source work item with created bug/sub-work-item links and source state transition result.
 
 Do not submit bug/issue work items to Plane before human review `OK`.

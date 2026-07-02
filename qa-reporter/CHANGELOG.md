@@ -1,5 +1,13 @@
 ﻿# Changelog
 
+## 0.7.4 - 2026-07-02
+
+- Added Plane sub-work-item scope support: qa-reporter can read parent work items plus many child/sub-work-items, or process explicit sub-work-item id lists.
+- Added governed sub-work-item operations: read, create, update, delete/archive, comment, link, relate, and change state with per-item read-back verification.
+- Added batch reporting behavior for sub-work-items: report scenarios use the target sub-work-item `work_item_id`, comments/state updates are applied per target, and parent context remains traceable.
+- Added nested issue creation guidance: bugs found in a sub-work-item create child issue sub-work-items under that source when supported, otherwise link back to the source sub-work-item.
+- Added `handoff-contract.md` template for Notion-published reporter handoffs.
+
 ## 0.7.3 - 2026-06-26
 
 - Added approval blocking-info guard: if unresolved blockers such as missing env, email, OTP, test data, access, or evidence remain, approve/OK now requires one extra explicit confirmation before approval is processed.

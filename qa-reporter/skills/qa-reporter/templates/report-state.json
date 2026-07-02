@@ -180,7 +180,28 @@
 
                                                                                   ],
                                                                  "fetched_at":  ""
-                                                             }
+                                                             },
+                                        "source_sub_work_item":  {
+                                                                     "readable_identifier":  "",
+                                                                     "work_item_id":  "",
+                                                                     "parent_readable_identifier":  "",
+                                                                     "parent_work_item_id":  "",
+                                                                     "title":  "",
+                                                                     "url":  "",
+                                                                     "notion_links":  [
+
+                                                                                      ],
+                                                                     "fetched_at":  ""
+                                                                 },
+                                        "work_item_scope":  {
+                                                                "scope_type":  "single",
+                                                                "parent_work_item_id":  "",
+                                                                "parent_readable_identifier":  "",
+                                                                "targets":  [
+
+                                                                            ],
+                                                                "batch_processing_status":  "not_started"
+                                                            }
                                     },
                           "notion":  {
                                          "source_pages":  [
