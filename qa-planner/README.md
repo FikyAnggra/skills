@@ -39,7 +39,6 @@ The source of truth is `planning_state.json`. Human-readable plans, test cases, 
 Expected outputs include:
 - test plan
 - separated UI test cases and API test cases
-- explicit test variables per test case so required data preparation is clear
 - requirement coverage map
 - `qa-executor`, `qa-automation`, and `qa-reporter` handoff contracts
 - Plane comment, attachment, wiki/page, page link, sync record, and optional status transition output when Plane tools are available
@@ -114,7 +113,6 @@ Gunakan field API:
 
 Actual Result harus kosong.
 Test Case Status default: Untested.
-Gunakan variable test data seperti `{{valid_user_email}}`, `{{access_token}}`, atau `{{customer_id}}` dan buat daftar `test_variables` agar jelas data apa yang harus disiapkan.
 Jangan gunakan asumsi untuk expected result.
 ```
 
@@ -149,7 +147,6 @@ Untuk Attachment:
 - kalau document tidak bisa dibuat, render dalam table di Attachment
 - kalau table juga tidak bisa, render sebagai structured text
 
-Setiap test case wajib memakai variable seperti `{{valid_user_email}}` dan mencantumkan daftar `test_variables` agar data yang harus disiapkan jelas.
 ```
 
 ### Test Plan Only

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.17 - 2026-07-14
+
+- Removed `test_variables` from active UI/API test case instructions, planning state schema, templates, README prompts, and examples.
+- Kept the default non-Plane/Notion test plan attachment behavior from `0.2.16`.
+
 ## 0.2.16 - 2026-07-14
 
 - Added `test_variables` to UI/API test cases so required accounts, payloads, ids, files, dates, tokens, fixtures, and expected computed values are explicit.

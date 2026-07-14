@@ -4,14 +4,6 @@
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | TC0001 | | | GET | /path | | | | | | Untested | To Be Automate | |
 
-## Test Variables
-
-Use variables in `header`, `params`, `body`, and `expected_result` with `{{variable_name}}` placeholders.
-
-| tc_id | variable | description | source | required | example_or_placeholder | sensitive | preparation_notes |
-|---|---|---|---|---|---|---|---|
-| TC0001 | `{{access_token}}` | Authorization token for the API request | needs_user_or_fixture | true | `{{access_token}}` | true | Prepare securely before execution |
-
 ## Field Rules
 
 - `method`: `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `HEAD`, or `OPTIONS`.
@@ -23,4 +15,3 @@ Use variables in `header`, `params`, `body`, and `expected_result` with `{{varia
 - `actual_result` remains blank until executor result or explicit user instruction exists.
 - `test_case_status`: `Untested`, `On Progress`, `Passed`, `Failed`, `Blocked`, or `Retest`.
 - `automation_status`: `Manual Only`, `To Be Automate`, `Automation Implemented`, or `Already Automate`.
-- `test_variables` must list all required headers, tokens, path/query params, payload fields, ids, files, dates, fixtures, and expected computed values. Use placeholders instead of invented values.

@@ -49,7 +49,7 @@ Describe what this QA plan validates and what release decision it supports.
 ## Entry Criteria
 
 - Requirements reviewed for testability.
-- Test variables, fixtures, and environment access are identified.
+- Test data, fixtures, and environment access are identified.
 
 ## Exit Criteria
 
@@ -65,9 +65,9 @@ Attach or link the separate test case document when document generation is avail
 
 Fallback table:
 
-| TC ID | Scenario | Summary | Variables | Test Data | Expected Result | Status |
-|---|---|---|---|---|---|---|
-| TC0001 | | | `{{variable_name}}`: preparation notes | | | Untested |
+| TC ID | Scenario | Summary | Test Data | Expected Result | Status |
+|---|---|---|---|---|---|
+| TC0001 | | | | | Untested |
 
 Fallback text:
 
@@ -75,8 +75,6 @@ Fallback text:
 TC0001
 Scenario:
 Summary:
-Variables:
-- {{variable_name}}: description, source/preparation rule, required, sensitive flag, example or placeholder
 Test Data:
 Expected Result:
 ```

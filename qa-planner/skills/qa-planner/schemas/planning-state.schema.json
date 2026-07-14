@@ -322,7 +322,6 @@
         "test_case_status": { "$ref": "#/$defs/test_case_status" },
         "automation_status": { "$ref": "#/$defs/automation_status" },
         "notes": { "type": "string" },
-        "test_variables": { "type": "array", "items": { "$ref": "#/$defs/test_variable" }, "default": [] },
         "requirement_refs": { "type": "array", "items": { "type": "string" }, "default": [] },
         "plane_refs": { "type": "array", "items": { "$ref": "plane-source.schema.json" }, "default": [] },
         "tags": { "type": "array", "items": { "type": "string" }, "default": [] },
@@ -361,7 +360,6 @@
         "test_case_status": { "$ref": "#/$defs/test_case_status" },
         "automation_status": { "$ref": "#/$defs/automation_status" },
         "notes": { "type": "string" },
-        "test_variables": { "type": "array", "items": { "$ref": "#/$defs/test_variable" }, "default": [] },
         "requirement_refs": { "type": "array", "items": { "type": "string" }, "default": [] },
         "plane_refs": { "type": "array", "items": { "$ref": "plane-source.schema.json" }, "default": [] },
         "tags": { "type": "array", "items": { "type": "string" }, "default": [] },
@@ -410,23 +408,6 @@
         "notion_url": { "type": "string" },
         "source_url": { "type": "string" },
         "custom_fields": { "type": "object", "additionalProperties": true, "default": {} }
-      }
-    },
-    "test_variable": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["name", "description", "required", "source"],
-      "properties": {
-        "name": { "type": "string", "pattern": "^\\{\\{[a-zA-Z][a-zA-Z0-9_]*\\}\\}$" },
-        "description": { "type": "string" },
-        "required": { "type": "boolean" },
-        "source": {
-          "type": "string",
-          "enum": ["provided_by_user", "fixture", "environment", "generated", "api_response", "database", "configuration", "needs_user_or_fixture"]
-        },
-        "example_value": { "type": "string" },
-        "sensitive": { "type": "boolean", "default": false },
-        "preparation_notes": { "type": "string" }
       }
     },
     "planning_attachment": {

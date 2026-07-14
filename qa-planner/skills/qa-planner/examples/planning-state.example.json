@@ -112,26 +112,6 @@
       "test_case_status": "Untested",
       "automation_status": "To Be Automate",
       "notes": "Primary positive case.",
-      "test_variables": [
-        {
-          "name": "{{promo_code_valid}}",
-          "description": "Valid promo code that applies 10 percent discount.",
-          "required": true,
-          "source": "fixture",
-          "example_value": "SAVE10",
-          "sensitive": false,
-          "preparation_notes": "Configure before checkout regression execution."
-        },
-        {
-          "name": "{{cart_total}}",
-          "description": "Eligible cart total used for deterministic discount assertion.",
-          "required": true,
-          "source": "fixture",
-          "example_value": "100.00",
-          "sensitive": false,
-          "preparation_notes": "Use an eligible item and stable currency."
-        }
-      ],
       "requirement_refs": ["REQ-001"],
       "tags": ["checkout", "smoke"]
     },
@@ -153,26 +133,6 @@
       "test_case_status": "Untested",
       "automation_status": "Automation Implemented",
       "notes": "Automation script exists but is not reviewed or approved yet.",
-      "test_variables": [
-        {
-          "name": "{{promo_code_expired}}",
-          "description": "Expired promo code that must not change payable total.",
-          "required": true,
-          "source": "fixture",
-          "example_value": "SPRINGOLD",
-          "sensitive": false,
-          "preparation_notes": "Keep code expired in test environment."
-        },
-        {
-          "name": "{{cart_total}}",
-          "description": "Eligible cart total used for unchanged total assertion.",
-          "required": true,
-          "source": "fixture",
-          "example_value": "100.00",
-          "sensitive": false,
-          "preparation_notes": "Reuse deterministic cart fixture."
-        }
-      ],
       "requirement_refs": ["REQ-002"],
       "tags": ["checkout", "negative"]
     },
@@ -193,26 +153,6 @@
       "test_case_status": "Untested",
       "automation_status": "Already Automate",
       "notes": "Edge case likely covered by existing form validation suite.",
-      "test_variables": [
-        {
-          "name": "{{blank_promo_code}}",
-          "description": "Empty promo input value.",
-          "required": true,
-          "source": "generated",
-          "example_value": "",
-          "sensitive": false,
-          "preparation_notes": "Submit the promo form without entering a code."
-        },
-        {
-          "name": "{{cart_total}}",
-          "description": "Eligible cart total used for unchanged total assertion.",
-          "required": true,
-          "source": "fixture",
-          "example_value": "100.00",
-          "sensitive": false,
-          "preparation_notes": "Reuse deterministic cart fixture."
-        }
-      ],
       "requirement_refs": ["REQ-002"],
       "tags": ["checkout", "boundary"]
     },
@@ -233,26 +173,6 @@
       "test_case_status": "Untested",
       "automation_status": "Manual Only",
       "notes": "Manual-only until UI selector names are confirmed.",
-      "test_variables": [
-        {
-          "name": "{{promo_code_valid}}",
-          "description": "Valid promo code already applied before removal.",
-          "required": true,
-          "source": "fixture",
-          "example_value": "SAVE10",
-          "sensitive": false,
-          "preparation_notes": "Start from a cart where the valid promo is applied."
-        },
-        {
-          "name": "{{original_cart_total}}",
-          "description": "Original payable total before discount.",
-          "required": true,
-          "source": "fixture",
-          "example_value": "100.00",
-          "sensitive": false,
-          "preparation_notes": "Use for restoration assertion after removal."
-        }
-      ],
       "requirement_refs": ["REQ-003"],
       "tags": ["checkout", "ui"]
     }
