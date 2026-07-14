@@ -1,17 +1,6 @@
-# QA Test Plan
+# Test Plan Name
 
-## Metadata
-
-| Field | Value |
-|---|---|
-| Package ID | |
-| Project | |
-| Feature | |
-| Version | |
-| Planning Status | draft |
-| Owner | |
-| Created At | |
-| Updated At | |
+{{test_plan_name}}
 
 ## Objective
 
@@ -27,11 +16,11 @@ Describe what this QA plan validates and what release decision it supports.
 
 ### In Scope
 
-- 
+-
 
 ### Out of Scope
 
-- 
+-
 
 ## Assumptions and Open Questions
 
@@ -47,12 +36,6 @@ Describe what this QA plan validates and what release decision it supports.
 |---|---|---|---|
 | OQ-001 | | open | |
 
-## Risk Analysis
-
-| Risk ID | Category | Description | Impact | Mitigation | Related Requirements |
-|---|---|---|---|---|---|
-| RISK-001 | product | | P2 - Medium | | |
-
 ## Test Strategy
 
 | Field | Value |
@@ -63,35 +46,57 @@ Describe what this QA plan validates and what release decision it supports.
 | Coverage Target | |
 | Execution Approach | |
 
-## Environment
-
-Describe target environment, accounts, integrations, seed data, and constraints.
-
 ## Entry Criteria
 
 - Requirements reviewed for testability.
-- Test data and environment access identified.
+- Test variables, fixtures, and environment access are identified.
 
 ## Exit Criteria
 
-- Review status is OK.
+- Review status is OK or remaining gaps are explicitly accepted.
 - Coverage gaps are documented or resolved.
-- Handoff contracts are generated from approved planning state.
+- Test case and handoff attachments are generated from planning state.
 
-## Dependencies
+## Attachment
 
-- 
+### Test Case
 
-## Coverage Summary
+Attach or link the separate test case document when document generation is available.
 
-| Requirement ID | Test Case IDs | Coverage Status | Exclusion Reason | Notes |
-|---|---|---|---|---|
-| REQ-001 | TC0001 | covered | | |
+Fallback table:
 
-## Handoff Summary
+| TC ID | Scenario | Summary | Variables | Test Data | Expected Result | Status |
+|---|---|---|---|---|---|---|
+| TC0001 | | | `{{variable_name}}`: preparation notes | | | Untested |
+
+Fallback text:
+
+```text
+TC0001
+Scenario:
+Summary:
+Variables:
+- {{variable_name}}: description, source/preparation rule, required, sensitive flag, example or placeholder
+Test Data:
+Expected Result:
+```
+
+### Handoff
+
+Attach or link the separate handoff document when document generation is available.
+
+Fallback table:
 
 | Target Agent | Contract Ref | Approval Status | Notes |
 |---|---|---|---|
 | qa-executor | handoff_contracts.qa_executor | draft | |
 | qa-automation | handoff_contracts.qa_automation | draft | |
 | qa-reporter | handoff_contracts.qa_reporter | draft | |
+
+Fallback text:
+
+```text
+qa-executor: handoff_contracts.qa_executor, approval_status=draft
+qa-automation: handoff_contracts.qa_automation, approval_status=draft
+qa-reporter: handoff_contracts.qa_reporter, approval_status=draft
+```

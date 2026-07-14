@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.16 - 2026-07-14
+
+- Added `test_variables` to UI/API test cases so required accounts, payloads, ids, files, dates, tokens, fixtures, and expected computed values are explicit.
+- Added placeholder guidance such as `{{valid_user_email}}` and `{{access_token}}` to avoid inventing unavailable data.
+- Added default non-Plane/Notion output behavior: render a test plan document with `Test Plan Name`, objective, source inputs, scope, assumptions/open questions, test strategy, entry criteria, exit criteria, and `Attachment`.
+- Added `Attachment -> Test Case` and `Attachment -> Handoff` fallback order: separate document artifact, embedded table, then structured text.
+- Extended planning state schema, test plan template, test case templates, README prompts, and examples for variable-driven test cases and default attachments.
+
 ## 0.2.15 - 2026-07-02
 
 - Added `Automation Implemented` as an allowed automation status between `To Be Automate` and `Already Automate`.

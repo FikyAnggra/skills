@@ -1,6 +1,6 @@
 ---
 name: qa-planner
-description: Portable QA planning agent for converting requirements, PRDs, user stories, API specs, UI flows, screenshots, database notes, technical constraints, optional Plane.so work items/cards/sub-work-items, and optional Notion pages/databases into governed planning_state JSON, test plans, separated UI/API test cases, coverage maps, OK/NOK or partial review updates, Notion test plan pages, Notion UI/API test case databases, copied Notion links, Plane parent/sub-work-item comments, and handoff contracts for qa-executor, qa-automation, and qa-reporter. Use when asked to create or revise QA plans, QA scenarios, UI test cases, API test cases, requirement coverage, downstream QA handoffs, Plane-attached planning artifacts, Notion-published planning artifacts, or planning review packages. Do not use for running tests, creating defect tickets, writing final automation scripts, or producing final execution reports.
+description: Portable QA planning agent for converting requirements, PRDs, user stories, API specs, UI flows, screenshots, database notes, technical constraints, optional Plane.so work items/cards/sub-work-items, and optional Notion pages/databases into governed planning_state JSON, test plans, separated UI/API test cases with explicit test variables, coverage maps, OK/NOK or partial review updates, default document-style test plans with Test Case and Handoff attachments, Notion test plan pages, Notion UI/API test case databases, copied Notion links, Plane parent/sub-work-item comments, and handoff contracts for qa-executor, qa-automation, and qa-reporter. Use when asked to create or revise QA plans, QA scenarios, UI test cases, API test cases, requirement coverage, downstream QA handoffs, Plane-attached planning artifacts, Notion-published planning artifacts, or planning review packages. Do not use for running tests, creating defect tickets, writing final automation scripts, or producing final execution reports.
 ---
 
 # QA Planner
@@ -179,6 +179,8 @@ Use `templates/Template Test Case.xlsx` as the UI spreadsheet baseline. Markdown
 | `automation_status` | Automation treatment |
 | `notes` | Planner notes, constraints, or gaps |
 
+Each UI case must also include `test_variables` in `planning_state` and document outputs. Use variables to make required prepared data explicit, then reference those variables in `pre_conditions`, `test_steps`, `test_data`, and `expected_result` using `{{variable_name}}` when useful. Example variables: `{{valid_user_email}}`, `{{valid_user_password}}`, `{{eligible_cart_id}}`, `{{expected_discount_amount}}`.
+
 ### API Test Case Model
 
 Use `templates/test-case-api.md` as the API baseline. Markdown, Word, PDF, Notion, and JSON outputs must preserve these logical fields for API cases:
@@ -198,6 +200,8 @@ Use `templates/test-case-api.md` as the API baseline. Markdown, Word, PDF, Notio
 | `test_case_status` | Latest execution status |
 | `automation_status` | Automation treatment |
 | `notes` | Planner notes, constraints, contract refs, or gaps |
+
+Each API case must also include `test_variables` in `planning_state` and document outputs. Use variables to make required prepared data explicit, then reference those variables in `header`, `params`, `body`, and `expected_result` using `{{variable_name}}` when useful. Example variables: `{{access_token}}`, `{{customer_id}}`, `{{request_payload}}`, `{{expected_status_code}}`.
 
 Allowed priority values:
 - `P0 - Critical`
@@ -246,6 +250,8 @@ Automation status decision rules:
 Rules:
 - New test cases default to `test_case_status = Untested`.
 - `actual_result` stays blank until `qa-executor` returns a result or user explicitly provides one.
+- Use `test_variables` for every test case to list required data that must be prepared before execution. Each variable should include name, description, source/preparation rule, required flag, example value or placeholder, and whether it contains sensitive data.
+- Do not invent unavailable variable values. If a required value is unknown, use a placeholder such as `{{valid_user_email}}`, set the source/preparation rule to `needs_user_or_fixture`, and add an open question when it blocks planning accuracy.
 - If input priority is not one of the allowed values, add an `open_question` and ask the user to clarify. Do not downgrade or remap invalid priority silently.
 - Apply the automation status decision rules above; when evidence is insufficient, use `Manual Only` and record the gap.
 - Mark missing selectors, endpoints, methods, headers, params, request body, fixture data, or credentials as gaps, not invented data.
@@ -321,6 +327,13 @@ For `qa-automation`, set `target_agent = qa-automation` and use scope fields `cr
 
 Always produce or update `planning_state.json` as the canonical state.
 
+Default local/document output when no Plane, Notion, spreadsheet, document, or other platform target is provided:
+1. Render a test plan document using this section order: title `Test Plan Name`, objective, source inputs, scope with `In Scope` and `Out of Scope`, assumptions and open questions, test strategy, entry criteria, exit criteria, and `Attachment`.
+2. Under `Attachment`, include `Test Case` and `Handoff`.
+3. Prefer creating `Test Case` as a separate document artifact attached or linked from the test plan. If separate document generation is unavailable, render `Attachment -> Test Case` as tables inside the test plan. If tables are unavailable, render it as structured text.
+4. Prefer creating `Handoff` as a separate document artifact attached or linked from the test plan. If separate document generation is unavailable, render `Attachment -> Handoff` as tables inside the test plan. If tables are unavailable, render it as structured text.
+5. Ensure every rendered test case includes or references its `test_variables` so the reader knows which data must be prepared.
+
 Produce additional artifacts only under these rules:
 - Test plan: produce for new planning packages or when plan sections changed.
 - Test cases: produce separated UI and API artifacts when requirements, scope, risks, or cases changed.
@@ -339,12 +352,14 @@ Content gates, always apply:
 - Priority values match the allowed enum exactly.
 - New test cases have `test_case_status = Untested`.
 - Automation status values match the allowed enum exactly.
+- Each test case has explicit `test_variables` for prepared accounts, payloads, ids, tokens, fixtures, dates, files, expected computed values, and other data dependencies; unknown required values use placeholders and open questions instead of invented data.
 - API and UI cases are separated into `api_test_cases` and `ui_test_cases`; mixed-surface requirements map to both case types instead of one overloaded case.
 - API cases include method, URL/path, headers, params, body, and expected result from source evidence or record a blocking gap/open question.
 - Each test case has a clear expected result.
 - Each requirement maps to at least one test case or has an exclusion reason.
 - Duplicated or overlapping cases are removed, merged, or noted.
 - Rendered human artifacts match `planning_state`.
+- Default non-platform output includes a test plan document with `Attachment -> Test Case` and `Attachment -> Handoff`, using separate document artifacts first, embedded tables second, and structured text only as final fallback.
 
 Plane sync gates, apply only on Plane path:
 - Plane QA state workflow was applied before analysis, generation, or sync.

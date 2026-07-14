@@ -6,3 +6,12 @@
 | TC0002 | Reject expired promo code | Verify expired code does not alter total. | Negative | P1 - High | Cart has eligible item and user is on checkout page. | 1. Enter `SPRINGOLD`. 2. Select apply. 3. Review message and total. | Promo code `SPRINGOLD`; cart total 100.00 | Error `Promo code has expired` appears and payable total remains 100.00. | | Untested | Automation Implemented | Automation script exists but is not reviewed or approved yet. |
 | TC0003 | Empty promo submission | Verify empty submit shows validation and keeps total unchanged. | Boundary | P2 - Medium | Cart has eligible item and promo input is visible. | 1. Leave promo field empty. 2. Select apply. | Blank promo code; cart total 100.00 | Error `Enter a promo code` appears and payable total remains 100.00. | | Untested | Already Automate | Edge case if existing form validation suite covers this. |
 | TC0004 | Visual total restoration after removal | Verify removing promo restores original total and UI state. | UI | P2 - Medium | Promo `SAVE10` is already applied. | 1. Select remove promo. 2. Review discount row and payable total. | Applied promo `SAVE10`; original total 100.00 | Discount row disappears and payable total returns to 100.00. | | Untested | Manual Only | Manual-only until UI selector names are confirmed. |
+
+## Test Variables
+
+| tc_id | variable | description | source | required | example_or_placeholder | sensitive | preparation_notes |
+|---|---|---|---|---|---|---|---|
+| TC0001 | `{{promo_code_valid}}` | Valid promo code that applies 10 percent discount | fixture | true | SAVE10 | false | Configure before checkout regression execution |
+| TC0001 | `{{cart_total}}` | Eligible cart total for deterministic discount assertion | fixture | true | 100.00 | false | Use an eligible item and stable currency |
+| TC0002 | `{{promo_code_expired}}` | Expired promo code that must not change payable total | fixture | true | SPRINGOLD | false | Keep code expired in test environment |
+| TC0004 | `{{original_cart_total}}` | Original payable total before discount | fixture | true | 100.00 | false | Use for restoration assertion after removal |

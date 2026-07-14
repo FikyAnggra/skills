@@ -39,12 +39,15 @@ The source of truth is `planning_state.json`. Human-readable plans, test cases, 
 Expected outputs include:
 - test plan
 - separated UI test cases and API test cases
+- explicit test variables per test case so required data preparation is clear
 - requirement coverage map
 - `qa-executor`, `qa-automation`, and `qa-reporter` handoff contracts
 - Plane comment, attachment, wiki/page, page link, sync record, and optional status transition output when Plane tools are available
 - per-sub-work-item Plane result comments when a parent/sub-work-item Plane request is processed
 - Notion test plan page, Notion test case database, Notion views, and captured Notion links when Notion tools are available
 - review history and changelog entries
+
+When no Plane, Notion, spreadsheet, document, or other platform target is provided, `qa-planner` defaults to a local/document-style test plan. The test plan uses this structure: `Test Plan Name`, objective, source inputs, scope, assumptions and open questions, test strategy, entry criteria, exit criteria, and `Attachment`. The `Attachment` section contains `Test Case` and `Handoff`. `qa-planner` should create separate documents for test cases and handoff when document generation is available; otherwise it embeds tables under each attachment section; if tables are not available, it uses structured text.
 
 ## Usage Prompts
 
@@ -111,7 +114,42 @@ Gunakan field API:
 
 Actual Result harus kosong.
 Test Case Status default: Untested.
+Gunakan variable test data seperti `{{valid_user_email}}`, `{{access_token}}`, atau `{{customer_id}}` dan buat daftar `test_variables` agar jelas data apa yang harus disiapkan.
 Jangan gunakan asumsi untuk expected result.
+```
+
+### Default Test Plan With Attachments
+
+```text
+Gunakan skill qa-planner.
+
+Buat QA planning package dari requirement berikut:
+<isi requirement / PRD / user story / acceptance criteria>
+
+Tidak ada target Plane, Notion, spreadsheet, atau tools lain.
+
+Output default:
+- Test Plan Name
+- Objective
+- Source Inputs
+- Scope
+  - In Scope
+  - Out of Scope
+- Assumptions and Open Questions
+- Test Strategy
+- Entry Criteria
+- Exit Criteria
+- Attachment
+  - Test Case
+  - Handoff
+
+Untuk Attachment:
+- buat Test Case sebagai document terpisah jika bisa
+- buat Handoff sebagai document terpisah jika bisa
+- kalau document tidak bisa dibuat, render dalam table di Attachment
+- kalau table juga tidak bisa, render sebagai structured text
+
+Setiap test case wajib memakai variable seperti `{{valid_user_email}}` dan mencantumkan daftar `test_variables` agar data yang harus disiapkan jelas.
 ```
 
 ### Test Plan Only
